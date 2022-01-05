@@ -69,14 +69,14 @@ constexpr T Statistics::x_max() const noexcept;
 constexpr T Statistics::y_max() const noexcept;
 ```
 
-Return the minimum and maximum values. Behaviour is undefined if `n<1`.
+Return the minimum and maximum values. These will return zero if `n<1`.
 
 ```c++
 constexpr T Statistics::x_mean() const noexcept;
 constexpr T Statistics::y_mean() const noexcept;
 ```
 
-Return the mean values. Behaviour is undefined if `n<1`.
+Return the mean values. These will return zero if `n<1`.
 
 ```c++
 constexpr T Statistics::x_variance() const noexcept;
@@ -90,9 +90,9 @@ T Statistics::y_pop_sd() const noexcept;
 ```
 
 Return the sample (with Bessel correction) and population (no Bessel
-correction) variance and standard deviation. Behaviour is undefined for the
-uncorrected population measures if `n<1`, and for the corrected sample
-measures if `n<2`.
+correction) variance and standard deviation. The corrected sample measures
+will return zero if `n<2`; the uncorrected population measures will return
+zero if `n<1`.
 
 ```c++
 T Statistics::x_skewness() const noexcept;
@@ -102,14 +102,13 @@ T Statistics::y_kurtosis() const noexcept;
 ```
 
 Return the skewness (third standard moment) and kurtosis (Pearson's modified
-fourth moment) of the sample. Behaviour is undefined for both functions if
-`n<2`.
+fourth moment) of the sample. All of these will return zero if `n<2`.
 
 ```c++
 T Statistics::r() const noexcept;
 ```
 
-Returns the Pearson coefficient of correlation. Behaviour is undefined if
+Returns the Pearson coefficient of correlation. This will return zero if
 `n<1`.
 
 ```c++
@@ -120,5 +119,5 @@ T Statistics::inv_b() const noexcept;
 ```
 
 Return the linear regression coefficients in `y=a*x+b`. The `inv_*()`
-functions return the inverse coefficients in `x=a'*y+b'`. Behaviour of all of
-these functions is undefined if `n<1`.
+functions return the inverse coefficients in `x=a'*y+b'`. All of these will
+return zero if `n<1`.

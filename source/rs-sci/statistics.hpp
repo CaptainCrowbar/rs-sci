@@ -29,31 +29,31 @@ namespace RS::Sci {
         constexpr int n() const noexcept { return count_; }
         constexpr T tn() const noexcept { return T(count_); }
 
-        constexpr T x_min() const noexcept { return xmin_; }
-        constexpr T x_max() const noexcept { return xmax_; }
-        constexpr T x_mean() const noexcept { return xm1_; }
-        constexpr T x_variance() const noexcept { return xm2_ / (count_ - 1); }
+        constexpr T x_min() const noexcept { return check(xmin_, 1); }
+        constexpr T x_max() const noexcept { return check(xmax_, 1); }
+        constexpr T x_mean() const noexcept { return check(xm1_, 1); }
+        constexpr T x_variance() const noexcept { return check(xm2_ / (count_ - 1), 2); }
         T x_sd() const noexcept { return std::sqrt(x_variance()); }
-        constexpr T x_pop_variance() const noexcept { return xm2_ / count_; }
+        constexpr T x_pop_variance() const noexcept { return check(xm2_ / count_, 1); }
         T x_pop_sd() const noexcept { return std::sqrt(x_pop_variance()); }
-        T x_skewness() const noexcept { return std::sqrt(tn()) * xm3_ / std::pow(xm2_, T(1.5)); }
-        T x_kurtosis() const noexcept { return tn() * xm4_ / (xm2_ * xm2_) - 3; }
+        T x_skewness() const noexcept { return check(std::sqrt(tn()) * xm3_ / std::pow(xm2_, T(1.5)), 2); }
+        T x_kurtosis() const noexcept { return check(tn() * xm4_ / (xm2_ * xm2_) - 3, 2); }
 
-        constexpr T y_min() const noexcept { return ymin_; }
-        constexpr T y_max() const noexcept { return ymax_; }
-        constexpr T y_mean() const noexcept { return ym1_; }
-        constexpr T y_variance() const noexcept { return ym2_ / (count_ - 1); }
+        constexpr T y_min() const noexcept { return check(ymin_, 1); }
+        constexpr T y_max() const noexcept { return check(ymax_, 1); }
+        constexpr T y_mean() const noexcept { return check(ym1_, 1); }
+        constexpr T y_variance() const noexcept { return check(ym2_ / (count_ - 1), 2); }
         T y_sd() const noexcept { return std::sqrt(y_variance()); }
-        constexpr T y_pop_variance() const noexcept { return ym2_ / count_; }
+        constexpr T y_pop_variance() const noexcept { return check(ym2_ / count_, 1); }
         T y_pop_sd() const noexcept { return std::sqrt(y_pop_variance()); }
-        T y_skewness() const noexcept { return std::sqrt(tn()) * ym3_ / std::pow(ym2_, T(1.5)); }
-        T y_kurtosis() const noexcept { return tn() * ym4_ / (ym2_ * ym2_) - 3; }
+        T y_skewness() const noexcept { return check(std::sqrt(tn()) * ym3_ / std::pow(ym2_, T(1.5)), 2); }
+        T y_kurtosis() const noexcept { return check(tn() * ym4_ / (ym2_ * ym2_) - 3, 2); }
 
-        T r() const noexcept { return sxy_ / (x_sd() * y_sd() * (tn() - 1)); }
-        T a() const noexcept { return sxy_ / (x_variance() * (tn() - 1)); }
-        T b() const noexcept { return ym1_ - a() * xm1_; }
-        T inv_a() const noexcept { return sxy_ / (y_variance() * (tn() - 1)); }
-        T inv_b() const noexcept { return xm1_ - inv_a() * ym1_; }
+        T r() const noexcept { return check(sxy_ / (x_sd() * y_sd() * (tn() - 1)), 1); }
+        T a() const noexcept { return check(sxy_ / (x_variance() * (tn() - 1)), 1); }
+        T b() const noexcept { return check(ym1_ - a() * xm1_, 1); }
+        T inv_a() const noexcept { return check(sxy_ / (y_variance() * (tn() - 1)), 1); }
+        T inv_b() const noexcept { return check(xm1_ - inv_a() * ym1_, 1); }
 
     private:
 
@@ -61,6 +61,8 @@ namespace RS::Sci {
         T xm1_, xm2_, xm3_, xm4_, xmin_, xmax_;
         T ym1_, ym2_, ym3_, ym4_, ymin_, ymax_;
         T sxy_;
+
+        constexpr T check(T t, int min_n) const noexcept { return count_ < min_n ? T(0) : t; }
 
     };
 
