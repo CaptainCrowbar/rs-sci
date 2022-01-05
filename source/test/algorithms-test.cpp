@@ -1,4 +1,5 @@
 #include "rs-sci/algorithms.hpp"
+#include "rs-graphics-core/vector.hpp"
 #include "rs-unit-test.hpp"
 #include <algorithm>
 #include <functional>
@@ -6,6 +7,7 @@
 #include <string>
 #include <vector>
 
+using namespace RS::Graphics::Core;
 using namespace RS::Sci;
 
 void test_rs_sci_algorithm_binomial_coefficients() {
@@ -46,30 +48,6 @@ void test_rs_sci_algorithm_binomial_coefficients() {
     TEST_EQUAL(binomial(5, 4),    5);
     TEST_EQUAL(binomial(5, 5),    1);
     TEST_EQUAL(binomial(5, 6),    0);
-
-}
-
-void test_rs_sci_algorithm_find_optimum() {
-
-    std::vector<std::string> vec;
-    auto i = vec.begin();
-    auto str_size = [] (const std::string& s) { return s.size(); };
-
-    TRY(i = find_optimum(vec, str_size));
-    TEST(i == vec.end());
-
-    vec = {"alpha"};
-    TRY(i = find_optimum(vec, str_size));
-    REQUIRE(i != vec.end());
-    TEST_EQUAL(*i, "alpha");
-
-    vec = {"alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"};
-    TRY(i = find_optimum(vec, str_size));
-    REQUIRE(i != vec.end());
-    TEST_EQUAL(*i, "charlie");
-    TRY(i = find_optimum(vec, str_size, std::less<>()));
-    REQUIRE(i != vec.end());
-    TEST_EQUAL(*i, "echo");
 
 }
 
@@ -124,5 +102,49 @@ void test_rs_sci_algorithm_precision_sum() {
     #if ! defined(__GNUC__) || defined(__clang__)
         precision_sum_test<long double>(1000, 100, 1e100l, rng);
     #endif
+
+}
+
+void test_rs_sci_algorithm_line_integral() {
+
+    double integral = 0;
+    auto f = [] (auto x) { return x * x; };
+
+    TRY((integral = line_integral(0.0, 10.0, 10, f)));
+    TEST_EQUAL(integral, 335);
+
+}
+
+void test_rs_sci_algorithm_volume_integral() {
+
+    double integral = 0;
+    auto f = [] (auto x) { return x[0] * x[1]; };
+
+    TRY((integral = volume_integral(Double2(0, 0), Double2(5, 5), 5, f)));
+    TEST_EQUAL(integral, 156.25);
+
+}
+
+void test_rs_sci_algorithm_find_optimum() {
+
+    std::vector<std::string> vec;
+    auto i = vec.begin();
+    auto str_size = [] (const std::string& s) { return s.size(); };
+
+    TRY(i = find_optimum(vec, str_size));
+    TEST(i == vec.end());
+
+    vec = {"alpha"};
+    TRY(i = find_optimum(vec, str_size));
+    REQUIRE(i != vec.end());
+    TEST_EQUAL(*i, "alpha");
+
+    vec = {"alpha", "bravo", "charlie", "delta", "echo", "foxtrot", "golf", "hotel"};
+    TRY(i = find_optimum(vec, str_size));
+    REQUIRE(i != vec.end());
+    TEST_EQUAL(*i, "charlie");
+    TRY(i = find_optimum(vec, str_size, std::less<>()));
+    REQUIRE(i != vec.end());
+    TEST_EQUAL(*i, "echo");
 
 }
