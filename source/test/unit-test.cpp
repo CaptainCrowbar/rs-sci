@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
     // algorithms-test.cpp
     UNIT_TEST(rs_sci_algorithm_binomial_coefficients)
     UNIT_TEST(rs_sci_algorithm_find_optimum)
+    UNIT_TEST(rs_sci_algorithm_precision_sum)
 
     // constants-test.cpp
     UNIT_TEST(rs_sci_constants)

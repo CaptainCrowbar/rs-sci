@@ -1,6 +1,8 @@
 #include "rs-sci/algorithms.hpp"
 #include "rs-unit-test.hpp"
+#include <algorithm>
 #include <functional>
+#include <random>
 #include <string>
 #include <vector>
 
@@ -68,5 +70,59 @@ void test_rs_sci_algorithm_find_optimum() {
     TRY(i = find_optimum(vec, str_size, std::less<>()));
     REQUIRE(i != vec.end());
     TEST_EQUAL(*i, "echo");
+
+}
+
+namespace {
+
+    template <typename T, typename RNG>
+    void precision_sum_test(size_t copies, size_t cycles, T highval, RNG& rng) {
+
+        std::vector<T> values;
+        values.reserve(4 * copies);
+
+        for (size_t i = 0; i < copies; ++i) {
+            values.push_back(1);
+            values.push_back(highval);
+            values.push_back(1);
+            values.push_back(- highval);
+        }
+
+        PrecisionSum<T> psum;
+
+        for (size_t i = 0; i < cycles; ++i) {
+            std::shuffle(values.begin(), values.end(), rng);
+            TRY(psum.clear());
+            for (T t: values)
+                TRY(psum.add(t));
+            T sum = 0;
+            TRY(sum = psum.get());
+            TEST_EQUAL(sum, T(2 * copies));
+        }
+
+        for (size_t i = 0; i < cycles; ++i) {
+            std::shuffle(values.begin(), values.end(), rng);
+            T sum = 0;
+            TRY(sum = precision_sum(values));
+            TEST_EQUAL(sum, T(2 * copies));
+        }
+
+    }
+
+}
+
+void test_rs_sci_algorithm_precision_sum() {
+
+    std::mt19937 rng(42);
+
+    precision_sum_test<float>(1000, 100, 1e20f, rng);
+    precision_sum_test<double>(1000, 100, 1e100, rng);
+
+    // GCC doesn't provide strict IEEE mode for long double
+    // (not even with -ffloat-store)
+
+    #if ! defined(__GNUC__) || defined(__clang__)
+        precision_sum_test<long double>(1000, 100, 1e100l, rng);
+    #endif
 
 }

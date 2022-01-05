@@ -40,3 +40,27 @@ function is expected to have less-than semantics, and defaults to
 `std::less<T>()` to get the minimum value of `f(x)` instead of the maximum. If
 there is more than one optimum element, the first one will be returned. These
 will return an end iterator only if the range is empty.
+
+```c++
+template <typename T> class PrecisionSum {
+    using value_type = T;
+    PrecisionSum& add(T t);
+    PrecisionSum& operator()(T t); // same as add()
+    void clear() noexcept;
+    T get() const;
+    operator T() const; // same as get()
+};
+template <typename SinglePassRange>
+    [value type] precision_sum(const SinglePassRange& range);
+```
+
+Calculate the sum of a sequence of numbers using the high precision algorithm from
+[Shewchuk](http://www-2.cs.cmu.edu/afs/cs/project/quake/public/papers/robust-arithmetic.ps)
+and [Hettinger](http://code.activestate.com/recipes/393090/).
+
+This can be called as either an accumulator to which values can be added one
+at a time, or a range based function that calculates the sum in one call. The
+range's value type must be a floating point arithmetic type. This is always
+much more accurate than simple addition, and is guaranteed to give the
+correct answer (the exact sum correctly rounded) if the value type implements
+IEEE arithmetic (on GCC this requires the `-ffloat-store` option).

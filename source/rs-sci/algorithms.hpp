@@ -1,10 +1,17 @@
 #pragma once
 
+#include <algorithm>
+#include <cmath>
+#include <cstdlib>
 #include <functional>
 #include <iterator>
+#include <numeric>
 #include <type_traits>
+#include <vector>
 
 namespace RS::Sci {
+
+    // Integer algorithms
 
     template <typename T>
     constexpr T binomial(T a, T b) noexcept {
@@ -25,6 +32,8 @@ namespace RS::Sci {
         }
         return n / d;
     }
+
+    // Range algorithms
 
     template <typename ForwardRange, typename UnaryFunction, typename Compare>
     auto find_optimum(ForwardRange& range, UnaryFunction f, Compare cmp) {
@@ -51,6 +60,53 @@ namespace RS::Sci {
         using std::begin;
         using T = std::decay_t<decltype(f(*begin(range)))>;
         return find_optimum(range, f, std::greater<T>());
+    }
+
+    template <typename T>
+    class PrecisionSum {
+
+    public:
+
+        static_assert(std::is_floating_point_v<T>);
+
+        using value_type = T;
+
+        PrecisionSum& add(T t) {
+            size_t i = 0;
+            for (T p: partials_) {
+                if (std::abs(t) < std::abs(p))
+                    std::swap(t, p);
+                T sum = t + p;
+                p -= sum - t;
+                t = sum;
+                if (p != T())
+                    partials_[i++] = p;
+            }
+            partials_.erase(partials_.begin() + i, partials_.end());
+            partials_.push_back(t);
+            return *this;
+        }
+
+        PrecisionSum& operator()(T t) { return add(t); }
+        void clear() noexcept { partials_.clear(); }
+        T get() const { return std::accumulate(partials_.begin(), partials_.end(), T()); }
+        operator T() const { return get(); }
+
+    private:
+
+        std::vector<T> partials_;
+
+    };
+
+    template <typename SinglePassRange>
+    auto precision_sum(const SinglePassRange& range) {
+        using std::begin;
+        using T = std::decay_t<decltype(*begin(range))>;
+        static_assert(std::is_floating_point_v<T>);
+        PrecisionSum<T> sum;
+        for (auto x: range)
+            sum(x);
+        return sum;
     }
 
 }
