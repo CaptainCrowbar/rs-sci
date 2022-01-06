@@ -604,6 +604,83 @@ namespace RS::Sci {
 
     };
 
+    template <typename T, typename U = double>
+    class PoissonDistribution {
+
+    public:
+
+        static_assert(std::is_integral_v<T>);
+        static_assert(std::is_floating_point_v<U>);
+
+        using result_type = T;
+        using scalar_type = U;
+
+        PoissonDistribution() noexcept {}
+        explicit PoissonDistribution(U lambda) noexcept: lambda_(lambda), log_lambda_(std::log(lambda)) {}
+
+        template <typename RNG>
+        T operator()(RNG& rng) const noexcept {
+
+            // https://www.johndcook.com/blog/2010/06/14/generating-poisson-random-values/
+
+            T n;
+            UniformReal<U> unit;
+
+            if (lambda_ <= 30) {
+
+                // Knuth algorithm
+
+                U xl = std::exp(- lambda_);
+                T k = 0;
+                U p = 1;
+
+                do {
+                    ++k;
+                    U u = unit(rng);
+                    p *= u;
+                } while (p > xl);
+
+                n = k - 1;
+
+            } else {
+
+                // Atkinson algorithm
+
+                U c = U(0.767) - U(3.36) / lambda_;
+                U beta = pi_c<U> / std::sqrt(3 * lambda_);
+                U alpha = beta * lambda_;
+                U k = std::log(c) - lambda_ - std::log(beta);
+                U lhs, rhs;
+
+                do {
+                    U u = unit(rng);
+                    U x = (alpha - std::log((1 - u) / u)) / beta;
+                    n = T(std::floor(x + U(0.5)));
+                    if (n < 0)
+                        continue;
+                    U v = unit(rng);
+                    U y = alpha - beta * x;
+                    U z = 1 + std::exp(y);
+                    lhs = y + std::log(v / (z * z));
+                    rhs = k + n * log_lambda_ - std::lgamma(U(n) + 1);
+                } while (lhs > rhs);
+
+            }
+
+            return n;
+
+        }
+
+        U mean() const noexcept { return lambda_; }
+        U sd() const noexcept { return std::sqrt(lambda_); }
+
+    private:
+
+        U lambda_ = 1;
+        U log_lambda_ = 0;
+
+    };
+
     // Distribution with resampling from a constrained range
 
     namespace Detail {

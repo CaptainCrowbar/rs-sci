@@ -397,6 +397,43 @@ void test_rs_sci_random_log_uniform_distribution() {
 
 }
 
+void test_rs_sci_random_poisson_distribution() {
+
+    static constexpr int iterations = 1'000'000;
+
+    PoissonDistribution<int> poi;
+    Statistics<double> stats;
+    Pcg64 rng(42);
+    int x = 0;
+
+    TRY(poi = PoissonDistribution<int>(4));
+    TEST_EQUAL(poi.mean(), 4);
+    TEST_EQUAL(poi.sd(), 2);
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(x = poi(rng));
+        stats(x);
+    }
+
+    TEST_NEAR(stats.mean(), poi.mean(), 0.002);
+    TEST_NEAR(stats.sd(), poi.sd(), 0.002);
+
+    TRY(poi = PoissonDistribution<int>(100));
+    TEST_EQUAL(poi.mean(), 100);
+    TEST_EQUAL(poi.sd(), 10);
+
+    stats.clear();
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(x = poi(rng));
+        stats(x);
+    }
+
+    TEST_NEAR(stats.mean(), poi.mean(), 0.2);
+    TEST_NEAR(stats.sd(), poi.sd(), 0.2);
+
+}
+
 void test_rs_sci_random_constrained_distribution() {
 
     using constrained_int = ConstrainedDistribution<UniformInteger<int>>;
