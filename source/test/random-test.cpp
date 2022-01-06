@@ -90,11 +90,11 @@ void test_rs_sci_random_uniform_integer_distribution() {
 
     TEST_EQUAL(census.size(), 5u);
 
-    TEST_NEAR(census[0] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[1] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[2] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[3] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[4] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census[0] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[1] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[2] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[3] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[4] / double(iterations), 0.2, 0.002);
 
     TRY(dist = UniformInteger(1, 5));
     census.clear();
@@ -106,11 +106,11 @@ void test_rs_sci_random_uniform_integer_distribution() {
 
     TEST_EQUAL(census.size(), 5u);
 
-    TEST_NEAR(census[1] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[2] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[3] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[4] / double(iterations), 0.2, 0.001);
-    TEST_NEAR(census[5] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census[1] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[2] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[3] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[4] / double(iterations), 0.2, 0.002);
+    TEST_NEAR(census[5] / double(iterations), 0.2, 0.002);
 
 }
 

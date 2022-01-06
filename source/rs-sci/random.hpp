@@ -19,14 +19,6 @@ namespace RS::Sci {
 
     namespace Detail {
 
-        template <typename T, typename = void> struct HasMinMethod: std::false_type {};
-        template <typename T> struct HasMinMethod<T, std::void_t<decltype(std::declval<const T&>().min())>>: std::true_type {};
-        template <typename T> constexpr bool has_min_method = HasMinMethod<T>::value;
-
-        template <typename T, typename = void> struct HasMaxMethod: std::false_type {};
-        template <typename T> struct HasMaxMethod<T, std::void_t<decltype(std::declval<const T&>().min())>>: std::true_type {};
-        template <typename T> constexpr bool has_max_method = HasMaxMethod<T>::value;
-
         template <typename T>
         constexpr T rotl(T t, int n) noexcept {
             int size = 8 * sizeof(T);
@@ -208,8 +200,6 @@ namespace RS::Sci {
 
     public:
 
-        // This assumes range << max int
-
         static_assert(std::is_integral_v<T>);
 
         using result_type = T;
@@ -220,7 +210,16 @@ namespace RS::Sci {
 
         template <typename RNG>
         constexpr T operator()(RNG& rng) const noexcept {
-            return min_ + rng() % range_;
+            // This is a bit of a hack for efficiency and slightly improved
+            // quality. I'm assuming that the actual range of rng() will
+            // never be orders of magnitude smaller than its type, and that
+            // the required output range will be much smaller.
+            auto r = rng();
+            if constexpr (sizeof(r) >= sizeof(uint64_t))
+                r >>= 16;
+            else if constexpr (sizeof(r) >= sizeof(uint32_t))
+                r >>= 8;
+            return min_ + r % range_;
         }
 
         constexpr T min() const noexcept { return min_; }
@@ -423,6 +422,18 @@ namespace RS::Sci {
     };
 
     // Distribution with resampling from a constrained range
+
+    namespace Detail {
+
+        template <typename T, typename = void> struct HasMinMethod: std::false_type {};
+        template <typename T> struct HasMinMethod<T, std::void_t<decltype(std::declval<const T&>().min())>>: std::true_type {};
+        template <typename T> constexpr bool has_min_method = HasMinMethod<T>::value;
+
+        template <typename T, typename = void> struct HasMaxMethod: std::false_type {};
+        template <typename T> struct HasMaxMethod<T, std::void_t<decltype(std::declval<const T&>().min())>>: std::true_type {};
+        template <typename T> constexpr bool has_max_method = HasMaxMethod<T>::value;
+
+    }
 
     template <typename Base>
     class ConstrainedDistribution {
