@@ -24,6 +24,16 @@ int main(int argc, char** argv) {
     // constants-test.cpp
     UNIT_TEST(rs_sci_constants)
 
+    // rational-test.cpp
+    UNIT_TEST(rs_sci_rational_basics)
+    UNIT_TEST(rs_sci_rational_reduction)
+    UNIT_TEST(rs_sci_rational_arithmetic)
+    UNIT_TEST(rs_sci_rational_properties)
+    UNIT_TEST(rs_sci_rational_comparison)
+    UNIT_TEST(rs_sci_rational_mixed)
+    UNIT_TEST(rs_sci_rational_parsing)
+    UNIT_TEST(rs_sci_rational_hash)
+
     // statistics-test.cpp
     UNIT_TEST(rs_sci_statistics_univariate)
     UNIT_TEST(rs_sci_statistics_bivariate)
