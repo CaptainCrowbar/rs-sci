@@ -24,6 +24,19 @@ int main(int argc, char** argv) {
     // constants-test.cpp
     UNIT_TEST(rs_sci_constants)
 
+    // formula-test.cpp
+    UNIT_TEST(rs_sci_formula_sphere_geometry)
+    UNIT_TEST(rs_sci_formula_mass_density)
+    UNIT_TEST(rs_sci_formula_surface_gravity)
+    UNIT_TEST(rs_sci_formula_orbital_period)
+    UNIT_TEST(rs_sci_formula_hill_sphere)
+    UNIT_TEST(rs_sci_formula_stellar_luminosity)
+    UNIT_TEST(rs_sci_formula_stellar_lifetime)
+    UNIT_TEST(rs_sci_formula_schwarzschild_radius)
+    UNIT_TEST(rs_sci_formula_magnitude_luminosity)
+    UNIT_TEST(rs_sci_formula_bolometric_correction)
+    UNIT_TEST(rs_sci_formula_planet_temperature)
+
     // rational-test.cpp
     UNIT_TEST(rs_sci_rational_basics)
     UNIT_TEST(rs_sci_rational_reduction)

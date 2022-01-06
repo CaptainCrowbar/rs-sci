@@ -26,6 +26,7 @@ tests.
 
 * [Algorithms](algorithms.html)
 * [Constants](constants.html)
+* [Formula functions](formula.html)
 * [Rational numbers](rational.html)
 * [Statistics](statistics.html)
 * [Version information](version.html)
