@@ -8,8 +8,11 @@
 #include <cstdlib>
 #include <deque>
 #include <functional>
+#include <initializer_list>
 #include <iterator>
+#include <map>
 #include <numeric>
+#include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -37,6 +40,205 @@ namespace RS::Sci {
         }
         return n / d;
     }
+
+    // Interpolation
+
+    enum Interpolate: int {
+        log_x = 1,
+        log_y = 2,
+    };
+
+    template <typename T>
+    T interpolate(T x1, T y1, T x2, T y2, T x, int flags = 0) noexcept {
+        static_assert(std::is_floating_point_v<T>);
+        if ((flags & Interpolate::log_x) != 0) {
+            x1 = std::log(x1);
+            x2 = std::log(x2);
+            x = std::log(x);
+        }
+        if ((flags & Interpolate::log_y) != 0) {
+            y1 = std::log(y1);
+            y2 = std::log(y2);
+        }
+        T y = y1 + (y2 - y1) * ((x - x1) / (x2 - x1));
+        if ((flags & Interpolate::log_y) != 0)
+            y = std::exp(y);
+        return y;
+    }
+
+    template <typename T, int Flags = 0>
+    class InterpolatedMapBase {
+
+    protected:
+
+        static_assert(std::is_floating_point_v<T>);
+
+        static constexpr bool x_log = (Flags & Interpolate::log_x) != 0;
+        static constexpr bool y_log = (Flags & Interpolate::log_y) != 0;
+
+        static T x_in(T x) noexcept { if constexpr (x_log) return std::log(x); else return x; }
+        static T y_in(T y) noexcept { if constexpr (y_log) return std::log(y); else return y; }
+        static T y_out(T y) noexcept { if constexpr (y_log) return std::exp(y); else return y; }
+
+    };
+
+    template <typename T, int Flags = 0>
+    class InterpolatedMap:
+    public InterpolatedMapBase<T, Flags> {
+
+    public:
+
+        InterpolatedMap() = default;
+        InterpolatedMap(std::initializer_list<std::pair<const T, T>> list)
+            { for (auto& [x,y]: list) insert(x, y); }
+        explicit InterpolatedMap(const std::vector<std::pair<T, T>> points)
+            { for (auto& [x,y]: points) insert(x, y); }
+
+        InterpolatedMap& insert(T x, T y);
+        T operator()(T x) const noexcept;
+
+    private:
+
+        std::map<T, T> map_;
+
+        void init();
+
+    };
+
+        template <typename T, int Flags>
+        InterpolatedMap<T, Flags>& InterpolatedMap<T, Flags>::insert(T x, T y) {
+            x = this->x_in(x);
+            y = this->y_in(y);
+            map_[x] = y;
+            return *this;
+        }
+
+        template <typename T, int Flags>
+        T InterpolatedMap<T, Flags>::operator()(T x) const noexcept {
+
+            if (map_.empty())
+                return 0;
+
+            if (map_.size() == 1)
+                return this->y_out(map_.begin()->second);
+
+            x = this->x_in(x);
+            auto i = map_.lower_bound(x);
+
+            if (i == map_.end())
+                --i;
+            else if (i->first == x)
+                return this->y_out(i->second);
+
+            auto j = i;
+            if (i == map_.begin())
+                ++j;
+            else
+                --i;
+
+            T y = i->second + (j->second - i->second) * ((x - i->first) / (j->first - i->first));
+            y = this->y_out(y);
+
+            return y;
+
+        }
+
+    template <typename T, int Flags = 0>
+    class CubicSplineMap:
+    public InterpolatedMapBase<T, Flags> {
+
+    public:
+
+        CubicSplineMap() = default;
+        CubicSplineMap(std::initializer_list<std::pair<T, T>> list): points_(list) { init(); }
+        explicit CubicSplineMap(const std::vector<std::pair<T, T>> points): points_(points) { init(); }
+
+        T operator()(T x) const noexcept;
+
+    private:
+
+        std::vector<std::pair<T, T>> points_;
+        std::vector<T> deriv2_;
+        int count_ = 0;
+
+        void init();
+        T px(int i) const noexcept { return points_[i].first; }
+        T py(int i) const noexcept { return points_[i].second; }
+
+    };
+
+        template <typename T, int Flags>
+        T CubicSplineMap<T, Flags>::operator()(T x) const noexcept {
+
+            x = this->x_in(x);
+
+            auto it = std::upper_bound(points_.begin(), points_.end(), std::make_pair(x, 0.0));
+
+            if (it == points_.end())
+                --it;
+            if (it != points_.begin())
+                --it;
+
+            int j = it - points_.begin();
+            T dx = px(j + 1) - px(j);
+            T q_prev = (x - px(j)) / dx;
+            T q_next = (px(j + 1) - x) / dx;
+            T qp_cubic = q_prev * (q_prev * q_prev - 1);
+            T qn_cubic = q_next * (q_next * q_next - 1);
+            T d20 = deriv2_[j];
+            T d21 = deriv2_[j + 1];
+            T y = q_next * py(j) + q_prev * py(j + 1) + dx * dx * (qn_cubic * d20 + qp_cubic * d21) / 6;
+            y = this->y_out(y);
+
+            return y;
+
+        }
+
+        template <typename T, int Flags>
+        void CubicSplineMap<T, Flags>::init() {
+
+            count_ = int(points_.size());
+            if (count_ < 4)
+                throw std::invalid_argument("Not enough points for cubic spline (requires 4)");
+
+            std::sort(points_.begin(), points_.end());
+            points_.erase(std::unique(points_.begin(), points_.end()), points_.end());
+            auto it = std::adjacent_find(points_.begin(), points_.end(),
+                [] (auto& a, auto& b) { return a.first == b.first; });
+            if (it != points_.end())
+                throw std::invalid_argument("Degenerate points in cubic spline");
+
+            if constexpr (Flags != 0) {
+                for (auto& [x,y]: points_) {
+                    if constexpr (this->x_log)
+                        if (x <= 0)
+                            throw std::invalid_argument("Invalid X value in logarithmic cubic spline");
+                    if constexpr (this->y_log)
+                        if (y <= 0)
+                            throw std::invalid_argument("Invalid Y value in logarithmic cubic spline");
+                    x = this->x_in(x);
+                    y = this->y_in(y);
+                }
+            }
+
+            deriv2_.resize(points_.size(), 0);
+            std::vector<T> d2_offset(count_ - 1, 0);
+
+            for (int i = 1; i < count_ - 1; ++i) {
+                T dx_prev = px(i) - px(i - 1);
+                T dx_next = px(i + 1) - px(i);
+                T dy_prev = py(i) - py(i - 1);
+                T dy_next = py(i + 1) - py(i);
+                T delta_d = dy_next / dx_next - dy_prev / dx_prev;
+                T divisor = dx_prev * (deriv2_[i - 1] + 2) + dx_next * 2;
+                deriv2_[i] = - dx_next / divisor;
+                d2_offset[i] = (delta_d * 6 - dx_prev * d2_offset[i - 1]) / divisor;
+            }
+
+            for (int i = count_ - 2; i >= 0; --i)
+                deriv2_[i] = deriv2_[i] * deriv2_[i + 1] + d2_offset[i];
+
+        }
 
     // Numerical algorithms
 

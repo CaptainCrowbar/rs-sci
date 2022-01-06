@@ -10,11 +10,16 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_version)
 
     // algorithms-test.cpp
-    UNIT_TEST(rs_sci_algorithm_binomial_coefficients)
-    UNIT_TEST(rs_sci_algorithm_precision_sum)
-    UNIT_TEST(rs_sci_algorithm_line_integral)
-    UNIT_TEST(rs_sci_algorithm_volume_integral)
-    UNIT_TEST(rs_sci_algorithm_find_optimum)
+    UNIT_TEST(rs_sci_algorithms_binomial_coefficients)
+    UNIT_TEST(rs_sci_algorithms_interpolation)
+    UNIT_TEST(rs_sci_algorithms_interpolated_map)
+    UNIT_TEST(rs_sci_algorithms_interpolated_map_lin_log)
+    UNIT_TEST(rs_sci_algorithms_interpolated_map_log_log)
+    UNIT_TEST(rs_sci_algorithms_cubic_spline_map)
+    UNIT_TEST(rs_sci_algorithms_precision_sum)
+    UNIT_TEST(rs_sci_algorithms_line_integral)
+    UNIT_TEST(rs_sci_algorithms_volume_integral)
+    UNIT_TEST(rs_sci_algorithms_find_optimum)
 
     // constants-test.cpp
     UNIT_TEST(rs_sci_constants)

@@ -23,6 +23,64 @@ Returns the binomial coefficient of `(a,b)`, equal to `a!/b!(a-b)!` if
 undefined if the correct result would be out of range for `T`, or if `T` is
 floating point and either argument is not an integer value.
 
+## Interpolation
+
+For all of these templates, `T` must be a floating point arithmetic type.
+
+```c++
+enum Interpolate: int {
+    log_x = 1,
+    log_y = 2,
+};
+```
+
+The interpolation functions take a flags parameter, which is a combination of
+these bitmask flags, to indicate which of the X and Y scales are
+logarithmic.
+
+```c++
+template <typename T>
+    T interpolate(T x1, T y1, T x2, T y2, T x, int flags = 0) noexcept;
+```
+
+Interpolate or extrapolate to a third point, given two points. Behaviour is
+undefined if `x1==x2`; if the `log_x` flag is used and any of the X values
+are less than or equal to zero; or if the `log_y` flag is used and either of
+the Y values is less than or equal to zero.
+
+```c++
+template <typename T, int Flags = 0> class InterpolatedMap {
+    InterpolatedMap();
+    InterpolatedMap(std::initializer_list<std::pair<const T, T>> list);
+    explicit InterpolatedMap(const std::vector<std::pair<T, T>> points);
+    InterpolatedMap& insert(T x, T y);
+    T operator()(T x) const noexcept;
+};
+```
+
+This is a map containing a sequence of key-value pairs. The function call
+operator performs interpolation between the nearest two points
+(or extrapolation if the argument is outside the mapped range). If two points
+have the same X value but different Y values, a later entry will overwrite an
+earlier one. The constructors and `insert()` function will throw
+`std::invalid_argument` if a zero or negative value is supplied for a
+log-scaled parameter.
+
+```c++
+template <typename T, int Flags = 0> class CubicSplineMap {
+    CubicSplineMap();
+    CubicSplineMap(std::initializer_list<std::pair<T, T>> list);
+    explicit CubicSplineMap(const std::vector<std::pair<T, T>> points);
+    T operator()(T x) const noexcept;
+};
+```
+
+This performs cubic spline interpolation. Its behaviour is otherwise similar
+to `InterpolatedMap`. In addition to the usual log scale checking, the
+constructors will throw `std::invalid_argument` if less than four distinct
+points are supplied, or if two points have the same X value but different Y
+values.
+
 ## Numerical algorithms
 
 ```c++
