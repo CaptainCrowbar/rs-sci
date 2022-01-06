@@ -421,6 +421,39 @@ void test_rs_sci_random_constrained_distribution() {
 
 }
 
+void test_rs_sci_random_choice_distribution() {
+
+    static constexpr int iterations = 1'000'000;
+
+    Pcg64 rng(42);
+    RandomChoice<char> choice;
+    std::map<char, int> census;
+    std::string alpha = "abcdefghij";
+    char c;
+
+    TRY(choice = RandomChoice<char>(alpha));
+    TEST_EQUAL(choice.size(), 10u);
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(c = choice(rng));
+        ++census[c];
+    }
+
+    TEST_EQUAL(census.size(), 10u);
+
+    TEST_NEAR(census['a'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['b'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['c'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['d'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['e'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['f'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['g'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['h'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['i'] / double(iterations), 0.1, 0.001);
+    TEST_NEAR(census['j'] / double(iterations), 0.1, 0.001);
+
+}
+
 void test_rs_sci_random_weighted_distribution() {
 
     static constexpr int iterations = 1'000'000;

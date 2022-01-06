@@ -8,6 +8,7 @@
 #include <array>
 #include <cmath>
 #include <initializer_list>
+#include <iterator>
 #include <limits>
 #include <map>
 #include <stdexcept>
@@ -578,7 +579,7 @@ namespace RS::Sci {
     };
 
     template <typename T>
-    class IntegerNormal {
+    class DiscreteNormal {
 
     public:
 
@@ -586,8 +587,8 @@ namespace RS::Sci {
 
         using result_type = T;
 
-        IntegerNormal() = default; // Defaults to (0,1)
-        IntegerNormal(double mean, double sd) noexcept: norm_(mean, sd) {}
+        DiscreteNormal() = default; // Defaults to (0,1)
+        DiscreteNormal(double mean, double sd) noexcept: norm_(mean, sd) {}
 
         template <typename RNG>
         T operator()(RNG& rng) const noexcept {
@@ -676,6 +677,49 @@ namespace RS::Sci {
                 throw std::out_of_range("Constrained distribution has no possible values");
         }
 
+    // Selection from a set of discrete values
+
+    template <typename T>
+    class RandomChoice {
+
+    public:
+
+        using result_type = T;
+
+        RandomChoice() = default;
+        RandomChoice(std::initializer_list<T> list): vec_(list) {}
+
+        template <typename Range>
+        explicit RandomChoice(const Range& range) {
+            using std::begin;
+            using std::end;
+            vec_.assign(begin(range), end(range));
+        }
+
+        template <typename RNG>
+        const T& operator()(RNG& rng) const {
+            UniformInteger<size_t> dist(vec_.size());
+            size_t index = dist(rng);
+            return vec_[index];
+        }
+
+        template <typename... Args>
+        RandomChoice& add(const T& t, const Args&... args) {
+            vec_.push_back(t);
+            if constexpr (sizeof...(Args) > 0)
+                add(args...);
+            return *this;
+        }
+
+        bool empty() const noexcept { return vec_.empty(); }
+        size_t size() const noexcept { return vec_.size(); }
+
+    private:
+
+        std::vector<T> vec_;
+
+    };
+
     // Selection from a weighted set of discrete values
 
     template <typename T>
@@ -692,7 +736,7 @@ namespace RS::Sci {
 
     public:
 
-        using value_type = T;
+        using result_type = T;
 
         WeightedChoice() = default;
         WeightedChoice(std::initializer_list<group> list);
@@ -701,6 +745,7 @@ namespace RS::Sci {
         const T& operator()(RNG& rng) const;
 
         template <typename... Args> WeightedChoice& add(double w, const Args&... args); // Weight split between values
+        bool empty() const noexcept { return table_.empty(); }
         double total_weight() const noexcept { return dist_.max(); }
 
     private:

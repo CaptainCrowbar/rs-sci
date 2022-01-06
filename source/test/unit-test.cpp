@@ -59,6 +59,7 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_random_log_normal_distribution)
     UNIT_TEST(rs_sci_random_log_uniform_distribution)
     UNIT_TEST(rs_sci_random_constrained_distribution)
+    UNIT_TEST(rs_sci_random_choice_distribution)
     UNIT_TEST(rs_sci_random_weighted_distribution)
 
     // statistics-test.cpp
