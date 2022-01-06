@@ -91,11 +91,13 @@ class Xoshiro {
     constexpr Xoshiro() noexcept; // seed(0,0,0,0)
     constexpr explicit Xoshiro(uint64_t s) noexcept;
     constexpr Xoshiro(uint64_t s, uint64_t t) noexcept;
-    constexpr Xoshiro(uint64_t s, uint64_t t, uint64_t u, uint64_t v) noexcept;
+    constexpr Xoshiro(uint64_t s, uint64_t t,
+        uint64_t u, uint64_t v) noexcept;
     constexpr uint64_t operator()() noexcept;
     constexpr void seed(uint64_t s = 0) noexcept;
     constexpr void seed(uint64_t s, uint64_t t) noexcept;
-    constexpr void seed(uint64_t s, uint64_t t, uint64_t u, uint64_t v) noexcept;
+    constexpr void seed(uint64_t s, uint64_t t,
+        uint64_t u, uint64_t v) noexcept;
     static constexpr uint64_t min() noexcept;
     static constexpr uint64_t max() noexcept;
 };
@@ -115,10 +117,14 @@ implementation.
 ```c++
 template <typename T> class UniformInteger {
     using result_type = T;
-    constexpr UniformInteger() noexcept; // range=[0,1]
-    constexpr explicit UniformInteger(T r) noexcept; // range=[0,r-1]; UB if r<1
-    constexpr UniformInteger(T a, T b) noexcept; // range=[a,b]; UB if a>b
-    template <typename RNG> constexpr T operator()(RNG& rng) const noexcept;
+    constexpr UniformInteger() noexcept;
+        // range=[0,1]
+    constexpr explicit UniformInteger(T r) noexcept;
+        // range=[0,r-1]; UB if r<1
+    constexpr UniformInteger(T a, T b) noexcept;
+        // range=[a,b]; UB if a>b
+    template <typename RNG>
+        constexpr T operator()(RNG& rng) const noexcept;
     constexpr T min() const noexcept;
     constexpr T max() const noexcept;
 };
@@ -128,10 +134,14 @@ template <typename T> class UniformInteger {
 class BernoulliDistribution {
     using result_type = bool;
     constexpr BernoulliDistribution() noexcept;
-    constexpr explicit BernoulliDistribution(double p) noexcept; // UB if p<0 or p>1
-    constexpr explicit BernoulliDistribution(Rational p) noexcept: // UB if p<0 or p>1
-    constexpr BernoulliDistribution(int num, int den) noexcept; // p=num/den; UB if num<0, den<1, or num>den
-    template <typename RNG> constexpr bool operator()(RNG& rng) const noexcept;
+    constexpr explicit BernoulliDistribution(double p) noexcept;
+        // UB if p<0 or p>1
+    constexpr explicit BernoulliDistribution(Rational p) noexcept:;
+        // UB if p<0 or p>1
+    constexpr BernoulliDistribution(int num, int den) noexcept;
+        // p=num/den; UB if num<0, den<1, or num>den
+    template <typename RNG>
+        constexpr bool operator()(RNG& rng) const noexcept;
     constexpr Rational p() const noexcept;
 };
 ```
@@ -151,8 +161,10 @@ template <typename T> class DiscreteNormal {
 template <typename T, typename U = double> class PoissonDistribution {
     using result_type = T; // integer type
     using scalar_type = U; // floating point type
-    PoissonDistribution() noexcept; // lambda=1
-    explicit PoissonDistribution(U lambda) noexcept; // UB if lambda<=0
+    PoissonDistribution() noexcept;
+        // lambda=1
+    explicit PoissonDistribution(U lambda) noexcept;
+        // UB if lambda<=0
     template <typename RNG> T operator()(RNG& rng) const noexcept;
     U mean() const noexcept;
     U sd() const noexcept;
@@ -164,10 +176,14 @@ template <typename T, typename U = double> class PoissonDistribution {
 ```c++
 template <typename T> class UniformReal {
     using result_type = T;
-    constexpr UniformReal() noexcept; // range=[0,1]
-    constexpr explicit UniformReal(T r) noexcept; // range=[0,r); UB if r<=0
-    constexpr UniformReal(T a, T b) noexcept; // range=[a,b); UB if a>b
-    template <typename RNG> constexpr T operator()(RNG& rng) const noexcept;
+    constexpr UniformReal() noexcept;
+        // range=[0,1]
+    constexpr explicit UniformReal(T r) noexcept;
+        // range=[0,r); UB if r<=0
+    constexpr UniformReal(T a, T b) noexcept;
+        // range=[a,b); UB if a>b
+    template <typename RNG>
+        constexpr T operator()(RNG& rng) const noexcept;
     constexpr T min() const noexcept;
     constexpr T max() const noexcept;
 };
@@ -214,8 +230,11 @@ template <typename T> class LogNormal {
 template <typename Base> class ConstrainedDistribution {
     using base_distribution = Base;
     using result_type = typename Base::result_type;
-    ConstrainedDistribution(const Base& dist, result_type min, result_type max);
-    template <typename... Args> ConstrainedDistribution(result_type min, result_type max, Args&&... args);
+    ConstrainedDistribution(const Base& dist,
+        result_type min, result_type max);
+    template <typename... Args>
+        ConstrainedDistribution(result_type min, result_type max,
+            Args&&... args);
     template <typename RNG> result_type operator()(RNG& rng) const;
     result_type min() const noexcept;
     result_type max() const noexcept;
@@ -257,7 +276,8 @@ template <typename T> class WeightedChoice {
     WeightedChoice();
     WeightedChoice(std::initializer_list<...> list);
     template <typename RNG> const T& operator()(RNG& rng) const;
-    template <typename... Args> WeightedChoice& add(double w, const Args&... args);
+    template <typename... Args>
+        WeightedChoice& add(double w, const Args&... args);
     bool empty() const noexcept;
     double total_weight() const noexcept;
 };
