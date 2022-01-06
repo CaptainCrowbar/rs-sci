@@ -293,3 +293,72 @@ nested initializer lists, each corresponding to the arguments to a call to
 
 Behaviour is undefined if the function call operator is called on an empty
 distribution.
+
+## Spatial distributions
+
+### Random vectors
+
+```c++
+template <typename T, int N> class RandomVector {
+    using result_type = Graphics::Core::Vector<T, N>;
+    using scalar_type = T;
+    static constexpr int dim = N;
+    constexpr RandomVector() noexcept;
+        // apex=(1,1,...)
+    constexpr explicit RandomVector(T t) noexcept;
+        // apex=(t,t,...)
+    constexpr explicit RandomVector(const result_type& apex) noexcept;
+    template <typename RNG> result_type operator()(RNG& rng) const;
+    constexpr result_type apex() const noexcept;
+};
+template <typename T, int N> class SymmetricRandomVector {
+    using result_type = Graphics::Core::Vector<T, N>;
+    using scalar_type = T;
+    static constexpr int dim = N;
+    constexpr SymmetricRandomVector() noexcept;
+        // apex=(1,1,...)
+    constexpr explicit SymmetricRandomVector(T t) noexcept;
+        // apex=(t,t,...)
+    constexpr explicit
+        SymmetricRandomVector(const result_type& apex) noexcept;
+    template <typename RNG> result_type operator()(RNG& rng) const;
+    constexpr result_type apex() const noexcept;
+};
+```
+
+These generate a random point in a rectangular box. `RandomVector` generates a
+point in the box whose corners are `(origin,apex)`, while
+`SymmetricRandomVector` generates one in the box whose corners are `
+(-apex,apex)`.
+
+### Random point in a sphere
+
+```c++
+template <typename T, int N> class RandomPointInSphere {
+    using result_type = Graphics::Core::Vector<T, N>;
+    using scalar_type = T;
+    static constexpr int dim = N;
+    constexpr RandomPointInSphere() noexcept;
+    constexpr explicit RandomPointInSphere(T r) noexcept;
+    template <typename RNG> result_type operator()(RNG& rng) const;
+    constexpr T radius() const noexcept;
+};
+```
+
+Generates a random point in a sphere of the given radius, centred on the
+origin in `N` dimensions. Behaviour is undefined if `r<0`.
+
+### Random direction
+
+```c++
+template <typename T, int N> class RandomDirection {
+    using result_type = Graphics::Core::Vector<T, N>;
+    using scalar_type = T;
+    static constexpr int dim = N;
+    constexpr RandomDirection() noexcept;
+    template <typename RNG> result_type operator()(RNG& rng) const;
+};
+```
+
+Generates a random unit vector, uniformly distributed in `N` dimensions. The
+vector's length may not be exactly 1 due to floating point rounding.

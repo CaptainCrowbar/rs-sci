@@ -62,6 +62,9 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_random_constrained_distribution)
     UNIT_TEST(rs_sci_random_choice_distribution)
     UNIT_TEST(rs_sci_random_weighted_distribution)
+    UNIT_TEST(rs_sci_random_vectors)
+    UNIT_TEST(rs_sci_random_point_in_sphere)
+    UNIT_TEST(rs_sci_random_direction)
 
     // statistics-test.cpp
     UNIT_TEST(rs_sci_statistics_univariate)
