@@ -16,6 +16,10 @@ template <typename T> class Statistics;
 A `Statistics` object keeps running statistics for one or two variables. `T`
 must be a floating point arithmetic type.
 
+Member functions with an`x_` or `y_` prefix return the statistics for that
+variable. The versions with no prefix are synonyms for the `x_` version, for
+convenience when only one variable is being tallied.
+
 Based on code by John Cook:
 
 * [Standard deviation](https://www.johndcook.com/blog/standard_deviation/)
@@ -63,8 +67,10 @@ constexpr T Statistics::tn() const noexcept;
 Return the number of items entered, as an integer or a floating point number.
 
 ```c++
+constexpr T Statistics::min() const noexcept;
 constexpr T Statistics::x_min() const noexcept;
 constexpr T Statistics::y_min() const noexcept;
+constexpr T Statistics::max() const noexcept;
 constexpr T Statistics::x_max() const noexcept;
 constexpr T Statistics::y_max() const noexcept;
 ```
@@ -72,6 +78,7 @@ constexpr T Statistics::y_max() const noexcept;
 Return the minimum and maximum values. These will return zero if `n<1`.
 
 ```c++
+constexpr T Statistics::mean() const noexcept;
 constexpr T Statistics::x_mean() const noexcept;
 constexpr T Statistics::y_mean() const noexcept;
 ```
@@ -79,12 +86,16 @@ constexpr T Statistics::y_mean() const noexcept;
 Return the mean values. These will return zero if `n<1`.
 
 ```c++
+constexpr T Statistics::variance() const noexcept;
 constexpr T Statistics::x_variance() const noexcept;
 constexpr T Statistics::y_variance() const noexcept;
+T Statistics::sd() const noexcept;
 T Statistics::x_sd() const noexcept;
 T Statistics::y_sd() const noexcept;
+constexpr T Statistics::pop_variance() const noexcept;
 constexpr T Statistics::x_pop_variance() const noexcept;
 constexpr T Statistics::y_pop_variance() const noexcept;
+T Statistics::pop_sd() const noexcept;
 T Statistics::x_pop_sd() const noexcept;
 T Statistics::y_pop_sd() const noexcept;
 ```
@@ -95,8 +106,10 @@ will return zero if `n<2`; the uncorrected population measures will return
 zero if `n<1`.
 
 ```c++
+T Statistics::skewness() const noexcept;
 T Statistics::x_skewness() const noexcept;
 T Statistics::y_skewness() const noexcept;
+T Statistics::kurtosis() const noexcept;
 T Statistics::x_kurtosis() const noexcept;
 T Statistics::y_kurtosis() const noexcept;
 ```

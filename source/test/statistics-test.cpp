@@ -13,13 +13,13 @@ void test_rs_sci_statistics_univariate() {
     }
 
     TEST_EQUAL(stats.n(), 100);
-    TEST_EQUAL(stats.x_min(), 0);
-    TEST_EQUAL(stats.x_max(), 960'498);
-    TEST_EQUAL(stats.x_mean(), 241'741.5);
-    TEST_NEAR(stats.x_sd(), 277'531.552'582, 1e-6);
-    TEST_NEAR(stats.x_pop_sd(), 276'140.408'219, 1e-6);
-    TEST_NEAR(stats.x_skewness(), 1.068'426, 1e-6);
-    TEST_NEAR(stats.x_kurtosis(), -0.071'029, 1e-6);
+    TEST_EQUAL(stats.min(), 0);
+    TEST_EQUAL(stats.max(), 960'498);
+    TEST_EQUAL(stats.mean(), 241'741.5);
+    TEST_NEAR(stats.sd(), 277'531.552'582, 1e-6);
+    TEST_NEAR(stats.pop_sd(), 276'140.408'219, 1e-6);
+    TEST_NEAR(stats.skewness(), 1.068'426, 1e-6);
+    TEST_NEAR(stats.kurtosis(), -0.071'029, 1e-6);
 
 }
 

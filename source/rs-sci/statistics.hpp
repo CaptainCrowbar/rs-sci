@@ -29,6 +29,16 @@ namespace RS::Sci {
         constexpr int n() const noexcept { return count_; }
         constexpr T tn() const noexcept { return T(count_); }
 
+        constexpr T min() const noexcept { return x_min(); }
+        constexpr T max() const noexcept { return x_max(); }
+        constexpr T mean() const noexcept { return x_mean(); }
+        constexpr T variance() const noexcept { return x_variance(); }
+        T sd() const noexcept { return x_sd(); }
+        constexpr T pop_variance() const noexcept { return x_pop_variance(); }
+        T pop_sd() const noexcept { return x_pop_sd(); }
+        T skewness() const noexcept { return x_skewness(); }
+        T kurtosis() const noexcept { return x_kurtosis(); }
+
         constexpr T x_min() const noexcept { return check(xmin_, 1); }
         constexpr T x_max() const noexcept { return check(xmax_, 1); }
         constexpr T x_mean() const noexcept { return check(xm1_, 1); }

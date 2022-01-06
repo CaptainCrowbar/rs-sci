@@ -1,15 +1,18 @@
 #include "rs-sci/random.hpp"
+#include "rs-sci/statistics.hpp"
 #include "rs-unit-test.hpp"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <map>
 #include <string>
+#include <vector>
 
 using namespace RS::Sci;
 
 void test_rs_sci_random_pcg64() {
 
-    static constexpr uint64_t expect1[64] = {
+    static const std::vector<uint64_t> expect1 = {
         0xcf7d'be68'4e0c'4045ull, 0x1564'2875'dfe1'e67cull, 0x32f0'49df'2f50'd811ull, 0x98c1'd0a1'63e1'f856ull,
         0x0743'e58f'0360'd766ull, 0xfee9'e4fc'0347'9bf6ull, 0xf7ce'cb16'2663'9417ull, 0x2df8'59db'9576'2826ull,
         0x1c3f'9381'2e14'8ea4ull, 0x8af3'831f'2bb8'5205ull, 0x18a8'332d'd6ff'efc9ull, 0xf4d9'e8a9'f8a2'4f80ull,
@@ -28,7 +31,7 @@ void test_rs_sci_random_pcg64() {
         0xb699'cd1d'bc63'9cd9ull, 0xc402'a50c'737e'0a62ull, 0x95fa'c59a'4269'c9baull, 0x84ee'24cf'64cb'80a4ull,
     };
 
-    static constexpr uint64_t expect2[64] = {
+    static const std::vector<uint64_t> expect2 = {
         0x7e68'4885'6818'e376ull, 0xc7a3'ca18'7fec'4f97ull, 0x4bf5'9a39'22b1'5522ull, 0x8424'4cd3'df75'a1eaull,
         0xadbf'c289'c379'431eull, 0xb86e'b9b4'b36d'a00eull, 0x474b'9deb'd7a7'061cull, 0x3354'0fe3'b963'9b67ull,
         0x4625'c32b'c26b'36bfull, 0x7021'1a03'b27e'ee0full, 0x6877'db4a'31b9'0b48ull, 0x7161'475b'7d80'ef34ull,
@@ -117,51 +120,31 @@ void test_rs_sci_random_uniform_real_distribution() {
 
     Pcg64 rng(42);
     UniformReal<double> dist;
+    Statistics<double> stats;
     double x = 0;
-    double sum = 0;
-    double sum2 = 0;
-    double min = 1e100;
-    double max = -1e100;
 
     for (int i = 0; i < iterations; ++i) {
         TRY(x = dist(rng));
-        sum += x;
-        sum2 += x * x;
-        min = std::min(x, min);
-        max = std::max(x, max);
+        stats(x);
     }
 
-    double mean = sum / iterations;
-    double sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 0.5, 0.001);
-    TEST_NEAR(sd, 0.2887, 0.001);
-    TEST_NEAR(min, 0, 0.001);
-    TEST_NEAR(max, 1, 0.001);
+    TEST_NEAR(stats.mean(), 0.5, 0.001);
+    TEST_NEAR(stats.sd(), 0.2887, 0.001);
+    TEST_NEAR(stats.min(), 0, 0.001);
+    TEST_NEAR(stats.max(), 1, 0.001);
 
     TRY(dist = UniformReal<double>(-100, 100));
-
-    x = 0;
-    sum = 0;
-    sum2 = 0;
-    min = 1e100;
-    max = -1e100;
+    stats.clear();
 
     for (int i = 0; i < iterations; ++i) {
         TRY(x = dist(rng));
-        sum += x;
-        sum2 += x * x;
-        min = std::min(x, min);
-        max = std::max(x, max);
+        stats(x);
     }
 
-    mean = sum / iterations;
-    sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 0, 0.1);
-    TEST_NEAR(sd, 57.74, 0.1);
-    TEST_NEAR(min, -100, 0.1);
-    TEST_NEAR(max, 100, 0.1);
+    TEST_NEAR(stats.mean(), 0, 0.1);
+    TEST_NEAR(stats.sd(), 57.74, 0.1);
+    TEST_NEAR(stats.min(), -100, 0.1);
+    TEST_NEAR(stats.max(), 100, 0.1);
 
 }
 
@@ -212,39 +195,27 @@ void test_rs_sci_random_normal_distribution() {
 
     Pcg64 rng(42);
     NormalDistribution<double> norm;
+    Statistics<double> stats;
     double x = 0;
-    double sum = 0;
-    double sum2 = 0;
 
     for (int i = 0; i < iterations; ++i) {
         TRY(x = norm(rng));
-        sum += x;
-        sum2 += x * x;
+        stats(x);
     }
 
-    double mean = sum / iterations;
-    double sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 0, 0.001);
-    TEST_NEAR(sd, 1, 0.001);
+    TEST_NEAR(stats.mean(), 0, 0.001);
+    TEST_NEAR(stats.sd(), 1, 0.001);
 
     TRY(norm = NormalDistribution<double>(100, 50));
-
-    x = 0;
-    sum = 0;
-    sum2 = 0;
+    stats.clear();
 
     for (int i = 0; i < iterations; ++i) {
         TRY(x = norm(rng));
-        sum += x;
-        sum2 += x * x;
+        stats(x);
     }
 
-    mean = sum / iterations;
-    sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 100, 0.1);
-    TEST_NEAR(sd, 50, 0.1);
+    TEST_NEAR(stats.mean(), 100, 0.1);
+    TEST_NEAR(stats.sd(), 50, 0.1);
 
 }
 
@@ -254,10 +225,9 @@ void test_rs_sci_random_log_normal_distribution() {
 
     Pcg64 rng(42);
     LogNormal<double> dist;
+    Statistics<double> stats;
     double x = 0;
     double lx = 0;
-    double sum = 0;
-    double sum2 = 0;
 
     TEST_EQUAL(dist.m(), 0);
     TEST_EQUAL(dist.s(), 1);
@@ -267,22 +237,14 @@ void test_rs_sci_random_log_normal_distribution() {
     for (int i = 0; i < iterations; ++i) {
         TRY(x = dist(rng));
         lx = std::log(x);
-        sum += lx;
-        sum2 += lx * lx;
+        stats(lx);
     }
 
-    double mean = sum / iterations;
-    double sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 0, 0.001);
-    TEST_NEAR(sd, 1, 0.001);
+    TEST_NEAR(stats.mean(), 0, 0.001);
+    TEST_NEAR(stats.sd(), 1, 0.001);
 
     dist = LogNormal<double>(2, 1, LogMode::decimal);
-
-    x = 0;
-    lx = 0;
-    sum = 0;
-    sum2 = 0;
+    stats.clear();
 
     TEST_NEAR(dist.m(), 4.605'170, 1e-6);
     TEST_NEAR(dist.s(), 2.302'585, 1e-6);
@@ -292,15 +254,11 @@ void test_rs_sci_random_log_normal_distribution() {
     for (int i = 0; i < iterations; ++i) {
         TRY(x = dist(rng));
         lx = std::log(x);
-        sum += lx;
-        sum2 += lx * lx;
+        stats(lx);
     }
 
-    mean = sum / iterations;
-    sd = std::sqrt(sum2 / iterations - mean * mean);
-
-    TEST_NEAR(mean, 4.605, 0.01);
-    TEST_NEAR(sd, 2.303, 0.01);
+    TEST_NEAR(stats.mean(), 4.605, 0.01);
+    TEST_NEAR(stats.sd(), 2.303, 0.01);
 
 }
 
@@ -310,13 +268,13 @@ void test_rs_sci_random_log_uniform_distribution() {
 
     Pcg64 rng(42);
     LogUniform<double> dist(10, 100'000);
-    int count[] = {0,0,0,0};
+    Statistics<double> stats;
+    std::array<int, 4> count = {{0,0,0,0}};
     double x = 0;
-    double min = 1e100;
-    double max = -1e100;
 
     for (int i = 0; i < iterations; ++i) {
         TRY(x = dist(rng));
+        stats(x);
         if (x < 100)
             ++count[0];
         else if (x < 1'000)
@@ -325,8 +283,6 @@ void test_rs_sci_random_log_uniform_distribution() {
             ++count[2];
         else
             ++count[3];
-        min = std::min(x, min);
-        max = std::max(x, max);
     }
 
     double fraction[4];
@@ -337,8 +293,8 @@ void test_rs_sci_random_log_uniform_distribution() {
     TEST_NEAR(fraction[1], 0.25, 0.001);
     TEST_NEAR(fraction[2], 0.25, 0.001);
     TEST_NEAR(fraction[3], 0.25, 0.001);
-    TEST_NEAR(min, 10, 0.01);
-    TEST_NEAR(max, 100'000, 100);
+    TEST_NEAR(stats.min(), 10, 0.01);
+    TEST_NEAR(stats.max(), 100'000, 100);
 
 }
 
