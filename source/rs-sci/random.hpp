@@ -19,6 +19,11 @@
 
 namespace RS::Sci {
 
+    RS_DEFINE_ENUM_CLASS(LogMode, int, 0,
+        natural,  // Use base e logs
+        common   // Use base 10 logs
+    )
+
     // Linear congruential generators
 
     // Good LCG transformations for 32 and 64 bit integers
@@ -177,30 +182,7 @@ namespace RS::Sci {
         constexpr explicit Pcg64(uint64_t s) noexcept: st_(0, s) { init(); }
         constexpr explicit Pcg64(uint64_t hi, uint64_t lo) noexcept: st_(hi, lo) { init(); }
 
-        constexpr uint64_t operator()() noexcept;
-
-        constexpr void advance(int64_t offset) noexcept;
-        constexpr void seed(uint64_t s) noexcept { st_ = {0, s}; init(); }
-        constexpr void seed(uint64_t hi, uint64_t lo) noexcept { st_ = {hi, lo}; init(); }
-
-        static constexpr uint64_t min() noexcept { return 0; }
-        static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
-
-    private:
-
-        using state = Detail::Uint128;
-
-        static constexpr uint64_t default_seed_ = 0xcafe'f00d'd15e'a5e5ull;
-        static constexpr state a_ = {0x2360'ed05'1fc6'5da4ull, 0x4385'df64'9fcc'f645ull};
-        static constexpr state b_ = {0x5851'f42d'4c95'7f2dull, 0x1405'7b7e'f767'814full};
-
-        state st_;
-
-        constexpr void init() noexcept;
-
-    };
-
-        constexpr uint64_t Pcg64::operator()() noexcept {
+        constexpr uint64_t operator()() noexcept {
             st_.multiply(a_);
             st_.add(b_);
             uint64_t x = st_.hi ^ st_.lo;
@@ -208,7 +190,7 @@ namespace RS::Sci {
             return Detail::rotr(x, y);
         }
 
-        constexpr void Pcg64::advance(int64_t offset) noexcept {
+        constexpr void advance(int64_t offset) noexcept {
             state u = uint64_t(offset);
             if (offset < 0)
                 u.hi = ~ uint64_t(0);
@@ -232,11 +214,29 @@ namespace RS::Sci {
             st_.add(add);
         }
 
-        constexpr void Pcg64::init() noexcept {
+        constexpr void seed(uint64_t s) noexcept { st_ = {0, s}; init(); }
+        constexpr void seed(uint64_t hi, uint64_t lo) noexcept { st_ = {hi, lo}; init(); }
+
+        static constexpr uint64_t min() noexcept { return 0; }
+        static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
+
+    private:
+
+        using state = Detail::Uint128;
+
+        static constexpr uint64_t default_seed_ = 0xcafe'f00d'd15e'a5e5ull;
+        static constexpr state a_ = {0x2360'ed05'1fc6'5da4ull, 0x4385'df64'9fcc'f645ull};
+        static constexpr state b_ = {0x5851'f42d'4c95'7f2dull, 0x1405'7b7e'f767'814full};
+
+        state st_;
+
+        constexpr void init() noexcept {
             st_.add(b_);
             st_.multiply(a_);
             st_.add(b_);
         }
+
+    };
 
     // Xoshiro256** generator by David Blackman and Sebastiano Vigna
     // http://xoshiro.di.unimi.it/
@@ -512,11 +512,6 @@ namespace RS::Sci {
 
     };
 
-    RS_DEFINE_ENUM(LogMode, int, 0,
-        natural,  // Use base e logs
-        decimal   // Use base 10 logs
-    )
-
     template <typename T>
     class LogNormal {
 
@@ -529,7 +524,7 @@ namespace RS::Sci {
         LogNormal() noexcept {} // Defaults to (0,1)
 
         LogNormal(T m, T s, LogMode mode = LogMode::natural) noexcept {
-            if (mode == LogMode::decimal) {
+            if (mode == LogMode::common) {
                 m *= ln10_c<T>;
                 s *= ln10_c<T>;
             }
@@ -751,7 +746,7 @@ namespace RS::Sci {
             if constexpr (Detail::has_max_method<Base>)
                 max_ = std::min(max_, dist_.max());
             if (min_ > max_)
-                throw std::out_of_range("Constrained distribution has no possible values");
+                throw std::invalid_argument("Constrained distribution has no possible values");
         }
 
     // Selection from a set of discrete values
@@ -808,7 +803,7 @@ namespace RS::Sci {
             double weight = 0;
             std::vector<T> values;
             group() = default;
-            template <typename... Args> group(double w, const Args&... args): weight(w), values{args...} {}
+            template <typename... Args> group(double w, const T& t, const Args&... args): weight(w), values{t, args...} {}
         };
 
     public:
@@ -816,12 +811,26 @@ namespace RS::Sci {
         using result_type = T;
 
         WeightedChoice() = default;
-        WeightedChoice(std::initializer_list<group> list);
+
+        WeightedChoice(std::initializer_list<group> list) {
+            for (auto& g: list)
+                add_group(g);
+        }
 
         template <typename RNG>
-        const T& operator()(RNG& rng) const;
+        const T& operator()(RNG& rng) const {
+            double x = dist_(rng);
+            auto it = table_.upper_bound(x);
+            return it->second;
+        }
 
-        template <typename... Args> WeightedChoice& add(double w, const Args&... args); // Weight split between values
+        template <typename... Args>
+        WeightedChoice& add(double w, const T& t, const Args&... args) {
+            group g(w, t, args...);
+            add_group(g);
+            return *this;
+        }
+
         bool empty() const noexcept { return table_.empty(); }
         double total_weight() const noexcept { return dist_.max(); }
 
@@ -830,34 +839,7 @@ namespace RS::Sci {
         std::map<double, T> table_; // Cumulative => value
         UniformReal<double> dist_{0};
 
-        void add_group(const group& g);
-
-    };
-
-        template <typename T>
-        WeightedChoice<T>::WeightedChoice(std::initializer_list<group> list) {
-            for (auto& g: list)
-                add_group(g);
-        }
-
-        template <typename T>
-        template <typename RNG>
-        const T& WeightedChoice<T>::operator()(RNG& rng) const {
-            double x = dist_(rng);
-            auto it = table_.upper_bound(x);
-            return it->second;
-        }
-
-        template <typename T>
-        template <typename... Args>
-        WeightedChoice<T>& WeightedChoice<T>::add(double w, const Args&... args) {
-            group g(w, args...);
-            add_group(g);
-            return *this;
-        }
-
-        template <typename T>
-        void WeightedChoice<T>::add_group(const group& g) {
+        void add_group(const group& g) {
             if (g.weight <= 0 || g.values.empty())
                 return;
             T last = g.values.back();
@@ -872,5 +854,7 @@ namespace RS::Sci {
             table_[cw] = last;
             dist_ = UniformReal<double>(cw);
         }
+
+    };
 
 }

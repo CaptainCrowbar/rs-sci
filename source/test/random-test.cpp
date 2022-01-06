@@ -342,7 +342,7 @@ void test_rs_sci_random_log_normal_distribution() {
     TEST_NEAR(stats.mean(), 0, 0.001);
     TEST_NEAR(stats.sd(), 1, 0.001);
 
-    dist = LogNormal<double>(2, 1, LogMode::decimal);
+    dist = LogNormal<double>(2, 1, LogMode::common);
     stats.clear();
 
     TEST_NEAR(dist.m(), 4.605'170, 1e-6);
