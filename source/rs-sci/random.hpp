@@ -17,6 +17,49 @@
 
 namespace RS::Sci {
 
+    // Linear congruential generators
+
+    constexpr uint32_t lcg32(uint32_t x) noexcept {
+        return uint32_t(32'310'901ul * x + 850'757'001ul);
+    }
+
+    constexpr uint64_t lcg64(uint64_t x) noexcept {
+        return uint64_t(3'935'559'000'370'003'845ull * x + 8'831'144'850'135'198'739ull);
+    }
+
+    class Lcg32 {
+    public:
+        using result_type = uint32_t;
+        constexpr Lcg32() noexcept {}
+        explicit constexpr Lcg32(uint32_t s) noexcept: state_(s) {}
+        constexpr uint32_t operator()() noexcept { state_ = lcg32(state_); return state_; }
+        constexpr bool operator==(const Lcg32& rhs) const noexcept { return state_ == rhs.state_; }
+        constexpr bool operator!=(const Lcg32& rhs) const noexcept { return state_ != rhs.state_; }
+        constexpr void seed(uint32_t s) noexcept { state_ = s; }
+        static constexpr uint32_t min() noexcept { return 0; }
+        static constexpr uint32_t max() noexcept { return ~ uint32_t(0); }
+    private:
+        uint32_t state_ = 0;
+    };
+
+    class Lcg64 {
+    public:
+        using result_type = uint64_t;
+        constexpr Lcg64() noexcept {}
+        explicit constexpr Lcg64(uint64_t s) noexcept: state_(s) {}
+        uint64_t constexpr operator()() noexcept { state_ = lcg64(state_); return state_; }
+        bool constexpr operator==(const Lcg64& rhs) const noexcept { return state_ == rhs.state_; }
+        bool constexpr operator!=(const Lcg64& rhs) const noexcept { return state_ != rhs.state_; }
+        void constexpr seed(uint64_t s) noexcept { state_ = s; }
+        static constexpr uint64_t min() noexcept { return 0; }
+        static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
+    private:
+        uint64_t state_ = 0;
+    };
+
+    // PCG generator by Melissa O'Neill
+    // http://www.pcg-random.org/
+
     namespace Detail {
 
         template <typename T>
@@ -117,9 +160,6 @@ namespace RS::Sci {
             }
 
     }
-
-    // PCG generator by Melissa O'Neill
-    // http://www.pcg-random.org/
 
     class Pcg64 {
 

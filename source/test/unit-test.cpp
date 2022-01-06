@@ -48,6 +48,7 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_rational_hash)
 
     // random-test.cpp
+    UNIT_TEST(rs_sci_random_lcg_generators)
     UNIT_TEST(rs_sci_random_pcg64)
     UNIT_TEST(rs_sci_random_uniform_integer_distribution)
     UNIT_TEST(rs_sci_random_uniform_real_distribution)
