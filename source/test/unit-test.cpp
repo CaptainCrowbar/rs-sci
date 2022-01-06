@@ -47,6 +47,17 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_rational_parsing)
     UNIT_TEST(rs_sci_rational_hash)
 
+    // random-test.cpp
+    UNIT_TEST(rs_sci_random_pcg64)
+    UNIT_TEST(rs_sci_random_uniform_integer_distribution)
+    UNIT_TEST(rs_sci_random_uniform_real_distribution)
+    UNIT_TEST(rs_sci_random_bernoulli_distribution)
+    UNIT_TEST(rs_sci_random_normal_distribution)
+    UNIT_TEST(rs_sci_random_log_normal_distribution)
+    UNIT_TEST(rs_sci_random_log_uniform_distribution)
+    UNIT_TEST(rs_sci_random_constrained_distribution)
+    UNIT_TEST(rs_sci_random_weighted_distribution)
+
     // statistics-test.cpp
     UNIT_TEST(rs_sci_statistics_univariate)
     UNIT_TEST(rs_sci_statistics_bivariate)
