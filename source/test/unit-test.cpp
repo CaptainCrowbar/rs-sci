@@ -50,6 +50,8 @@ int main(int argc, char** argv) {
     // random-test.cpp
     UNIT_TEST(rs_sci_random_lcg_generators)
     UNIT_TEST(rs_sci_random_pcg64)
+    UNIT_TEST(rs_sci_random_splitmix64)
+    UNIT_TEST(rs_sci_random_xoshiro256ss)
     UNIT_TEST(rs_sci_random_uniform_integer_distribution)
     UNIT_TEST(rs_sci_random_uniform_real_distribution)
     UNIT_TEST(rs_sci_random_bernoulli_distribution)

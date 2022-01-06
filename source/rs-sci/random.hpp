@@ -5,6 +5,7 @@
 #include "rs-sci/traits.hpp"
 #include "rs-format/enum.hpp"
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <initializer_list>
 #include <limits>
@@ -18,6 +19,10 @@
 namespace RS::Sci {
 
     // Linear congruential generators
+
+    // Good LCG transformations for 32 and 64 bit integers
+    // Pierre L'Ecuyer (1999), "Tables of Linear Congruential Generators of Different Sizes and Good Lattice Structure"
+    // http://www.ams.org/journals/mcom/1999-68-225/S0025-5718-99-00996-5/S0025-5718-99-00996-5.pdf
 
     constexpr uint32_t lcg32(uint32_t x) noexcept {
         return uint32_t(32'310'901ul * x + 850'757'001ul);
@@ -231,6 +236,90 @@ namespace RS::Sci {
             st_.multiply(a_);
             st_.add(b_);
         }
+
+    // Xoshiro256** generator by David Blackman and Sebastiano Vigna
+    // http://xoshiro.di.unimi.it/
+
+    namespace Detail {
+
+        class SplitMix64 {
+        public:
+            using result_type = uint64_t;
+            constexpr SplitMix64() noexcept: state_(0) {}
+            constexpr explicit SplitMix64(uint64_t s) noexcept: state_ (s) {}
+            constexpr uint64_t operator()() noexcept {
+                constexpr uint64_t a = 0x9e37'79b9'7f4a'7c15ull;
+                constexpr uint64_t b = 0xbf58'476d'1ce4'e5b9ull;
+                constexpr uint64_t c = 0x94d0'49bb'1331'11ebull;
+                state_ += a;
+                uint64_t x = (state_ ^ (state_ >> 30)) * b;
+                x = (x ^ (x >> 27)) * c;
+                return x ^ (x >> 31);
+            }
+            constexpr void seed(uint64_t s = 0) noexcept { state_ = s; }
+            static constexpr uint64_t min() noexcept { return 0; }
+            static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
+        private:
+            uint64_t state_;
+        };
+
+    }
+
+    class Xoshiro {
+
+    public:
+
+        using result_type = uint64_t;
+
+        constexpr Xoshiro() noexcept: state_() { seed(0); }
+        constexpr explicit Xoshiro(uint64_t s) noexcept: state_() { seed(s); }
+        constexpr Xoshiro(uint64_t s, uint64_t t) noexcept: state_() { seed(s, t); }
+        constexpr Xoshiro(uint64_t s, uint64_t t, uint64_t u, uint64_t v) noexcept: state_() { seed(s, t, u, v); }
+
+        constexpr uint64_t operator()() noexcept {
+            uint64_t x = Detail::rotl(state_[1] * 5, 7) * 9;
+            uint64_t y = state_[1] << 17;
+            state_[2] ^= state_[0];
+            state_[3] ^= state_[1];
+            state_[1] ^= state_[2];
+            state_[0] ^= state_[3];
+            state_[2] ^= y;
+            state_[3] = Detail::rotl(state_[3], 45);
+            return x;
+        }
+
+        constexpr void seed(uint64_t s = 0) noexcept {
+            Detail::SplitMix64 sm(s);
+            state_[0] = sm();
+            state_[1] = sm();
+            state_[2] = sm();
+            state_[3] = sm();
+        }
+
+        constexpr void seed(uint64_t s, uint64_t t) noexcept {
+            Detail::SplitMix64 sm(s);
+            state_[0] = sm();
+            state_[1] = sm();
+            sm.seed(t);
+            state_[2] = sm();
+            state_[3] = sm();
+        }
+
+        constexpr void seed(uint64_t s, uint64_t t, uint64_t u, uint64_t v) noexcept {
+            state_[0] = s;
+            state_[1] = t;
+            state_[2] = u;
+            state_[3] = v;
+        }
+
+        static constexpr uint64_t min() noexcept { return 0; }
+        static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
+
+    private:
+
+        std::array<uint64_t, 4> state_;
+
+    };
 
     // Replacements for standard distributions
     // (to ensure reproducibility)
