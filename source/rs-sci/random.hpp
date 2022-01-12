@@ -2,9 +2,9 @@
 
 #include "rs-sci/constants.hpp"
 #include "rs-sci/rational.hpp"
-#include "rs-sci/traits.hpp"
 #include "rs-format/enum.hpp"
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/iterator.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -962,7 +962,7 @@ namespace RS::Sci {
             if (g.weight <= 0 || g.values.empty())
                 return;
             T last = g.values.back();
-            auto most = irange(g.values.begin(), g.values.end() - 1);
+            auto most = TL::irange(g.values.begin(), g.values.end() - 1);
             double cw = dist_.max();
             double iw = g.weight / g.values.size();
             for (auto& t: most) {

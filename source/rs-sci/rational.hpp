@@ -1,9 +1,9 @@
 #pragma once
 
-#include "rs-sci/traits.hpp"
 #include "rs-format/format.hpp"
 #include "rs-format/string.hpp"
 #include "rs-graphics-core/maths.hpp"
+#include "rs-tl/types.hpp"
 #include <algorithm>
 #include <functional>
 #include <numeric>
@@ -69,7 +69,7 @@ namespace RS::Sci {
 
     template <typename T>
     class Ratio:
-    public TotalOrder<Ratio<T>> {
+    public TL::TotalOrder<Ratio<T>> {
 
     public:
 

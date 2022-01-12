@@ -1,7 +1,7 @@
 #pragma once
 
 #include "rs-sci/constants.hpp"
-#include "rs-sci/traits.hpp"
+#include "rs-tl/iterator.hpp"
 #include <array>
 #include <cmath>
 #include <type_traits>
@@ -186,7 +186,7 @@ namespace RS::Sci {
         };
 
         T log_t = std::log10(temperature);
-        Irange<const T*> range;
+        TL::Irange<const T*> range;
 
         if (log_t <= 3.7)
             range = {coeffs1.begin(), coeffs1.end()};

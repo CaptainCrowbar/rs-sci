@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rs-sci/traits.hpp"
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/iterator.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -293,7 +293,7 @@ namespace RS::Sci {
 
         template <typename T>
         class LineIntegralIterator:
-        public ForwardIterator<LineIntegralIterator<T>, const T> {
+        public TL::ForwardIterator<LineIntegralIterator<T>, const T> {
 
         public:
 
@@ -330,7 +330,7 @@ namespace RS::Sci {
 
         template <typename T, int N>
         class VolumeIntegralIterator:
-        public ForwardIterator<VolumeIntegralIterator<T, N>, const T> {
+        public TL::ForwardIterator<VolumeIntegralIterator<T, N>, const T> {
 
         public:
 
