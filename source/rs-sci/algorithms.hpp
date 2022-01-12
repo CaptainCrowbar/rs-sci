@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/algorithm.hpp"
 #include "rs-tl/iterator.hpp"
 #include <algorithm>
 #include <array>
@@ -202,7 +203,7 @@ namespace RS::Sci {
                 throw std::invalid_argument("Not enough points for cubic spline (requires 4)");
 
             std::sort(points_.begin(), points_.end());
-            points_.erase(std::unique(points_.begin(), points_.end()), points_.end());
+            TL::unique_in(points_);
             auto it = std::adjacent_find(points_.begin(), points_.end(),
                 [] (auto& a, auto& b) { return a.first == b.first; });
             if (it != points_.end())
