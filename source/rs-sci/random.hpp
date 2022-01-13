@@ -6,6 +6,7 @@
 #include "rs-graphics-core/vector.hpp"
 #include "rs-tl/fixed-binary.hpp"
 #include "rs-tl/iterator.hpp"
+#include "rs-tl/uuid.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -890,6 +891,27 @@ namespace RS::Sci {
             cw = dist_.max() + g.weight;
             table_[cw] = last;
             dist_ = UniformReal<double>(cw);
+        }
+
+    };
+
+    // Random Uuid
+
+    class RandomUuid {
+    public:
+
+        using result_type = TL::Uuid;
+
+        template <typename RNG>
+        TL::Uuid operator()(RNG& rng) const {
+            std::array<uint64_t, 2> array;
+            UniformInteger<uint64_t> make64(0, ~uint64_t(0));
+            for (auto& a: array)
+                a = make64(rng);
+            TL::Uuid u(array.data(), 16);
+            u[6] = (u[6] & 0x0f) | 0x40;
+            u[8] = (u[8] & 0x3f) | 0x80;
+            return u;
         }
 
     };

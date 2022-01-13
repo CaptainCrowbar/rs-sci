@@ -1,6 +1,7 @@
 #include "rs-sci/random.hpp"
 #include "rs-sci/statistics.hpp"
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/uuid.hpp"
 #include "rs-unit-test.hpp"
 #include <algorithm>
 #include <array>
@@ -13,6 +14,7 @@
 using namespace RS::Graphics::Core;
 using namespace RS::Sci;
 using namespace RS::Sci::Detail;
+using namespace RS::TL;
 
 void test_rs_sci_random_siphash() {
 
@@ -600,6 +602,29 @@ void test_rs_sci_random_weighted_distribution() {
     TEST_NEAR(census["H"] / double(iterations), 0.0125, 0.001);
     TEST_NEAR(census["I"] / double(iterations), 0.0125, 0.001);
     TEST_NEAR(census["J"] / double(iterations), 0.0125, 0.001);
+
+}
+
+void test_rs_sci_random_uuid() {
+
+    static constexpr int iterations = 100'000;
+
+    Pcg64 rng(42);
+    RandomUuid ru;
+    Uuid u;
+    std::string s;
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(u = ru(rng));
+        TRY(s = u.str());
+        TEST_MATCH(s,
+            "^[0-9a-f]{8}-"
+            "[0-9a-f]{4}-"
+            "4[0-9a-f]{3}-"
+            "[89ab][0-9a-f]{3}-"
+            "[0-9a-f]{12}$"
+        );
+    }
 
 }
 

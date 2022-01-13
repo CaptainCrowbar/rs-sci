@@ -352,6 +352,18 @@ nested initializer lists, each corresponding to the arguments to a call to
 Behaviour is undefined if the function call operator is called on an empty
 distribution.
 
+### Random UUID
+
+```c++
+class RandomUuid {
+    using result_type = TL::Uuid;
+    RandomUuid();
+    template <typename RNG> TL::Uuid operator()(RNG& rng) const;
+};
+```
+
+Generates a random version 4 UUID.
+
 ## Spatial distributions
 
 ### Random vectors
