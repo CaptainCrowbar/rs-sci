@@ -81,23 +81,39 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_mp_integer_rational_mixed)
     UNIT_TEST(rs_sci_mp_integer_rational_parsing)
 
-    // random-test.cpp
+    // random-hash-test.cpp
     UNIT_TEST(rs_sci_random_siphash)
+
+    // random-lcg-test.cpp
     UNIT_TEST(rs_sci_random_lcg_generators)
+
+    // random-pcg-test.cpp
     UNIT_TEST(rs_sci_random_pcg64)
+
+    // random-xoshiro-test.cpp
     UNIT_TEST(rs_sci_random_splitmix64)
     UNIT_TEST(rs_sci_random_xoshiro256ss)
-    UNIT_TEST(rs_sci_random_uniform_integer_distribution)
-    UNIT_TEST(rs_sci_random_uniform_real_distribution)
+
+    // random-discrete-test.cpp
     UNIT_TEST(rs_sci_random_bernoulli_distribution)
+    UNIT_TEST(rs_sci_random_uniform_integer_distribution)
+    UNIT_TEST(rs_sci_random_poisson_distribution)
+
+    // random-continuous-test.cpp
+    UNIT_TEST(rs_sci_random_uniform_real_distribution)
+    UNIT_TEST(rs_sci_random_log_uniform_distribution)
     UNIT_TEST(rs_sci_random_normal_distribution)
     UNIT_TEST(rs_sci_random_log_normal_distribution)
-    UNIT_TEST(rs_sci_random_log_uniform_distribution)
-    UNIT_TEST(rs_sci_random_poisson_distribution)
+
+    // random-adapter-test.cpp
     UNIT_TEST(rs_sci_random_constrained_distribution)
+
+    // random-non-arithmetic-test.cpp
     UNIT_TEST(rs_sci_random_choice_distribution)
     UNIT_TEST(rs_sci_random_weighted_distribution)
     UNIT_TEST(rs_sci_random_uuid)
+
+    // random-spatial-test.cpp
     UNIT_TEST(rs_sci_random_vectors)
     UNIT_TEST(rs_sci_random_point_in_sphere)
     UNIT_TEST(rs_sci_random_direction)

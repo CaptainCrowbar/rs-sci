@@ -62,7 +62,15 @@ add_executable(${unittest}
     test/mp-integer-signed-test.cpp
     test/mp-integer-sign-agnostic-test.cpp
     test/mp-integer-rational-test.cpp
-    test/random-test.cpp
+    test/random-hash-test.cpp
+    test/random-lcg-test.cpp
+    test/random-pcg-test.cpp
+    test/random-xoshiro-test.cpp
+    test/random-discrete-test.cpp
+    test/random-continuous-test.cpp
+    test/random-adapter-test.cpp
+    test/random-non-arithmetic-test.cpp
+    test/random-spatial-test.cpp
     test/statistics-test.cpp
     test/unit-test.cpp
 )
