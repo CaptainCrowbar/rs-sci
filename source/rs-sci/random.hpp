@@ -4,6 +4,7 @@
 #include "rs-sci/rational.hpp"
 #include "rs-format/enum.hpp"
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/fixed-binary.hpp"
 #include "rs-tl/iterator.hpp"
 #include <algorithm>
 #include <array>
@@ -208,151 +209,68 @@ namespace RS::Sci {
     // PCG generator by Melissa O'Neill
     // http://www.pcg-random.org/
 
-    namespace Detail {
-
-        struct Uint128 {
-            uint64_t hi, lo;
-            constexpr Uint128(): hi(0), lo(0) {}
-            constexpr Uint128(uint64_t u): hi(0), lo(u) {}
-            constexpr Uint128(uint64_t h, uint64_t l): hi(h), lo(l) {}
-            constexpr void increment() noexcept;
-            constexpr void add(Uint128 y) noexcept;
-            constexpr void multiply(Uint128 y) noexcept;
-            constexpr void shift_left(int y) noexcept;
-            constexpr void shift_right(int y) noexcept;
-        };
-
-            constexpr void Uint128::increment() noexcept {
-                ++lo;
-                if (lo == 0)
-                    ++hi;
-            }
-
-            constexpr void Uint128::add(Uint128 y) noexcept {
-                hi += y.hi;
-                lo += y.lo;
-                if (lo < y.lo)
-                    ++hi;
-            }
-
-            constexpr void Uint128::multiply(Uint128 y) noexcept {
-                uint64_t mask = ~ uint32_t(0);
-                uint64_t x0 = lo & mask;
-                uint64_t x1 = lo >> 32;
-                uint64_t x2 = hi & mask;
-                uint64_t x3 = hi >> 32;
-                uint64_t y0 = y.lo & mask;
-                uint64_t y1 = y.lo >> 32;
-                uint64_t y2 = y.hi & mask;
-                uint64_t y3 = y.hi >> 32;
-                hi = 0;
-                lo = x3 * y0;
-                add(x2 * y1);
-                add(x1 * y2);
-                add(x0 * y3);
-                shift_left(32);
-                add(x2 * y0);
-                add(x1 * y1);
-                add(x0 * y2);
-                shift_left(32);
-                add(x1 * y0);
-                add(x0 * y1);
-                shift_left(32);
-                add(x0 * y0);
-            }
-
-            constexpr void Uint128::shift_left(int y) noexcept {
-                if (y == 0) {
-                    // pass
-                } else if (y < 64) {
-                    hi = (hi << y) | (lo >> (64 - y));
-                    lo <<= y;
-                } else if (y < 128) {
-                    hi = lo << (y - 64);
-                    lo = 0;
-                } else {
-                    hi = lo = 0;
-                }
-            }
-
-            constexpr void Uint128::shift_right(int y) noexcept {
-                if (y == 0) {
-                    // pass
-                } else if (y < 64) {
-                    lo = (lo >> y) | (hi << (64 - y));
-                    hi >>= y;
-                } else if (y < 128) {
-                    lo = hi >> (y - 64);
-                    hi = 0;
-                } else {
-                    hi = lo = 0;
-                }
-            }
-
-    }
-
     class Pcg64 {
 
     public:
 
         using result_type = uint64_t;
 
-        constexpr Pcg64() noexcept: st_(0, default_seed_) { init(); }
-        constexpr explicit Pcg64(uint64_t s) noexcept: st_(0, s) { init(); }
-        constexpr explicit Pcg64(uint64_t hi, uint64_t lo) noexcept: st_(hi, lo) { init(); }
+        constexpr Pcg64() noexcept: state_(default_seed_) { init(); }
+        constexpr explicit Pcg64(uint64_t s) noexcept: state_(s) { init(); }
+        constexpr explicit Pcg64(uint64_t hi, uint64_t lo) noexcept: state_{hi, lo} { init(); }
 
         constexpr uint64_t operator()() noexcept {
-            st_.multiply(a_);
-            st_.add(b_);
-            uint64_t x = st_.hi ^ st_.lo;
-            int y = int(st_.hi >> 58) & 63;
+            state_ *= a_;
+            state_ += b_;
+            auto x = uint64_t((state_ >> 64) ^ state_);
+            auto y = int(state_ >> 122) & 63;
             return Detail::rotr(x, y);
         }
 
         constexpr void advance(int64_t offset) noexcept {
-            state u = uint64_t(offset);
+            state_type u = uint64_t(offset);
             if (offset < 0)
-                u.hi = ~ uint64_t(0);
-            state add;
-            state mul = 1;
+                u |= ~ TL::Uint128(0) << 64;
+            state_type add;
+            state_type mul = 1;
             auto c = a_;
             auto d = b_;
-            while (u.hi != 0 || u.lo != 0) {
-                if ((u.lo & 1) == 1) {
-                    mul.multiply(c);
-                    add.multiply(c);
-                    add.add(d);
+            while (u) {
+                if (u & 1) {
+                    mul *= c;
+                    add *= c;
+                    add += d;
                 }
                 auto c1 = c;
-                c1.increment();
-                d.multiply(c1);
-                c.multiply(c);
-                u.shift_right(1);
+                ++c1;
+                d *= c1;
+                c *= c;
+                u >>= 1;
             }
-            st_.multiply(mul);
-            st_.add(add);
+            state_ *= mul;
+            state_ += add;
         }
 
-        constexpr void seed(uint64_t s) noexcept { st_ = {0, s}; init(); }
-        constexpr void seed(uint64_t hi, uint64_t lo) noexcept { st_ = {hi, lo}; init(); }
+        constexpr void seed(uint64_t s) noexcept { state_ = {0, s}; init(); }
+        constexpr void seed(uint64_t hi, uint64_t lo) noexcept { state_ = {hi, lo}; init(); }
 
         static constexpr uint64_t min() noexcept { return 0; }
         static constexpr uint64_t max() noexcept { return ~ uint64_t(0); }
 
     private:
 
-        using state = Detail::Uint128;
+        using state_type = TL::Uint128;
 
         static constexpr uint64_t default_seed_ = 0xcafe'f00d'd15e'a5e5ull;
-        static constexpr state a_ = {0x2360'ed05'1fc6'5da4ull, 0x4385'df64'9fcc'f645ull};
-        static constexpr state b_ = {0x5851'f42d'4c95'7f2dull, 0x1405'7b7e'f767'814full};
+        static constexpr state_type a_ = {0x2360'ed05'1fc6'5da4ull, 0x4385'df64'9fcc'f645ull};
+        static constexpr state_type b_ = {0x5851'f42d'4c95'7f2dull, 0x1405'7b7e'f767'814full};
 
-        state st_;
+        state_type state_;
 
         constexpr void init() noexcept {
-            st_.add(b_);
-            st_.multiply(a_);
-            st_.add(b_);
+            state_ += b_;
+            state_ *= a_;
+            state_ += b_;
         }
 
     };
