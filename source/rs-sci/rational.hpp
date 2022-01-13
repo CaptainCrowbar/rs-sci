@@ -162,7 +162,8 @@ namespace RS::Sci {
 
     };
 
-        using Rational = Ratio<long long>;
+        using Rational = Ratio<int>;
+        using Rational64 = Ratio<int64_t>;
 
         template <typename T>
         constexpr Ratio<T> Ratio<T>::abs() const noexcept {

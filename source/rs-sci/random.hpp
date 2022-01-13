@@ -491,8 +491,8 @@ namespace RS::Sci {
         BernoulliDistribution(1, 2) {}
 
         constexpr explicit BernoulliDistribution(double p) noexcept {
-            constexpr long long den = 1ll << 32;
-            auto num = std::llround(p * den);
+            constexpr int den = std::numeric_limits<int>::max();
+            int num = int(std::lround(p * den));
             prob_ = {num, den};
         }
 

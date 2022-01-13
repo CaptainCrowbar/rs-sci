@@ -24,10 +24,11 @@ if the denominator is zero, or in any other case of division by zero, or if
 the result of an operation is not representable in the integer type.
 
 ```c++
-using Rational = Ratio<long long>;
+using Rational = Ratio<int>;
+using Rational64 = Ratio<int64_t>;
 ```
 
-A general purpose rational type.
+General purpose rational types.
 
 ```c++
 using Ratio::integer_type = T;
