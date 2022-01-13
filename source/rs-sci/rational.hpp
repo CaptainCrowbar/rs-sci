@@ -6,7 +6,6 @@
 #include "rs-tl/types.hpp"
 #include <algorithm>
 #include <functional>
-#include <numeric>
 #include <ostream>
 #include <stdexcept>
 #include <string>
@@ -16,6 +15,14 @@
 namespace RS::Sci {
 
     namespace Detail {
+
+        template <typename T>
+        constexpr T gcd(T x, T y) noexcept {
+            if constexpr (! std::is_unsigned_v<T>)
+                if (x < 0)
+                    x = - x;
+            return y == 0 ? x : gcd(y, x % y);
+        }
 
         inline bool parse_rational(const std::string& s, std::vector<std::string>& parts, bool& neg) noexcept {
 
@@ -73,8 +80,6 @@ namespace RS::Sci {
 
     public:
 
-        static_assert(std::is_integral_v<T>);
-
         using integer_type = T;
 
         constexpr Ratio() noexcept: num_(0), den_(1) {}
@@ -84,11 +89,10 @@ namespace RS::Sci {
         constexpr explicit operator bool() const noexcept { return num_ != 0; }
 
         template <typename U> constexpr explicit operator U() const noexcept {
-            static_assert(std::is_arithmetic_v<U>);
-            if constexpr (std::is_integral_v<U>)
-                return Graphics::Core::euclidean_quotient(U(num_), U(den_));
-            else
+            if constexpr (std::is_floating_point_v<U>)
                 return U(num_) / U(den_);
+            else
+                return Graphics::Core::euclidean_quotient(U(num_), U(den_));
         }
 
         constexpr Ratio operator+() const noexcept { return *this; }
@@ -163,7 +167,7 @@ namespace RS::Sci {
         template <typename T>
         constexpr Ratio<T> Ratio<T>::abs() const noexcept {
             auto r = *this;
-            if constexpr (std::is_signed_v<T>)
+            if constexpr (! std::is_unsigned_v<T>)
                 if (num_ < 0)
                     r.num_ = - num_;
             return r;
@@ -221,20 +225,22 @@ namespace RS::Sci {
 
         template <typename T>
         std::string Ratio<T>::str() const {
-            std::string s = Format::format_integer(num_);
+            using std::to_string;
+            std::string s = to_string(num_);
             if (den_ > 1)
-                s += '/' + Format::format_integer(den_);
+                s += '/' + to_string(den_);
             return s;
         }
 
         template <typename T>
         std::string Ratio<T>::mixed() const {
+            using std::to_string;
             T w = whole();
             auto f = frac();
             bool wx = bool(w), fx = bool(f);
             std::string s;
             if (wx || ! fx) {
-                s = Format::format_integer(w);
+                s = to_string(w);
                 f = f.abs();
             }
             if (wx && fx)
@@ -282,7 +288,7 @@ namespace RS::Sci {
 
         template <typename T>
         constexpr void Ratio<T>::reduce() noexcept {
-            T d = std::gcd(num_, den_);
+            T d = Detail::gcd(num_, den_);
             num_ /= d;
             den_ /= d;
         }

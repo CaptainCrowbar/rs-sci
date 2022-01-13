@@ -14,7 +14,9 @@ template <typename T> class Ratio;
 ```
 
 The `Ratio` template implements rational numbers over an integer type. The
-underlying type `T` must be an integer arithmetic type.
+underlying type `T` must be an integer arithmetic type, but this is not
+statically checked to allow `Ratio` to be used with non-standard integer
+types.
 
 Constructors and arithmetic operators will always reduce the result to its
 lowest terms; the denominator will always be positive. Behaviour is undefined

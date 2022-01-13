@@ -47,6 +47,40 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_rational_parsing)
     UNIT_TEST(rs_sci_rational_hash)
 
+    // mp-integer-unsigned-test.cpp
+    UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_integers)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_strings)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_base_strings)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_double)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_arithmetic)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_arithmetic_powers)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_bit_operations)
+    UNIT_TEST(rs_sci_mp_integer_unsigned_byte_operations)
+
+    // mp-integer-signed-test.cpp
+    UNIT_TEST(rs_sci_mp_integer_signed_conversion_integers)
+    UNIT_TEST(rs_sci_mp_integer_signed_conversion_strings)
+    UNIT_TEST(rs_sci_mp_integer_signed_conversion_base_strings)
+    UNIT_TEST(rs_sci_mp_integer_signed_conversion_double)
+    UNIT_TEST(rs_sci_mp_integer_signed_arithmetic)
+    UNIT_TEST(rs_sci_mp_integer_signed_division)
+    UNIT_TEST(rs_sci_mp_integer_signed_large_arithmetic)
+    UNIT_TEST(rs_sci_mp_integer_signed_powers)
+
+    // mp-integer-sign-agnostic-test.cpp
+    UNIT_TEST(rs_sci_mp_integer_literals)
+    UNIT_TEST(rs_sci_mp_integer_core_functions)
+    UNIT_TEST(rs_sci_mp_integer_hash_set)
+
+    // mp-integer-rational-test.cpp
+    UNIT_TEST(rs_sci_mp_integer_rational_basics)
+    UNIT_TEST(rs_sci_mp_integer_rational_reduction)
+    UNIT_TEST(rs_sci_mp_integer_rational_arithmetic)
+    UNIT_TEST(rs_sci_mp_integer_rational_properties)
+    UNIT_TEST(rs_sci_mp_integer_rational_comparison)
+    UNIT_TEST(rs_sci_mp_integer_rational_mixed)
+    UNIT_TEST(rs_sci_mp_integer_rational_parsing)
+
     // random-test.cpp
     UNIT_TEST(rs_sci_random_siphash)
     UNIT_TEST(rs_sci_random_lcg_generators)
