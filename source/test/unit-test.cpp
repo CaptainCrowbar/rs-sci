@@ -81,6 +81,23 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_mp_integer_rational_mixed)
     UNIT_TEST(rs_sci_mp_integer_rational_parsing)
 
+    // prime-test.cpp
+    UNIT_TEST(rs_sci_prime_iterator_int)
+    UNIT_TEST(rs_sci_prime_iterator_fixed_binary)
+    UNIT_TEST(rs_sci_prime_iterator_mp_integer)
+    UNIT_TEST(rs_sci_prime_primality_int)
+    UNIT_TEST(rs_sci_prime_primality_fixed_binary)
+    UNIT_TEST(rs_sci_prime_primality_mp_integer)
+    UNIT_TEST(rs_sci_prime_next_prev_prime_int)
+    UNIT_TEST(rs_sci_prime_next_prev_prime_fixed_binary)
+    UNIT_TEST(rs_sci_prime_next_prev_prime_mp_integer)
+    UNIT_TEST(rs_sci_prime_factorization_int)
+    UNIT_TEST(rs_sci_prime_factorization_fixed_binary)
+    UNIT_TEST(rs_sci_prime_factorization_mp_integer)
+    UNIT_TEST(rs_sci_prime_list_primes_int)
+    UNIT_TEST(rs_sci_prime_list_primes_fixed_binary)
+    UNIT_TEST(rs_sci_prime_list_primes_mp_integer)
+
     // random-hash-test.cpp
     UNIT_TEST(rs_sci_random_siphash)
 

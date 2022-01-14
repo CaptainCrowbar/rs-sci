@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.18)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.1.34
+    VERSION 0.1.35
     LANGUAGES CXX
 )
 
@@ -62,6 +62,7 @@ add_executable(${unittest}
     test/mp-integer-signed-test.cpp
     test/mp-integer-sign-agnostic-test.cpp
     test/mp-integer-rational-test.cpp
+    test/prime-test.cpp
     test/random-hash-test.cpp
     test/random-lcg-test.cpp
     test/random-pcg-test.cpp

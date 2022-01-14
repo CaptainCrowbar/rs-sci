@@ -29,6 +29,7 @@ Other libraries required (all header only):
 * [Algorithms](algorithms.html)
 * [Constants](constants.html)
 * [Multiple precision integers](mp-integer.html)
+* [Prime numbers](prime.html)
 * [Random number generators](random.html)
 * [Rational numbers](rational.html)
 * [Statistics](statistics.html)

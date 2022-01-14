@@ -1,4 +1,4 @@
-# Formula functions
+# Formula Functions
 
 _[Scientific Library by Ross Smith](index.html)_
 
