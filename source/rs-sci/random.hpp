@@ -6,6 +6,7 @@
 #include "rs-graphics-core/vector.hpp"
 #include "rs-tl/fixed-binary.hpp"
 #include "rs-tl/iterator.hpp"
+#include "rs-tl/types.hpp"
 #include "rs-tl/uuid.hpp"
 #include <algorithm>
 #include <array>
@@ -829,6 +830,11 @@ namespace RS::Sci {
         std::vector<T> vec_;
 
     };
+
+    template <typename Range>
+    RandomChoice<TL::RangeValue<Range>> random_choice(const Range& range) {
+        return RandomChoice<TL::RangeValue<Range>>(range);
+    }
 
     // Selection from a weighted set of discrete values
 

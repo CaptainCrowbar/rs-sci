@@ -17,7 +17,7 @@ void test_rs_sci_random_choice_distribution() {
     std::string alpha = "abcdefghij";
     char c;
 
-    TRY(choice = RandomChoice<char>(alpha));
+    TRY(choice = random_choice(alpha));
     TEST_EQUAL(choice.size(), 10u);
 
     for (int i = 0; i < iterations; ++i) {

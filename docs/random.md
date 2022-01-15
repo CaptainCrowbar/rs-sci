@@ -326,6 +326,13 @@ template <typename T> class RandomChoice {
 Selects a random item from a set of values. Behaviour is undefined if the
 function call operator is called on an empty distribution.
 
+```c++
+template <typename Range>
+    RandomChoice<TL::RangeValue<Range>> random_choice(const Range& range);
+```
+
+Convenience function to construct a `RandomChoice` object.
+
 ### Weighted random choice
 
 ```c++
