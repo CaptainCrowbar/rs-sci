@@ -99,33 +99,35 @@ namespace RS::Sci {
 
         using result_type = uint64_t;
 
-        SipHash() noexcept {}
-        SipHash(uint64_t key0, uint64_t key1) noexcept: key0_(key0), key1_(key1) {}
+        constexpr SipHash() noexcept {}
+        constexpr SipHash(uint64_t key0, uint64_t key1) noexcept: key0_(key0), key1_(key1) {}
 
-        uint64_t operator()(const void* ptr, size_t len) const noexcept {
+        constexpr uint64_t operator()(const void* ptr, size_t len) const noexcept {
 
             uint64_t v0 = 0x736f'6d65'7073'6575ull;
             uint64_t v1 = 0x646f'7261'6e64'6f6dull;
             uint64_t v2 = 0x6c79'6765'6e65'7261ull;
             uint64_t v3 = 0x7465'6462'7974'6573ull;
 
-            auto bptr = static_cast<const uint8_t*>(ptr);
-            auto end = bptr + (len - len % sizeof(uint64_t));
-            int left = int(len & 7);
-            uint64_t b = uint64_t(len) << 56;
-            uint64_t m = 0;
-
             v0 ^= key0_;
             v1 ^= key1_;
             v2 ^= key0_;
             v3 ^= key1_;
 
-            for (; bptr != end; bptr += 8) {
-                std::memcpy(&m, bptr, 8);
+            auto bptr = static_cast<const uint8_t*>(ptr);
+            auto end = bptr + (len - len % sizeof(uint64_t));
+
+            while (bptr != end) {
+                uint64_t m = 0;
+                for (int i = 0; i < 64; i += 8)
+                    m |= uint64_t(*bptr++) << i;
                 v3 ^= m;
                 siprounds(2, v0, v1, v2, v3);
                 v0 ^= m;
             }
+
+            int left = int(len & 7);
+            uint64_t b = uint64_t(len) << 56;
 
             for (int i = left - 1; i >= 0; --i)
                 b |= uint64_t(bptr[i]) << 8 * i;
@@ -145,7 +147,7 @@ namespace RS::Sci {
         uint64_t key0_ = 0;
         uint64_t key1_ = 0;
 
-        static void siprounds(int n, uint64_t& v0, uint64_t& v1, uint64_t& v2, uint64_t& v3) noexcept {
+        static constexpr void siprounds(int n, uint64_t& v0, uint64_t& v1, uint64_t& v2, uint64_t& v3) noexcept {
             for (int i = 0; i < n; ++i) {
                 v0 += v1;
                 v1 = Detail::rotl(v1, 13);

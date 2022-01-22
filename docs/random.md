@@ -49,9 +49,9 @@ Daniel Bernstein's simple multiplicative hash.
 ```c++
 class SipHash {
     using result_type = uint64_t;
-    SipHash() noexcept; // keys=(0,0)
-    SipHash(uint64_t key0, uint64_t key1) noexcept;
-    uint64_t operator()(const void* ptr, size_t len) const noexcept;
+    constexpr SipHash() noexcept; // keys=(0,0)
+    constexpr SipHash(uint64_t key0, uint64_t key1) noexcept;
+    uint64_t constexpr operator()(const void* ptr, size_t len) const noexcept;
 };
 ```
 
