@@ -11,10 +11,25 @@ namespace RS::Sci {
 
     template <typename T>
     class PrimeGenerator {
-
     public:
+        PrimeGenerator(const PrimeGenerator& pg);
+        PrimeGenerator& operator=(const PrimeGenerator& pg);
+        PrimeGenerator() = default;
+        PrimeGenerator(PrimeGenerator&& pg) = default;
+        PrimeGenerator& operator=(PrimeGenerator&& pg) = default;
+        T operator()() { next(); return get(); }
+        const T& get() const noexcept { return current_; }
+        void next();
+    private:
+        std::unordered_map<T, T> multiples_;
+        std::unique_ptr<PrimeGenerator> recurse_;
+        T current_ = 1;
+        T factor_ = 0;
+        T square_ = 0;
+    };
 
-        PrimeGenerator(const PrimeGenerator& pg):
+        template <typename T>
+        PrimeGenerator<T>::PrimeGenerator(const PrimeGenerator& pg):
         multiples_(pg.multiples_),
         recurse_(),
         current_(pg.current_),
@@ -24,24 +39,15 @@ namespace RS::Sci {
                 recurse_ = std::make_unique<PrimeGenerator>(*pg.recurse_);
         }
 
-        PrimeGenerator& operator=(const PrimeGenerator& pg) {
+        template <typename T>
+        PrimeGenerator<T>& PrimeGenerator<T>::operator=(const PrimeGenerator& pg) {
             auto copy(pg);
             std::swap(copy, *this);
             return *this;
         }
 
-        PrimeGenerator() = default;
-        PrimeGenerator(PrimeGenerator&& pg) = default;
-        PrimeGenerator& operator=(PrimeGenerator&& pg) = default;
-
-        T operator()() {
-            next();
-            return get();
-        }
-
-        const T& get() const noexcept { return current_; }
-
-        void next() {
+        template <typename T>
+        void PrimeGenerator<T>::next() {
             if (current_ < 3) {
                 ++current_;
                 return;
@@ -80,16 +86,6 @@ namespace RS::Sci {
                 }
             }
         }
-
-    private:
-
-        std::unordered_map<T, T> multiples_;
-        std::unique_ptr<PrimeGenerator> recurse_;
-        T current_ = 1;
-        T factor_ = 0;
-        T square_ = 0;
-
-    };
 
     template <typename T>
     class PrimeIterator:

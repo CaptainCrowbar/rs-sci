@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.1.37
+    VERSION 0.2.1
     LANGUAGES CXX
 )
 
@@ -52,6 +52,11 @@ set(unittest test-${library})
 include_directories(.)
 find_package(Threads REQUIRED)
 
+add_library(${library} STATIC
+    ${library}/mp-integer.cpp
+    ${library}/rational.cpp
+)
+
 add_executable(${unittest}
     test/version-test.cpp
     test/algorithms-test.cpp
@@ -77,8 +82,10 @@ add_executable(${unittest}
 )
 
 target_link_libraries(${unittest}
+    PRIVATE ${library}
     PRIVATE Threads::Threads
 )
 
 install(DIRECTORY ${library} DESTINATION include)
 install(FILES ${library}.hpp DESTINATION include)
+install(TARGETS ${library} LIBRARY DESTINATION lib)

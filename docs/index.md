@@ -11,13 +11,11 @@ _[GitHub repository](https://github.com/CaptainCrowbar/rs-sci)_
 namespace RS::Sci;
 ```
 
-This is a headers-only library; there is nothing to build (unless you want to
-run the unit tests), and no binaries to install. The CMake file includes an
-`install` target to copy the headers into `/usr/local/include` or the
-equivalent. Headers can be included individually as required, or the entire
-library can be included using `"rs-sci.hpp"`.
+The CMake file includes an `install` target to copy the headers into
+`/usr/local/include` or the equivalent. Headers can be included individually
+as required, or the entire library can be included using `"rs-sci.hpp"`.
 
-Other libraries required (all header only):
+Dependencies:
 
 [My formatting library](https://github.com/CaptainCrowbar/rs-format)
 [My graphics core library](https://github.com/CaptainCrowbar/rs-graphics-core)
