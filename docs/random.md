@@ -142,6 +142,15 @@ class Xoshiro {
 [Xoshiro256** generator](http://xoshiro.di.unimi.it/) by David Blackman and
 Sebastiano Vigna.
 
+### Default generator
+
+```c++
+using StdRng = Pcg64;
+```
+
+A good generator to use as a default when we have a function that calls an RNG
+but we don't want to make it a template.
+
 ## Standard distributions
 
 Most of these duplicate distributions from the standard library, to allow

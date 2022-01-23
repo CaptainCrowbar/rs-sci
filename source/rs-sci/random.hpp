@@ -363,6 +363,10 @@ namespace RS::Sci {
 
     };
 
+    // Default choice of RNG
+
+    using StdRng = Pcg64;
+
     // Replacements for standard distributions
     // (to ensure reproducibility)
 
