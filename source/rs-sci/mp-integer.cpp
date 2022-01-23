@@ -6,14 +6,14 @@ namespace RS::Sci {
 
     // Unsigned integer class
 
-    Mpuint::Mpuint(uint64_t x) {
+    MPN::MPN(uint64_t x) {
         if (x > 0)
             rep_.push_back(uint32_t(x));
         if (x > mask32)
             rep_.push_back(uint32_t(x >> 32));
     }
 
-    Mpuint& Mpuint::operator+=(const Mpuint& rhs) {
+    MPN& MPN::operator+=(const MPN& rhs) {
         size_t common = std::min(rep_.size(), rhs.rep_.size());
         rep_.resize(std::max(rep_.size(), rhs.rep_.size()), 0);
         uint64_t sum = 0;
@@ -36,7 +36,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator-=(const Mpuint& rhs) {
+    MPN& MPN::operator-=(const MPN& rhs) {
         size_t common = std::min(rep_.size(), rhs.rep_.size());
         bool carry = false;
         for (size_t i = 0; i < common; ++i) {
@@ -52,7 +52,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator&=(const Mpuint& rhs) {
+    MPN& MPN::operator&=(const MPN& rhs) {
         size_t common = std::min(rep_.size(), rhs.rep_.size());
         rep_.resize(common);
         for (size_t i = 0; i < common; ++i)
@@ -61,7 +61,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator|=(const Mpuint& rhs) {
+    MPN& MPN::operator|=(const MPN& rhs) {
         size_t common = std::min(rep_.size(), rhs.rep_.size());
         rep_.resize(std::max(rep_.size(), rhs.rep_.size()));
         for (size_t i = 0; i < common; ++i)
@@ -69,7 +69,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator^=(const Mpuint& rhs) {
+    MPN& MPN::operator^=(const MPN& rhs) {
         size_t common = std::min(rep_.size(), rhs.rep_.size());
         rep_.resize(std::max(rep_.size(), rhs.rep_.size()));
         for (size_t i = 0; i < common; ++i)
@@ -78,7 +78,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator<<=(ptrdiff_t rhs) {
+    MPN& MPN::operator<<=(ptrdiff_t rhs) {
         if (rhs == 0)
             return *this;
         if (rhs < 0)
@@ -99,7 +99,7 @@ namespace RS::Sci {
         return *this;
     }
 
-    Mpuint& Mpuint::operator>>=(ptrdiff_t rhs) {
+    MPN& MPN::operator>>=(ptrdiff_t rhs) {
         if (rhs == 0)
             return *this;
         if (rhs < 0)
@@ -123,21 +123,21 @@ namespace RS::Sci {
         return *this;
     }
 
-    size_t Mpuint::bits() const noexcept {
+    size_t MPN::bits() const noexcept {
         size_t n = 32 * rep_.size();
         if (! rep_.empty())
             n -= 32 - TL::bit_width(rep_.back());
         return n;
     }
 
-    size_t Mpuint::bits_set() const noexcept {
+    size_t MPN::bits_set() const noexcept {
         size_t n = 0;
         for (auto i: rep_)
             n += TL::popcount(i);
         return n;
     }
 
-    size_t Mpuint::bytes() const noexcept {
+    size_t MPN::bytes() const noexcept {
         if (rep_.empty())
             return 0;
         else
@@ -145,7 +145,7 @@ namespace RS::Sci {
                 + size_t(rep_.back() > size_t(0xffff)) + size_t(rep_.back() > size_t(0xffffff));
     }
 
-    int Mpuint::compare(const Mpuint& rhs) const noexcept {
+    int MPN::compare(const MPN& rhs) const noexcept {
         if (rep_.size() != rhs.rep_.size())
             return rep_.size() < rhs.rep_.size() ? -1 : 1;
         for (size_t i = rep_.size() - 1; i != std::string::npos; --i)
@@ -154,21 +154,21 @@ namespace RS::Sci {
         return 0;
     }
 
-    bool Mpuint::get_bit(size_t i) const noexcept {
+    bool MPN::get_bit(size_t i) const noexcept {
         if (i < 32 * rep_.size())
             return (rep_[i / 32] >> (i % 32)) & 1;
         else
             return false;
     }
 
-    uint8_t Mpuint::get_byte(size_t i) const noexcept {
+    uint8_t MPN::get_byte(size_t i) const noexcept {
         if (i < 4 * rep_.size())
             return (rep_[i / 4] >> (i % 4 * 8)) & 0xff;
         else
             return 0;
     }
 
-    void Mpuint::set_bit(size_t i, bool b) {
+    void MPN::set_bit(size_t i, bool b) {
         bool in_rep = i < 32 * rep_.size();
         if (b) {
             if (! in_rep)
@@ -180,22 +180,22 @@ namespace RS::Sci {
         }
     }
 
-    void Mpuint::set_byte(size_t i, uint8_t b) {
+    void MPN::set_byte(size_t i, uint8_t b) {
         if (i >= 4 * rep_.size())
             rep_.resize(i / 4 + 1, 0);
         rep_[i / 4] |= uint32_t(b) << (i % 4 * 8);
         trim();
     }
 
-    void Mpuint::flip_bit(size_t i) {
+    void MPN::flip_bit(size_t i) {
         if (i >= 32 * rep_.size())
             rep_.resize(i / 32 + 1, 0);
         rep_[i / 32] ^= uint32_t(1) << (i % 32);
         trim();
     }
 
-    Mpuint Mpuint::pow(const Mpuint& n) const {
-        Mpuint x = *this, y = n, z = 1;
+    MPN MPN::pow(const MPN& n) const {
+        MPN x = *this, y = n, z = 1;
         while (y) {
             if (y.is_odd())
                 z *= x;
@@ -205,7 +205,7 @@ namespace RS::Sci {
         return z;
     }
 
-    std::string Mpuint::str(int base, size_t digits) const {
+    std::string MPN::str(int base, size_t digits) const {
         if (base < 2 || base > 36)
             throw std::invalid_argument("Invalid base: " + std::to_string(base));
         if (rep_.empty())
@@ -220,7 +220,7 @@ namespace RS::Sci {
             for (size_t i = rep_.size() - 2; i != std::string::npos; --i)
                 s += Format::format_integer(rep_[i], "x8");
         } else if (base <= 10) {
-            Mpuint b = base, q, r, t = *this;
+            MPN b = base, q, r, t = *this;
             while (t) {
                 do_divide(t, b, q, r);
                 s += char(int(r) + '0');
@@ -228,7 +228,7 @@ namespace RS::Sci {
             }
             std::reverse(s.begin(), s.end());
         } else {
-            Mpuint b = base, q, r, t = *this;
+            MPN b = base, q, r, t = *this;
             while (t) {
                 do_divide(t, b, q, r);
                 int d = int(r);
@@ -245,7 +245,7 @@ namespace RS::Sci {
         return s;
     }
 
-    void Mpuint::write_be(void* ptr, size_t n) const noexcept {
+    void MPN::write_be(void* ptr, size_t n) const noexcept {
         size_t nb = std::min(n, bytes());
         std::memset(ptr, 0, n - nb);
         auto bp = static_cast<uint8_t*>(ptr) + n - nb, end = bp + nb;
@@ -253,7 +253,7 @@ namespace RS::Sci {
             *bp++ = get_byte(--nb);
     }
 
-    void Mpuint::write_le(void* ptr, size_t n) const noexcept {
+    void MPN::write_le(void* ptr, size_t n) const noexcept {
         auto bp = static_cast<uint8_t*>(ptr);
         size_t nb = std::min(n, bytes());
         for (size_t i = 0; i < nb; ++i)
@@ -261,16 +261,16 @@ namespace RS::Sci {
         std::memset(bp + nb, 0, n - nb);
     }
 
-    Mpuint Mpuint::from_double(double x) {
+    MPN MPN::from_double(double x) {
         int e = 0;
         double m = frexp(fabs(x), &e);
-        Mpuint n = uint64_t(floor(ldexp(m, 64)));
+        MPN n = uint64_t(floor(ldexp(m, 64)));
         n <<= e - 64;
         return n;
     }
 
-    Mpuint Mpuint::read_be(const void* ptr, size_t n) {
-        Mpuint result;
+    MPN MPN::read_be(const void* ptr, size_t n) {
+        MPN result;
         result.rep_.resize((n + 3) / 4);
         auto bp = static_cast<const uint8_t*>(ptr);
         for (size_t i = 0, j = n - 1; i < n; ++i, --j)
@@ -279,8 +279,8 @@ namespace RS::Sci {
         return result;
     }
 
-    Mpuint Mpuint::read_le(const void* ptr, size_t n) {
-        Mpuint result;
+    MPN MPN::read_le(const void* ptr, size_t n) {
+        MPN result;
         result.rep_.resize((n + 3) / 4);
         auto bp = static_cast<const uint8_t*>(ptr);
         for (size_t i = 0; i < n; ++i)
@@ -289,17 +289,17 @@ namespace RS::Sci {
         return result;
     }
 
-    void Mpuint::do_divide(const Mpuint& x, const Mpuint& y, Mpuint& q, Mpuint& r) {
-        Mpuint quo, rem = x;
+    void MPN::do_divide(const MPN& x, const MPN& y, MPN& q, MPN& r) {
+        MPN quo, rem = x;
         if (x >= y) {
             size_t shift = x.bits() - y.bits();
-            Mpuint rsub = y;
+            MPN rsub = y;
             rsub <<= shift;
             if (rsub > x) {
                 --shift;
                 rsub >>= 1;
             }
-            Mpuint qadd = 1;
+            MPN qadd = 1;
             qadd <<= shift;
             while (qadd) {
                 if (rem >= rsub) {
@@ -314,7 +314,7 @@ namespace RS::Sci {
         r = std::move(rem);
     }
 
-    void Mpuint::do_multiply(const Mpuint& x, const Mpuint& y, Mpuint& z) {
+    void MPN::do_multiply(const MPN& x, const MPN& y, MPN& z) {
         if (! x || ! y) {
             z.rep_.clear();
         } else {
@@ -338,7 +338,7 @@ namespace RS::Sci {
         }
     }
 
-    void Mpuint::init(std::string_view s, int base) {
+    void MPN::init(std::string_view s, int base) {
         if (base < 0 || base == 1 || base > 36)
             throw std::invalid_argument("Invalid base: " + std::to_string(base));
         if (s.empty())
@@ -356,7 +356,7 @@ namespace RS::Sci {
             if (base != 10)
                 ptr += 2;
         }
-        Mpuint nbase = base;
+        MPN nbase = base;
         int digit = 0;
         int (*get_digit)(char c);
         if (base <= 10)
@@ -375,7 +375,7 @@ namespace RS::Sci {
         }
     }
 
-    void Mpuint::trim() noexcept {
+    void MPN::trim() noexcept {
         size_t i = rep_.size() - 1;
         while (i != std::string::npos && rep_[i] == 0)
             --i;
@@ -384,7 +384,7 @@ namespace RS::Sci {
 
     // Signed integer class
 
-    Mpint& Mpint::operator+=(const Mpint& rhs) {
+    MPZ& MPZ::operator+=(const MPZ& rhs) {
         if (! rhs.mag_) {
             // do nothing
         } else if (! mag_) {
@@ -410,21 +410,21 @@ namespace RS::Sci {
         return *this;
     }
 
-    int Mpint::compare(const Mpint& rhs) const noexcept {
+    int MPZ::compare(const MPZ& rhs) const noexcept {
         if (neg_ != rhs.neg_)
             return neg_ ? -1 : 1;
         int c = mag_.compare(rhs.mag_);
         return neg_ ? - c : c;
     }
 
-    Mpint Mpint::pow(const Mpint& n) const {
-        Mpint z;
+    MPZ MPZ::pow(const MPZ& n) const {
+        MPZ z;
         z.mag_ = mag_.pow(n.mag_);
         z.neg_ = neg_ && n.mag_.is_odd();
         return z;
     }
 
-    std::string Mpint::str(int base, size_t digits, bool sign) const {
+    std::string MPZ::str(int base, size_t digits, bool sign) const {
         std::string s = mag_.str(base, digits);
         if (neg_)
             s.insert(s.begin(), '-');
@@ -433,14 +433,14 @@ namespace RS::Sci {
         return s;
     }
 
-    Mpint Mpint::from_double(double x) {
-        Mpint i = Mpuint::from_double(x);
+    MPZ MPZ::from_double(double x) {
+        MPZ i = MPN::from_double(x);
         if (x < 0)
             i = - i;
         return i;
     }
 
-    void Mpint::init(std::string_view s, int base) {
+    void MPZ::init(std::string_view s, int base) {
         if (base < 0 || base == 1 || base > 36)
             throw std::invalid_argument("Invalid base: " + std::to_string(base));
         if (s.empty())
@@ -454,9 +454,9 @@ namespace RS::Sci {
         neg_ &= bool(mag_);
     }
 
-    void Mpint::do_divide(const Mpint& x, const Mpint& y, Mpint& q, Mpint& r) {
-        Mpint quo, rem;
-        Mpuint::do_divide(x.mag_, y.mag_, quo.mag_, rem.mag_);
+    void MPZ::do_divide(const MPZ& x, const MPZ& y, MPZ& q, MPZ& r) {
+        MPZ quo, rem;
+        MPN::do_divide(x.mag_, y.mag_, quo.mag_, rem.mag_);
         if (rem.mag_ && (x.neg_ || y.neg_)) {
             if (x.neg_) {
                 ++quo.mag_;
@@ -468,8 +468,8 @@ namespace RS::Sci {
         r = std::move(rem);
     }
 
-    void Mpint::do_multiply(const Mpint& x, const Mpint& y, Mpint& z) {
-        Mpuint::do_multiply(x.mag_, y.mag_, z.mag_);
+    void MPZ::do_multiply(const MPZ& x, const MPZ& y, MPZ& z) {
+        MPN::do_multiply(x.mag_, y.mag_, z.mag_);
         z.neg_ = bool(x) && bool(y) && x.neg_ != y.neg_;
     }
 

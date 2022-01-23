@@ -19,38 +19,38 @@ namespace RS::Sci {
 
     // Unsigned integer class
 
-    class Mpuint:
-    public TL::TotalOrder<Mpuint> {
+    class MPN:
+    public TL::TotalOrder<MPN> {
     public:
 
-        Mpuint() = default;
-        Mpuint(uint64_t x);
-        explicit Mpuint(std::string_view s, int base = 0) { init(s, base); }
+        MPN() = default;
+        MPN(uint64_t x);
+        explicit MPN(std::string_view s, int base = 0) { init(s, base); }
 
         template <typename T> explicit operator T() const;
         explicit operator bool() const noexcept { return ! rep_.empty(); }
 
         bool operator!() const noexcept { return ! bool(*this); }
-        Mpuint operator+() const { return *this; }
-        Mpuint& operator++() { return *this += 1; }
-        Mpuint operator++(int) { auto x = *this; ++*this; return x; }
-        Mpuint& operator--() { return *this -= 1; }
-        Mpuint operator--(int) { auto x = *this; --*this; return x; }
-        Mpuint& operator+=(const Mpuint& rhs);
-        Mpuint& operator-=(const Mpuint& rhs);
-        Mpuint& operator*=(const Mpuint& rhs) { Mpuint z; do_multiply(*this, rhs, z); rep_.swap(z.rep_); return *this; }
-        Mpuint& operator/=(const Mpuint& rhs) { Mpuint q, r; do_divide(*this, rhs, q, r); rep_.swap(q.rep_); return *this; }
-        Mpuint& operator%=(const Mpuint& rhs) { Mpuint q, r; do_divide(*this, rhs, q, r); rep_.swap(r.rep_); return *this; }
-        Mpuint& operator&=(const Mpuint& rhs);
-        Mpuint& operator|=(const Mpuint& rhs);
-        Mpuint& operator^=(const Mpuint& rhs);
-        Mpuint& operator<<=(ptrdiff_t rhs);
-        Mpuint& operator>>=(ptrdiff_t rhs);
+        MPN operator+() const { return *this; }
+        MPN& operator++() { return *this += 1; }
+        MPN operator++(int) { auto x = *this; ++*this; return x; }
+        MPN& operator--() { return *this -= 1; }
+        MPN operator--(int) { auto x = *this; --*this; return x; }
+        MPN& operator+=(const MPN& rhs);
+        MPN& operator-=(const MPN& rhs);
+        MPN& operator*=(const MPN& rhs) { MPN z; do_multiply(*this, rhs, z); rep_.swap(z.rep_); return *this; }
+        MPN& operator/=(const MPN& rhs) { MPN q, r; do_divide(*this, rhs, q, r); rep_.swap(q.rep_); return *this; }
+        MPN& operator%=(const MPN& rhs) { MPN q, r; do_divide(*this, rhs, q, r); rep_.swap(r.rep_); return *this; }
+        MPN& operator&=(const MPN& rhs);
+        MPN& operator|=(const MPN& rhs);
+        MPN& operator^=(const MPN& rhs);
+        MPN& operator<<=(ptrdiff_t rhs);
+        MPN& operator>>=(ptrdiff_t rhs);
 
         size_t bits() const noexcept;
         size_t bits_set() const noexcept;
         size_t bytes() const noexcept;
-        int compare(const Mpuint& rhs) const noexcept;
+        int compare(const MPN& rhs) const noexcept;
         bool get_bit(size_t i) const noexcept;
         uint8_t get_byte(size_t i) const noexcept;
         void set_bit(size_t i, bool b = true);
@@ -59,25 +59,25 @@ namespace RS::Sci {
         size_t hash() const noexcept { return hash_mix(rep_); }
         bool is_even() const noexcept { return rep_.empty() || (rep_.front() & 1) == 0; }
         bool is_odd() const noexcept { return ! is_even(); }
-        Mpuint pow(const Mpuint& n) const;
+        MPN pow(const MPN& n) const;
         int sign() const noexcept { return int(bool(*this)); }
         std::string str(int base = 10, size_t digits = 1) const;
         void write_be(void* ptr, size_t n) const noexcept;
         void write_le(void* ptr, size_t n) const noexcept;
 
-        static Mpuint from_double(double x);
-        static Mpuint read_be(const void* ptr, size_t n);
-        static Mpuint read_le(const void* ptr, size_t n);
+        static MPN from_double(double x);
+        static MPN read_be(const void* ptr, size_t n);
+        static MPN read_le(const void* ptr, size_t n);
 
-        friend Mpuint operator*(const Mpuint& lhs, const Mpuint& rhs) { Mpuint z; Mpuint::do_multiply(lhs, rhs, z); return z; }
-        friend Mpuint operator/(const Mpuint& lhs, const Mpuint& rhs) { Mpuint q, r; Mpuint::do_divide(lhs, rhs, q, r); return q; }
-        friend Mpuint operator%(const Mpuint& lhs, const Mpuint& rhs) { Mpuint q, r; Mpuint::do_divide(lhs, rhs, q, r); return r; }
+        friend MPN operator*(const MPN& lhs, const MPN& rhs) { MPN z; MPN::do_multiply(lhs, rhs, z); return z; }
+        friend MPN operator/(const MPN& lhs, const MPN& rhs) { MPN q, r; MPN::do_divide(lhs, rhs, q, r); return q; }
+        friend MPN operator%(const MPN& lhs, const MPN& rhs) { MPN q, r; MPN::do_divide(lhs, rhs, q, r); return r; }
 
-        friend std::pair<Mpuint, Mpuint> divide(const Mpuint& lhs, const Mpuint& rhs) { Mpuint q, r; Mpuint::do_divide(lhs, rhs, q, r); return {q, r}; }
+        friend std::pair<MPN, MPN> divide(const MPN& lhs, const MPN& rhs) { MPN q, r; MPN::do_divide(lhs, rhs, q, r); return {q, r}; }
 
     private:
 
-        friend class Mpint;
+        friend class MPZ;
 
         static constexpr auto mask32 = ~ uint32_t(0);
 
@@ -86,25 +86,25 @@ namespace RS::Sci {
         void init(std::string_view s, int base);
         void trim() noexcept;
 
-        static void do_divide(const Mpuint& x, const Mpuint& y, Mpuint& q, Mpuint& r);
-        static void do_multiply(const Mpuint& x, const Mpuint& y, Mpuint& z);
+        static void do_divide(const MPN& x, const MPN& y, MPN& q, MPN& r);
+        static void do_multiply(const MPN& x, const MPN& y, MPN& z);
 
     };
 
-        inline Mpuint operator+(const Mpuint& lhs, const Mpuint& rhs) { auto z = lhs; z += rhs; return z; }
-        inline Mpuint operator-(const Mpuint& lhs, const Mpuint& rhs) { auto z = lhs; z -= rhs; return z; }
-        inline Mpuint operator&(const Mpuint& lhs, const Mpuint& rhs) { auto z = lhs; z &= rhs; return z; }
-        inline Mpuint operator|(const Mpuint& lhs, const Mpuint& rhs) { auto z = lhs; z |= rhs; return z; }
-        inline Mpuint operator^(const Mpuint& lhs, const Mpuint& rhs) { auto z = lhs; z ^= rhs; return z; }
-        inline Mpuint operator<<(const Mpuint& lhs, size_t rhs) { auto z = lhs; z <<= rhs; return z; }
-        inline Mpuint operator>>(const Mpuint& lhs, size_t rhs) { auto z = lhs; z >>= rhs; return z; }
-        inline bool operator==(const Mpuint& lhs, const Mpuint& rhs) noexcept { return lhs.compare(rhs) == 0; }
-        inline bool operator<(const Mpuint& lhs, const Mpuint& rhs) noexcept { return lhs.compare(rhs) == -1; }
-        inline std::string to_string(const Mpuint& x) { return x.str(); }
-        inline std::ostream& operator<<(std::ostream& out, const Mpuint& x) { return out << x.str(); }
+        inline MPN operator+(const MPN& lhs, const MPN& rhs) { auto z = lhs; z += rhs; return z; }
+        inline MPN operator-(const MPN& lhs, const MPN& rhs) { auto z = lhs; z -= rhs; return z; }
+        inline MPN operator&(const MPN& lhs, const MPN& rhs) { auto z = lhs; z &= rhs; return z; }
+        inline MPN operator|(const MPN& lhs, const MPN& rhs) { auto z = lhs; z |= rhs; return z; }
+        inline MPN operator^(const MPN& lhs, const MPN& rhs) { auto z = lhs; z ^= rhs; return z; }
+        inline MPN operator<<(const MPN& lhs, size_t rhs) { auto z = lhs; z <<= rhs; return z; }
+        inline MPN operator>>(const MPN& lhs, size_t rhs) { auto z = lhs; z >>= rhs; return z; }
+        inline bool operator==(const MPN& lhs, const MPN& rhs) noexcept { return lhs.compare(rhs) == 0; }
+        inline bool operator<(const MPN& lhs, const MPN& rhs) noexcept { return lhs.compare(rhs) == -1; }
+        inline std::string to_string(const MPN& x) { return x.str(); }
+        inline std::ostream& operator<<(std::ostream& out, const MPN& x) { return out << x.str(); }
 
         template <typename T>
-        Mpuint::operator T() const {
+        MPN::operator T() const {
             T t = 0;
             int bit = 0;
             for (auto w: rep_) {
@@ -122,72 +122,72 @@ namespace RS::Sci {
 
     // Signed integer class
 
-    class Mpint:
-    public TL::TotalOrder<Mpint> {
+    class MPZ:
+    public TL::TotalOrder<MPZ> {
 
     public:
 
-        Mpint() = default;
-        Mpint(int64_t x): mag_(uint64_t(std::abs(x))), neg_(x < 0) {}
-        Mpint(const Mpuint& x): mag_(x), neg_(false) {}
-        explicit Mpint(std::string_view s, int base = 0) { init(s, base); }
+        MPZ() = default;
+        MPZ(int64_t x): mag_(uint64_t(std::abs(x))), neg_(x < 0) {}
+        MPZ(const MPN& x): mag_(x), neg_(false) {}
+        explicit MPZ(std::string_view s, int base = 0) { init(s, base); }
 
         template <typename T> explicit operator T() const;
-        explicit operator Mpuint() const { return mag_; }
+        explicit operator MPN() const { return mag_; }
         explicit operator bool() const noexcept { return bool(mag_); }
 
         bool operator!() const noexcept { return ! bool(*this); }
-        Mpint operator+() const { return *this; }
-        Mpint operator-() const { Mpint z = *this; if (z) z.neg_ = ! z.neg_; return z; }
-        Mpint& operator++() { return *this += 1; }
-        Mpint operator++(int) { auto x = *this; ++*this; return x; }
-        Mpint& operator--() { return *this -= 1; }
-        Mpint operator--(int) { auto x = *this; --*this; return x; }
-        Mpint& operator+=(const Mpint& rhs);
-        Mpint& operator-=(const Mpint& rhs) { return *this += - rhs; }
-        Mpint& operator*=(const Mpint& rhs) { Mpint z; do_multiply(*this, rhs, z); std::swap(*this, z); return *this; }
-        Mpint& operator/=(const Mpint& rhs) { Mpint q, r; do_divide(*this, rhs, q, r); std::swap(*this, q); return *this; }
-        Mpint& operator%=(const Mpint& rhs) { Mpint q, r; do_divide(*this, rhs, q, r); std::swap(*this, r); return *this; }
+        MPZ operator+() const { return *this; }
+        MPZ operator-() const { MPZ z = *this; if (z) z.neg_ = ! z.neg_; return z; }
+        MPZ& operator++() { return *this += 1; }
+        MPZ operator++(int) { auto x = *this; ++*this; return x; }
+        MPZ& operator--() { return *this -= 1; }
+        MPZ operator--(int) { auto x = *this; --*this; return x; }
+        MPZ& operator+=(const MPZ& rhs);
+        MPZ& operator-=(const MPZ& rhs) { return *this += - rhs; }
+        MPZ& operator*=(const MPZ& rhs) { MPZ z; do_multiply(*this, rhs, z); std::swap(*this, z); return *this; }
+        MPZ& operator/=(const MPZ& rhs) { MPZ q, r; do_divide(*this, rhs, q, r); std::swap(*this, q); return *this; }
+        MPZ& operator%=(const MPZ& rhs) { MPZ q, r; do_divide(*this, rhs, q, r); std::swap(*this, r); return *this; }
 
-        Mpuint abs() const { return mag_; }
-        int compare(const Mpint& rhs) const noexcept;
+        MPN abs() const { return mag_; }
+        int compare(const MPZ& rhs) const noexcept;
         size_t hash() const noexcept { return hash_mix(mag_, neg_); }
         bool is_even() const noexcept { return mag_.is_even(); }
         bool is_odd() const noexcept { return mag_.is_odd(); }
-        Mpint pow(const Mpint& n) const;
+        MPZ pow(const MPZ& n) const;
         int sign() const noexcept { return neg_ ? -1 : mag_.sign(); }
         std::string str(int base = 10, size_t digits = 1, bool sign = false) const;
 
-        static Mpint from_double(double x);
+        static MPZ from_double(double x);
 
-        friend Mpint operator*(const Mpint& lhs, const Mpint& rhs) { Mpint z; Mpint::do_multiply(lhs, rhs, z); return z; }
-        friend Mpint operator/(const Mpint& lhs, const Mpint& rhs) { Mpint q, r; Mpint::do_divide(lhs, rhs, q, r); return q; }
-        friend Mpint operator%(const Mpint& lhs, const Mpint& rhs) { Mpint q, r; Mpint::do_divide(lhs, rhs, q, r); return r; }
-        friend std::pair<Mpint, Mpint> divide(const Mpint& lhs, const Mpint& rhs) { Mpint q, r; Mpint::do_divide(lhs, rhs, q, r); return {q, r}; }
+        friend MPZ operator*(const MPZ& lhs, const MPZ& rhs) { MPZ z; MPZ::do_multiply(lhs, rhs, z); return z; }
+        friend MPZ operator/(const MPZ& lhs, const MPZ& rhs) { MPZ q, r; MPZ::do_divide(lhs, rhs, q, r); return q; }
+        friend MPZ operator%(const MPZ& lhs, const MPZ& rhs) { MPZ q, r; MPZ::do_divide(lhs, rhs, q, r); return r; }
+        friend std::pair<MPZ, MPZ> divide(const MPZ& lhs, const MPZ& rhs) { MPZ q, r; MPZ::do_divide(lhs, rhs, q, r); return {q, r}; }
 
     private:
 
-        Mpuint mag_;
+        MPN mag_;
         bool neg_ = false;
 
         void init(std::string_view s, int base);
 
-        static void do_divide(const Mpint& x, const Mpint& y, Mpint& q, Mpint& r);
-        static void do_multiply(const Mpint& x, const Mpint& y, Mpint& z);
+        static void do_divide(const MPZ& x, const MPZ& y, MPZ& q, MPZ& r);
+        static void do_multiply(const MPZ& x, const MPZ& y, MPZ& z);
 
     };
 
-        using Mpratio = Ratio<Mpint>;
+        using MPQ = Ratio<MPZ>;
 
-        inline Mpint operator+(const Mpint& lhs, const Mpint& rhs) { auto z = lhs; z += rhs; return z; }
-        inline Mpint operator-(const Mpint& lhs, const Mpint& rhs) { auto z = lhs; z -= rhs; return z; }
-        inline bool operator==(const Mpint& lhs, const Mpint& rhs) noexcept { return lhs.compare(rhs) == 0; }
-        inline bool operator<(const Mpint& lhs, const Mpint& rhs) noexcept { return lhs.compare(rhs) == -1; }
-        inline std::string to_string(const Mpint& x) { return x.str(); }
-        inline std::ostream& operator<<(std::ostream& out, const Mpint& x) { return out << x.str(); }
+        inline MPZ operator+(const MPZ& lhs, const MPZ& rhs) { auto z = lhs; z += rhs; return z; }
+        inline MPZ operator-(const MPZ& lhs, const MPZ& rhs) { auto z = lhs; z -= rhs; return z; }
+        inline bool operator==(const MPZ& lhs, const MPZ& rhs) noexcept { return lhs.compare(rhs) == 0; }
+        inline bool operator<(const MPZ& lhs, const MPZ& rhs) noexcept { return lhs.compare(rhs) == -1; }
+        inline std::string to_string(const MPZ& x) { return x.str(); }
+        inline std::ostream& operator<<(std::ostream& out, const MPZ& x) { return out << x.str(); }
 
         template <typename T>
-        Mpint::operator T() const {
+        MPZ::operator T() const {
             auto t = T(mag_);
             if (neg_)
                 t = T(0) - t;
@@ -198,8 +198,8 @@ namespace RS::Sci {
 
     namespace Literals {
 
-        inline Mpint operator""_mpi(const char* raw) { return Mpint(raw); }
-        inline Mpuint operator""_mpu(const char* raw) { return Mpuint(raw); }
+        inline MPZ operator""_mpi(const char* raw) { return MPZ(raw); }
+        inline MPN operator""_mpu(const char* raw) { return MPN(raw); }
 
     }
 
@@ -208,17 +208,17 @@ namespace RS::Sci {
 namespace std {
 
     template <>
-    class hash<RS::Sci::Mpint> {
+    class hash<RS::Sci::MPZ> {
     public:
-        size_t operator()(const RS::Sci::Mpint& x) const noexcept {
+        size_t operator()(const RS::Sci::MPZ& x) const noexcept {
             return x.hash();
         }
     };
 
     template <>
-    class hash<RS::Sci::Mpuint> {
+    class hash<RS::Sci::MPN> {
     public:
-        size_t operator()(const RS::Sci::Mpuint& x) const noexcept {
+        size_t operator()(const RS::Sci::MPN& x) const noexcept {
             return x.hash();
         }
     };

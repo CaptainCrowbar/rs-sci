@@ -9,8 +9,8 @@ using namespace RS::Sci::Literals;
 
 void test_rs_sci_mp_integer_literals() {
 
-    Mpint i;
-    Mpuint n;
+    MPZ i;
+    MPN n;
 
     TRY(i = 0_mpi);                                                                TEST_EQUAL(i.str(), "0");
     TRY(i = 123456789_mpi);                                                        TEST_EQUAL(i.str(), "123456789");
@@ -52,11 +52,11 @@ void test_rs_sci_mp_integer_literals() {
 
 void test_rs_sci_mp_integer_core_functions() {
 
-    Mpuint a = 42, b = 99, c, d;
-    Mpint w = 42, x = -99, y, z;
+    MPN a = 42, b = 99, c, d;
+    MPZ w = 42, x = -99, y, z;
 
-    TRY(c = std::clamp(a, Mpuint(0), Mpuint(10)));  TEST_EQUAL(c, 10);
-    TRY(y = std::clamp(w, Mpint(0), Mpint(10)));  TEST_EQUAL(y, 10);
+    TRY(c = std::clamp(a, MPN(0), MPN(10)));  TEST_EQUAL(c, 10);
+    TRY(y = std::clamp(w, MPZ(0), MPZ(10)));  TEST_EQUAL(y, 10);
 
     TRY(c = b / a);  TEST_EQUAL(c, 2);   TRY(c = b % a);  TEST_EQUAL(c, 15);
     TRY(y = x / w);  TEST_EQUAL(y, -3);  TRY(y = x % w);  TEST_EQUAL(y, 27);
@@ -68,15 +68,15 @@ void test_rs_sci_mp_integer_core_functions() {
 
 void test_rs_sci_mp_integer_hash_set() {
 
-    std::unordered_set<Mpuint> uset;
-    std::unordered_set<Mpint> iset;
+    std::unordered_set<MPN> uset;
+    std::unordered_set<MPZ> iset;
 
     TEST(uset.empty());
     TEST(iset.empty());
 
     for (int i = 1; i <= 10; ++i) {
-        TRY(uset.insert(Mpuint(i)));
-        TRY(iset.insert(Mpint(i)));
+        TRY(uset.insert(MPN(i)));
+        TRY(iset.insert(MPZ(i)));
     }
 
     TEST_EQUAL(uset.size(), 10u);

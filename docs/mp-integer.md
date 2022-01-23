@@ -15,26 +15,26 @@ namespace RS::Sci;
 ## Multiple precision unsigned integer class
 
 ```c++
-class Mpuint;
+class MPN;
 ```
 
 An arbitrary precision unsigned integer (natural number). Most of its methods
 are conventional arithmetic operations with their natural behaviour.
 
 ```c++
-Mpuint::Mpuint();
+MPN::MPN();
 ```
 
 The default constructor sets the value to zero.
 
 ```c++
-Mpuint::Mpuint(uint64_t x);
+MPN::MPN(uint64_t x);
 ```
 
 Constructor from a 64-bit value.
 
 ```c++
-explicit Mpuint::Mpuint(std::string_view s, int base = 0);
+explicit MPN::MPN(std::string_view s, int base = 0);
 ```
 
 The constructor from a string accepts base of 0 or 2-36; it will throw
@@ -43,17 +43,17 @@ for a `"0b"` or `"0x"` prefix, assuming decimal otherwise. Input is case
 insensitive; apostrophe delimiters are allowed.
 
 ```c++
-Mpuint::Mpuint(const Mpuint& m);
-Mpuint::Mpuint(Mpuint&& m) noexcept;
-Mpuint::~Mpuint() noexcept;
-Mpuint& Mpuint::operator=(const Mpuint& m);
-Mpuint& Mpuint::operator=(Mpuint&& m) noexcept;
+MPN::MPN(const MPN& m);
+MPN::MPN(MPN&& m) noexcept;
+MPN::~MPN() noexcept;
+MPN& MPN::operator=(const MPN& m);
+MPN& MPN::operator=(MPN&& m) noexcept;
 ```
 
 Other life cycle functions.
 
 ```c++
-template <typename T> explicit Mpuint::operator T() const;
+template <typename T> explicit MPN::operator T() const;
 ```
 
 The explicit cast template returns the value converted to `T`, if possible.
@@ -62,62 +62,62 @@ are unspecified if the value is outside the return type's representable
 range.
 
 ```c++
-explicit Mpuint::operator bool() const noexcept;
+explicit MPN::operator bool() const noexcept;
 ```
 
 True if the value is not zero.
 
 ```c++
-bool Mpuint::operator!() const noexcept;
-Mpuint Mpuint::operator+() const;
-Mpuint& Mpuint::operator++();
-Mpuint Mpuint::operator++(int);
-Mpuint& Mpuint::operator--();
-Mpuint Mpuint::operator--(int);
-Mpuint& Mpuint::operator+=(const Mpuint& y);
-Mpuint& Mpuint::operator-=(const Mpuint& y);
-Mpuint& Mpuint::operator*=(const Mpuint& y);
-Mpuint& Mpuint::operator/=(const Mpuint& y);
-Mpuint& Mpuint::operator%=(const Mpuint& y);
-Mpuint operator+(const Mpuint& x, const Mpuint& y);
-Mpuint operator-(const Mpuint& x, const Mpuint& y);
-Mpuint operator*(const Mpuint& x, const Mpuint& y);
-Mpuint operator/(const Mpuint& x, const Mpuint& y);
-Mpuint operator%(const Mpuint& x, const Mpuint& y);
+bool MPN::operator!() const noexcept;
+MPN MPN::operator+() const;
+MPN& MPN::operator++();
+MPN MPN::operator++(int);
+MPN& MPN::operator--();
+MPN MPN::operator--(int);
+MPN& MPN::operator+=(const MPN& y);
+MPN& MPN::operator-=(const MPN& y);
+MPN& MPN::operator*=(const MPN& y);
+MPN& MPN::operator/=(const MPN& y);
+MPN& MPN::operator%=(const MPN& y);
+MPN operator+(const MPN& x, const MPN& y);
+MPN operator-(const MPN& x, const MPN& y);
+MPN operator*(const MPN& x, const MPN& y);
+MPN operator/(const MPN& x, const MPN& y);
+MPN operator%(const MPN& x, const MPN& y);
 ```
 
 Arithmetic operators. For division operations, behaviour is undefined if the
 divisor is zero.
 
 ```c++
-Mpuint& Mpuint::operator&=(const Mpuint& y);
-Mpuint& Mpuint::operator|=(const Mpuint& y);
-Mpuint& Mpuint::operator^=(const Mpuint& y);
-Mpuint& Mpuint::operator<<=(ptrdiff_t y);
-Mpuint& Mpuint::operator>>=(ptrdiff_t y);
-Mpuint operator&(const Mpuint& x, const Mpuint& y);
-Mpuint operator|(const Mpuint& x, const Mpuint& y);
-Mpuint operator^(const Mpuint& x, const Mpuint& y);
-Mpuint operator<<(const Mpuint& x, size_t y);
-Mpuint operator>>(const Mpuint& x, size_t y);
+MPN& MPN::operator&=(const MPN& y);
+MPN& MPN::operator|=(const MPN& y);
+MPN& MPN::operator^=(const MPN& y);
+MPN& MPN::operator<<=(ptrdiff_t y);
+MPN& MPN::operator>>=(ptrdiff_t y);
+MPN operator&(const MPN& x, const MPN& y);
+MPN operator|(const MPN& x, const MPN& y);
+MPN operator^(const MPN& x, const MPN& y);
+MPN operator<<(const MPN& x, size_t y);
+MPN operator>>(const MPN& x, size_t y);
 ```
 
 Bitwise operators.
 
 ```c++
-bool operator==(const Mpuint& x, const Mpuint& y) noexcept;
-bool operator!=(const Mpuint& x, const Mpuint& y) noexcept;
-bool operator<(const Mpuint& x, const Mpuint& y) noexcept;
-bool operator>(const Mpuint& x, const Mpuint& y) noexcept;
-bool operator<=(const Mpuint& x, const Mpuint& y) noexcept;
-bool operator>=(const Mpuint& x, const Mpuint& y) noexcept;
+bool operator==(const MPN& x, const MPN& y) noexcept;
+bool operator!=(const MPN& x, const MPN& y) noexcept;
+bool operator<(const MPN& x, const MPN& y) noexcept;
+bool operator>(const MPN& x, const MPN& y) noexcept;
+bool operator<=(const MPN& x, const MPN& y) noexcept;
+bool operator>=(const MPN& x, const MPN& y) noexcept;
 ```
 
 Comparison operators.
 
 ```c++
-size_t Mpuint::bits() const noexcept;
-size_t Mpuint::bits_set() const noexcept;
+size_t MPN::bits() const noexcept;
+size_t MPN::bits_set() const noexcept;
 ```
 
 The `bits()` function returns the number of bits in the number's binary
@@ -125,24 +125,24 @@ representation, starting with the highest 1 bit; `bits_set()` returns the
 number of 1 bits.
 
 ```c++
-size_t Mpuint::bytes() const noexcept;
+size_t MPN::bytes() const noexcept;
 ```
 
 The `bytes()` function returns the number of bytes needed to hold the number.
 
 ```c++
-int Mpuint::compare(const Mpuint& y) const noexcept;
+int MPN::compare(const MPN& y) const noexcept;
 ```
 
 Returns a three way comparison of `*this` and `y`, returning -1 if
 `*this<y`, 0 if `*this=y`, and 1 if `*this>y`.
 
 ```c++
-void Mpuint::flip_bit(size_t i);
-bool Mpuint::get_bit(size_t i) const noexcept;
-void Mpuint::set_bit(size_t i, bool b = true);
-uint8_t Mpuint::get_byte(size_t i) const noexcept;
-void Mpuint::set_byte(size_t i, uint8_t b);
+void MPN::flip_bit(size_t i);
+bool MPN::get_bit(size_t i) const noexcept;
+void MPN::set_bit(size_t i, bool b = true);
+uint8_t MPN::get_byte(size_t i) const noexcept;
+void MPN::set_byte(size_t i, uint8_t b);
 ```
 
 The `get_bit/byte()`, `set_bit/byte()`, and `flip_bit()` functions read or
@@ -152,35 +152,35 @@ significant end. If the index is too big for the stored value,
 `flip_bit()` will extend the value to include any bits newly set to 1.
 
 ```c++
-size_t Mpuint::hash() const noexcept;
-class std::hash<Mpuint>;
+size_t MPN::hash() const noexcept;
+class std::hash<MPN>;
 ```
 
 Hash functions.
 
 ```c++
-bool Mpuint::is_even() const noexcept;
-bool Mpuint::is_odd() const noexcept;
+bool MPN::is_even() const noexcept;
+bool MPN::is_odd() const noexcept;
 ```
 
 Parity functions.
 
 ```c++
-Mpuint Mpuint::pow(const Mpuint& n) const;
+MPN MPN::pow(const MPN& n) const;
 ```
 
 Raises `*this` to the power of `n`.
 
 ```c++
-int Mpuint::sign() const noexcept;
+int MPN::sign() const noexcept;
 ```
 
 Returns the sign of `*this` (0 if zero, otherwise 1).
 
 ```c++
-std::string Mpuint::str(int base = 10, size_t digits = 1) const;
-std::string to_string(const Mpuint& x);
-std::ostream& operator<<(std::ostream& out, const Mpuint& x);
+std::string MPN::str(int base = 10, size_t digits = 1) const;
+std::string to_string(const MPN& x);
+std::ostream& operator<<(std::ostream& out, const MPN& x);
 ```
 
 The `str()` function will throw `std::invalid_argument` if the base is less
@@ -188,10 +188,10 @@ than 2 or greater than 36. The output operator and `to_string()` call
 `str(10)`.
 
 ```c++
-void Mpuint::write_be(void* ptr, size_t n) const noexcept;
-void Mpuint::write_le(void* ptr, size_t n) const noexcept;
-static Mpuint Mpuint::read_be(const void* ptr, size_t n);
-static Mpuint Mpuint::read_le(const void* ptr, size_t n);
+void MPN::write_be(void* ptr, size_t n) const noexcept;
+void MPN::write_le(void* ptr, size_t n) const noexcept;
+static MPN MPN::read_be(const void* ptr, size_t n);
+static MPN MPN::read_le(const void* ptr, size_t n);
 ```
 
 These read and write an integer from a block of bytes, in big or little endian
@@ -199,14 +199,14 @@ order. The write functions will truncate the integer if it is too big to fit
 in the specified number of bytes.
 
 ```c++
-std::pair<Mpuint, Mpuint> divide(const Mpuint& x, const Mpuint& y);
+std::pair<MPN, MPN> divide(const MPN& x, const MPN& y);
 ```
 
 Returns the quotient and remainder of `x/y`. Behaviour is undefined if the
 divisor is zero.
 
 ```c++
-static Mpuint Mpuint::from_double(double x);
+static MPN MPN::from_double(double x);
 ```
 
 Converts a `double` to an integer. Fractions are rounded down.
@@ -214,38 +214,38 @@ Converts a `double` to an integer. Fractions are rounded down.
 ## Multiple precision signed integer class
 
 ```c++
-class Mpint;
+class MPZ;
 ```
 
 An arbitrary precision signed integer. Most of its operations do the same
-thing as the corresponding functions on `Mpuint` or plain `int`.
+thing as the corresponding functions on `MPN` or plain `int`.
 
 ```c++
-using Mpratio = Ratio<Mpint>;
+using MPQ = Ratio<MPZ>;
 ```
 
 An arbitrary precision rational number.
 
 ```c++
-Mpint::Mpint();
+MPZ::MPZ();
 ```
 
 The default constructor sets the value to zero.
 
 ```c++
-Mpint::Mpint(int64_t x);
+MPZ::MPZ(int64_t x);
 ```
 
 Constructor from a 64-bit value.
 
 ```c++
-Mpint::Mpint(const Mpuint& x);
+MPZ::MPZ(const MPN& x);
 ```
 
 Conversion constructor from an unsigned multiple precision integer.
 
 ```c++
-explicit Mpint::Mpint(std::string_view s, int base = 0);
+explicit MPZ::MPZ(std::string_view s, int base = 0);
 ```
 
 The constructor from a string accepts base of 0 or 2-36; it will throw
@@ -254,17 +254,17 @@ for a `"0b"` or `"0x"` prefix, assuming decimal otherwise. Input is case
 insensitive; apostrophe delimiters are allowed.
 
 ```c++
-Mpint::Mpint(const Mpint& m);
-Mpint::Mpint(Mpint&& m) noexcept;
-Mpint::~Mpint() noexcept;
-Mpint& Mpint::operator=(const Mpint& m);
-Mpint& Mpint::operator=(Mpint&& m) noexcept;
+MPZ::MPZ(const MPZ& m);
+MPZ::MPZ(MPZ&& m) noexcept;
+MPZ::~MPZ() noexcept;
+MPZ& MPZ::operator=(const MPZ& m);
+MPZ& MPZ::operator=(MPZ&& m) noexcept;
 ```
 
 Other life cycle functions.
 
 ```c++
-template <typename T> explicit Mpint::operator T() const;
+template <typename T> explicit MPZ::operator T() const;
 ```
 
 The explicit cast template returns the value converted to `T`, if possible.
@@ -273,35 +273,35 @@ are unspecified if the value is outside the return type's representable
 range.
 
 ```c++
-explicit Mpint::operator Mpuint() const;
+explicit MPZ::operator MPN() const;
 ```
 
-The explicit conversion to `Mpuint` returns the absolute value of the number.
+The explicit conversion to `MPN` returns the absolute value of the number.
 
 ```c++
-explicit Mpint::operator bool() const noexcept;
+explicit MPZ::operator bool() const noexcept;
 ```
 
 True if the value is not zero.
 
 ```c++
-bool Mpint::operator!() const noexcept;
-Mpint Mpint::operator+() const;
-Mpint Mpint::operator-() const;
-Mpint& Mpint::operator++();
-Mpint Mpint::operator++(int);
-Mpint& Mpint::operator--();
-Mpint Mpint::operator--(int);
-Mpint& Mpint::operator+=(const Mpint& y);
-Mpint& Mpint::operator-=(const Mpint& y);
-Mpint& Mpint::operator*=(const Mpint& y);
-Mpint& Mpint::operator/=(const Mpint& y);
-Mpint& Mpint::operator%=(const Mpint& y);
-Mpint operator+(const Mpint& x, const Mpint& y);
-Mpint operator-(const Mpint& x, const Mpint& y);
-Mpint operator*(const Mpint& x, const Mpint& y);
-Mpint operator/(const Mpint& x, const Mpint& y);
-Mpint operator%(const Mpint& x, const Mpint& y);
+bool MPZ::operator!() const noexcept;
+MPZ MPZ::operator+() const;
+MPZ MPZ::operator-() const;
+MPZ& MPZ::operator++();
+MPZ MPZ::operator++(int);
+MPZ& MPZ::operator--();
+MPZ MPZ::operator--(int);
+MPZ& MPZ::operator+=(const MPZ& y);
+MPZ& MPZ::operator-=(const MPZ& y);
+MPZ& MPZ::operator*=(const MPZ& y);
+MPZ& MPZ::operator/=(const MPZ& y);
+MPZ& MPZ::operator%=(const MPZ& y);
+MPZ operator+(const MPZ& x, const MPZ& y);
+MPZ operator-(const MPZ& x, const MPZ& y);
+MPZ operator*(const MPZ& x, const MPZ& y);
+MPZ operator/(const MPZ& x, const MPZ& y);
+MPZ operator%(const MPZ& x, const MPZ& y);
 ```
 
 Arithmetic operators. The division operators perform Euclidean division: if
@@ -310,60 +310,60 @@ signs of the arguments, and the quotient is the integer that satisfies
 `x=q*y+r`. Behaviour is undefined if the divisor is zero.
 
 ```c++
-bool operator==(const Mpint& x, const Mpint& y) noexcept;
-bool operator!=(const Mpint& x, const Mpint& y) noexcept;
-bool operator<(const Mpint& x, const Mpint& y) noexcept;
-bool operator>(const Mpint& x, const Mpint& y) noexcept;
-bool operator<=(const Mpint& x, const Mpint& y) noexcept;
-bool operator>=(const Mpint& x, const Mpint& y) noexcept;
+bool operator==(const MPZ& x, const MPZ& y) noexcept;
+bool operator!=(const MPZ& x, const MPZ& y) noexcept;
+bool operator<(const MPZ& x, const MPZ& y) noexcept;
+bool operator>(const MPZ& x, const MPZ& y) noexcept;
+bool operator<=(const MPZ& x, const MPZ& y) noexcept;
+bool operator>=(const MPZ& x, const MPZ& y) noexcept;
 ```
 
 Comparison operators.
 
 ```c++
-Mpuint Mpint::abs() const;
+MPN MPZ::abs() const;
 ```
 
 Returns the absolute value of `*this`.
 
 ```c++
-int Mpint::compare(const Mpint& y) const noexcept;
+int MPZ::compare(const MPZ& y) const noexcept;
 ```
 
 Returns a three way comparison of `*this` and `y`, returning -1 if
 `*this<y`, 0 if `*this=y`, and 1 if `*this>y`.
 
 ```c++
-size_t Mpint::hash() const noexcept;
-class std::hash<Mpint>;
+size_t MPZ::hash() const noexcept;
+class std::hash<MPZ>;
 ```
 
 Hash functions.
 
 ```c++
-bool Mpint::is_even() const noexcept;
-bool Mpint::is_odd() const noexcept;
+bool MPZ::is_even() const noexcept;
+bool MPZ::is_odd() const noexcept;
 ```
 
 Parity functions.
 
 ```c++
-Mpint Mpint::pow(const Mpint& n) const;
+MPZ MPZ::pow(const MPZ& n) const;
 ```
 
 Raises `*this` to the power of `n`. Behaviour is undefined if the exponent is
 negative.
 
 ```c++
-int Mpint::sign() const noexcept;
+int MPZ::sign() const noexcept;
 ```
 
 Returns the sign of `*this` (-1 if negative, 0 if zero, 1 if positive).
 
 ```c++
-std::string Mpint::str(int base = 10, size_t digits = 1, bool sign = false) const;
-std::string to_string(const Mpint& x);
-std::ostream& operator<<(std::ostream& out, const Mpint& x);
+std::string MPZ::str(int base = 10, size_t digits = 1, bool sign = false) const;
+std::string to_string(const MPZ& x);
+std::ostream& operator<<(std::ostream& out, const MPZ& x);
 ```
 
 The `str()` function will throw `std::invalid_argument` if the base is less
@@ -371,13 +371,13 @@ than 2 or greater than 36. The output operator and `to_string()` call
 `str(10)`.
 
 ```c++
-static std::pair<Mpint, Mpint> divide(const Mpint& x, const Mpint& y);
+static std::pair<MPZ, MPZ> divide(const MPZ& x, const MPZ& y);
 ```
 
 Returns the quotient and remainder of `x/y`. Division works as described above.
 
 ```c++
-static Mpint Mpint::from_double(double x);
+static MPZ MPZ::from_double(double x);
 ```
 
 Converts a `double` to an integer. Fractions are rounded down.
@@ -386,8 +386,8 @@ Converts a `double` to an integer. Fractions are rounded down.
 
 ```c++
 namespace Literals {
-    Mpint operator""_mpi(const char* raw);
-    Mpuint operator""_mpu(const char* raw);
+    MPZ operator""_mpi(const char* raw);
+    MPN operator""_mpu(const char* raw);
 }
 ```
 

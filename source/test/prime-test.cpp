@@ -180,9 +180,9 @@ void test_rs_sci_prime_iterator_fixed_binary() {
 
 void test_rs_sci_prime_iterator_mp_integer() {
 
-    PrimeGenerator<Mpint> gen;
-    PrimeIterator<Mpint> it;
-    Mpint p, q;
+    PrimeGenerator<MPZ> gen;
+    PrimeIterator<MPZ> it;
+    MPZ p, q;
 
     for (int i: primes_to_10k) {
         TRY(q = i);
@@ -252,18 +252,18 @@ void test_rs_sci_prime_primality_fixed_binary() {
 
 void test_rs_sci_prime_primality_mp_integer() {
 
-    TEST(! is_prime(Mpint(1)));
-    TEST(is_prime(Mpint(2)));
-    TEST(is_prime(Mpint(3)));
-    TEST(! is_prime(Mpint(4)));
-    TEST(is_prime(Mpint(5)));
-    TEST(! is_prime(Mpint(6)));
-    TEST(is_prime(Mpint(7)));
-    TEST(! is_prime(Mpint(8)));
-    TEST(! is_prime(Mpint(9)));
-    TEST(! is_prime(Mpint(10)));
-    TEST(! is_prime(Mpint(123456789)));
-    TEST(is_prime(Mpint(987654319)));
+    TEST(! is_prime(MPZ(1)));
+    TEST(is_prime(MPZ(2)));
+    TEST(is_prime(MPZ(3)));
+    TEST(! is_prime(MPZ(4)));
+    TEST(is_prime(MPZ(5)));
+    TEST(! is_prime(MPZ(6)));
+    TEST(is_prime(MPZ(7)));
+    TEST(! is_prime(MPZ(8)));
+    TEST(! is_prime(MPZ(9)));
+    TEST(! is_prime(MPZ(10)));
+    TEST(! is_prime(MPZ(123456789)));
+    TEST(is_prime(MPZ(987654319)));
 
 }
 
@@ -380,28 +380,28 @@ void test_rs_sci_prime_next_prev_prime_fixed_binary() {
 
 void test_rs_sci_prime_next_prev_prime_mp_integer() {
 
-    Mpint n, p, q;
+    MPZ n, p, q;
 
-    TRY(n = Mpint(0));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(0));
-    TRY(n = Mpint(1));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(0));
-    TRY(n = Mpint(2));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(2));
-    TRY(n = Mpint(3));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(3));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(3));
-    TRY(n = Mpint(4));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(5));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(3));
-    TRY(n = Mpint(5));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(5));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(5));
-    TRY(n = Mpint(6));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(7));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(5));
-    TRY(n = Mpint(7));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(7));       TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(7));
-    TRY(n = Mpint(8));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(7));
-    TRY(n = Mpint(9));       TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(7));
-    TRY(n = Mpint(10));      TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(7));
-    TRY(n = Mpint(131063));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131063));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131064));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131065));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131066));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131067));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131068));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131069));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131070));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131063));
-    TRY(n = Mpint(131071));  TRY(p = next_prime(n));  TEST_EQUAL(p, Mpint(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, Mpint(131071));
+    TRY(n = MPZ(0));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(0));
+    TRY(n = MPZ(1));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(0));
+    TRY(n = MPZ(2));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(2));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(2));
+    TRY(n = MPZ(3));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(3));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(3));
+    TRY(n = MPZ(4));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(5));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(3));
+    TRY(n = MPZ(5));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(5));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(5));
+    TRY(n = MPZ(6));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(7));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(5));
+    TRY(n = MPZ(7));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(7));       TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(7));
+    TRY(n = MPZ(8));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(7));
+    TRY(n = MPZ(9));       TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(7));
+    TRY(n = MPZ(10));      TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(11));      TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(7));
+    TRY(n = MPZ(131063));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131063));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131064));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131065));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131066));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131067));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131068));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131069));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131070));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131063));
+    TRY(n = MPZ(131071));  TRY(p = next_prime(n));  TEST_EQUAL(p, MPZ(131071));  TRY(q = prev_prime(n));  TEST_EQUAL(q, MPZ(131071));
 
 }
 
@@ -529,47 +529,47 @@ void test_rs_sci_prime_factorization_fixed_binary() {
 
 void test_rs_sci_prime_factorization_mp_integer() {
 
-    std::vector<Mpint> v;
-    std::map<Mpint, Mpint> m;
+    std::vector<MPZ> v;
+    std::map<MPZ, MPZ> m;
     std::string s;
 
-    TRY(v = prime_factors(Mpint(1)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[]");
-    TRY(v = prime_factors(Mpint(2)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2]");
-    TRY(v = prime_factors(Mpint(3)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[3]");
-    TRY(v = prime_factors(Mpint(4)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2]");
-    TRY(v = prime_factors(Mpint(5)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[5]");
-    TRY(v = prime_factors(Mpint(6)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,3]");
-    TRY(v = prime_factors(Mpint(7)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[7]");
-    TRY(v = prime_factors(Mpint(8)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2,2]");
-    TRY(v = prime_factors(Mpint(9)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[3,3]");
-    TRY(v = prime_factors(Mpint(10)));         TRY(s = format_range(v));  TEST_EQUAL(s, "[2,5]");
-    TRY(v = prime_factors(Mpint(123)));        TRY(s = format_range(v));  TEST_EQUAL(s, "[3,41]");
-    TRY(v = prime_factors(Mpint(1234)));       TRY(s = format_range(v));  TEST_EQUAL(s, "[2,617]");
-    TRY(v = prime_factors(Mpint(12345)));      TRY(s = format_range(v));  TEST_EQUAL(s, "[3,5,823]");
-    TRY(v = prime_factors(Mpint(123456)));     TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2,2,2,2,2,3,643]");
-    TRY(v = prime_factors(Mpint(1234567)));    TRY(s = format_range(v));  TEST_EQUAL(s, "[127,9721]");
-    TRY(v = prime_factors(Mpint(12345678)));   TRY(s = format_range(v));  TEST_EQUAL(s, "[2,3,3,47,14593]");
-    TRY(v = prime_factors(Mpint(123456789)));  TRY(s = format_range(v));  TEST_EQUAL(s, "[3,3,3607,3803]");
-    TRY(v = prime_factors(Mpint(987654319)));  TRY(s = format_range(v));  TEST_EQUAL(s, "[987654319]");
+    TRY(v = prime_factors(MPZ(1)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[]");
+    TRY(v = prime_factors(MPZ(2)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2]");
+    TRY(v = prime_factors(MPZ(3)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[3]");
+    TRY(v = prime_factors(MPZ(4)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2]");
+    TRY(v = prime_factors(MPZ(5)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[5]");
+    TRY(v = prime_factors(MPZ(6)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,3]");
+    TRY(v = prime_factors(MPZ(7)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[7]");
+    TRY(v = prime_factors(MPZ(8)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2,2]");
+    TRY(v = prime_factors(MPZ(9)));          TRY(s = format_range(v));  TEST_EQUAL(s, "[3,3]");
+    TRY(v = prime_factors(MPZ(10)));         TRY(s = format_range(v));  TEST_EQUAL(s, "[2,5]");
+    TRY(v = prime_factors(MPZ(123)));        TRY(s = format_range(v));  TEST_EQUAL(s, "[3,41]");
+    TRY(v = prime_factors(MPZ(1234)));       TRY(s = format_range(v));  TEST_EQUAL(s, "[2,617]");
+    TRY(v = prime_factors(MPZ(12345)));      TRY(s = format_range(v));  TEST_EQUAL(s, "[3,5,823]");
+    TRY(v = prime_factors(MPZ(123456)));     TRY(s = format_range(v));  TEST_EQUAL(s, "[2,2,2,2,2,2,3,643]");
+    TRY(v = prime_factors(MPZ(1234567)));    TRY(s = format_range(v));  TEST_EQUAL(s, "[127,9721]");
+    TRY(v = prime_factors(MPZ(12345678)));   TRY(s = format_range(v));  TEST_EQUAL(s, "[2,3,3,47,14593]");
+    TRY(v = prime_factors(MPZ(123456789)));  TRY(s = format_range(v));  TEST_EQUAL(s, "[3,3,3607,3803]");
+    TRY(v = prime_factors(MPZ(987654319)));  TRY(s = format_range(v));  TEST_EQUAL(s, "[987654319]");
 
-    TRY(m = prime_factors_map(Mpint(1)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{}");
-    TRY(m = prime_factors_map(Mpint(2)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1}");
-    TRY(m = prime_factors_map(Mpint(3)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1}");
-    TRY(m = prime_factors_map(Mpint(4)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:2}");
-    TRY(m = prime_factors_map(Mpint(5)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{5:1}");
-    TRY(m = prime_factors_map(Mpint(6)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,3:1}");
-    TRY(m = prime_factors_map(Mpint(7)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{7:1}");
-    TRY(m = prime_factors_map(Mpint(8)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:3}");
-    TRY(m = prime_factors_map(Mpint(9)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{3:2}");
-    TRY(m = prime_factors_map(Mpint(10)));         TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,5:1}");
-    TRY(m = prime_factors_map(Mpint(123)));        TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1,41:1}");
-    TRY(m = prime_factors_map(Mpint(1234)));       TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,617:1}");
-    TRY(m = prime_factors_map(Mpint(12345)));      TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1,5:1,823:1}");
-    TRY(m = prime_factors_map(Mpint(123456)));     TRY(s = format_map(m));  TEST_EQUAL(s, "{2:6,3:1,643:1}");
-    TRY(m = prime_factors_map(Mpint(1234567)));    TRY(s = format_map(m));  TEST_EQUAL(s, "{127:1,9721:1}");
-    TRY(m = prime_factors_map(Mpint(12345678)));   TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,3:2,47:1,14593:1}");
-    TRY(m = prime_factors_map(Mpint(123456789)));  TRY(s = format_map(m));  TEST_EQUAL(s, "{3:2,3607:1,3803:1}");
-    TRY(m = prime_factors_map(Mpint(987654319)));  TRY(s = format_map(m));  TEST_EQUAL(s, "{987654319:1}");
+    TRY(m = prime_factors_map(MPZ(1)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{}");
+    TRY(m = prime_factors_map(MPZ(2)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1}");
+    TRY(m = prime_factors_map(MPZ(3)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1}");
+    TRY(m = prime_factors_map(MPZ(4)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:2}");
+    TRY(m = prime_factors_map(MPZ(5)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{5:1}");
+    TRY(m = prime_factors_map(MPZ(6)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,3:1}");
+    TRY(m = prime_factors_map(MPZ(7)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{7:1}");
+    TRY(m = prime_factors_map(MPZ(8)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{2:3}");
+    TRY(m = prime_factors_map(MPZ(9)));          TRY(s = format_map(m));  TEST_EQUAL(s, "{3:2}");
+    TRY(m = prime_factors_map(MPZ(10)));         TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,5:1}");
+    TRY(m = prime_factors_map(MPZ(123)));        TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1,41:1}");
+    TRY(m = prime_factors_map(MPZ(1234)));       TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,617:1}");
+    TRY(m = prime_factors_map(MPZ(12345)));      TRY(s = format_map(m));  TEST_EQUAL(s, "{3:1,5:1,823:1}");
+    TRY(m = prime_factors_map(MPZ(123456)));     TRY(s = format_map(m));  TEST_EQUAL(s, "{2:6,3:1,643:1}");
+    TRY(m = prime_factors_map(MPZ(1234567)));    TRY(s = format_map(m));  TEST_EQUAL(s, "{127:1,9721:1}");
+    TRY(m = prime_factors_map(MPZ(12345678)));   TRY(s = format_map(m));  TEST_EQUAL(s, "{2:1,3:2,47:1,14593:1}");
+    TRY(m = prime_factors_map(MPZ(123456789)));  TRY(s = format_map(m));  TEST_EQUAL(s, "{3:2,3607:1,3803:1}");
+    TRY(m = prime_factors_map(MPZ(987654319)));  TRY(s = format_map(m));  TEST_EQUAL(s, "{987654319:1}");
 
 }
 
@@ -613,17 +613,17 @@ void test_rs_sci_prime_list_primes_fixed_binary() {
 
 void test_rs_sci_prime_list_primes_mp_integer() {
 
-    std::vector<Mpint> v;
+    std::vector<MPZ> v;
     std::string s;
 
-    TRY(v = prime_list(Mpint(1)));
+    TRY(v = prime_list(MPZ(1)));
     TEST(v.empty());
-    TRY(v = prime_list(Mpint(200)));
+    TRY(v = prime_list(MPZ(200)));
     TEST_EQUAL(v.size(), 46u);
     TRY(s = format_range(v));
     TEST_EQUAL(s, "[2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,"
         "101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199]");
-    TRY(v = prime_list(Mpint(100), Mpint(200)));
+    TRY(v = prime_list(MPZ(100), MPZ(200)));
     TEST_EQUAL(v.size(), 21u);
     TRY(s = format_range(v));
     TEST_EQUAL(s, "[101,103,107,109,113,127,131,137,139,149,151,157,163,167,173,179,181,191,193,197,199]");
