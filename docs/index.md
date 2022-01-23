@@ -17,10 +17,10 @@ as required, or the entire library can be included using `"rs-sci.hpp"`.
 
 Dependencies:
 
-[My formatting library](https://github.com/CaptainCrowbar/rs-format)
-[My graphics core library](https://github.com/CaptainCrowbar/rs-graphics-core)
-[My template library](https://github.com/CaptainCrowbar/rs-tl)
-[My unit test library](https://github.com/CaptainCrowbar/rs-unit-test)
+* [My formatting library](https://github.com/CaptainCrowbar/rs-format)
+* [My graphics core library](https://github.com/CaptainCrowbar/rs-graphics-core)
+* [My template library](https://github.com/CaptainCrowbar/rs-tl)
+* [My unit test library](https://github.com/CaptainCrowbar/rs-unit-test)
 
 ## Index
 
