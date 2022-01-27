@@ -1,4 +1,5 @@
-#include "rs-sci/random.hpp"
+#include "rs-sci/random-discrete-distributions.hpp"
+#include "rs-sci/random-engines.hpp"
 #include "rs-sci/statistics.hpp"
 #include "rs-unit-test.hpp"
 #include <map>
