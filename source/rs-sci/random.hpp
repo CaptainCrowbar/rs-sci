@@ -4,6 +4,7 @@
 #include "rs-sci/rational.hpp"
 #include "rs-format/enum.hpp"
 #include "rs-graphics-core/vector.hpp"
+#include "rs-tl/binary.hpp"
 #include "rs-tl/fixed-binary.hpp"
 #include "rs-tl/iterator.hpp"
 #include "rs-tl/types.hpp"
@@ -24,33 +25,11 @@
 
 namespace RS::Sci {
 
-    namespace Detail {
-
-        template <typename T>
-        constexpr T rotl(T t, int n) noexcept {
-            int size = 8 * sizeof(T);
-            n %= size;
-            if (n == 0)
-                return t;
-            return T((t << n) | (t >> (size - n)));
-        }
-
-        template <typename T>
-        constexpr T rotr(T t, int n) noexcept {
-            int size = 8 * sizeof(T);
-            n %= size;
-            if (n == 0)
-                return t;
-            return T((t >> n) | (t << (size - n)));
-        }
-
-    }
-
     // Supporting types
 
     RS_DEFINE_ENUM_CLASS(LogMode, int, 0,
         natural,  // Use base e logs
-        common   // Use base 10 logs
+        common    // Use base 10 logs
     )
 
     // Hash functions
@@ -150,19 +129,19 @@ namespace RS::Sci {
         static constexpr void siprounds(int n, uint64_t& v0, uint64_t& v1, uint64_t& v2, uint64_t& v3) noexcept {
             for (int i = 0; i < n; ++i) {
                 v0 += v1;
-                v1 = Detail::rotl(v1, 13);
+                v1 = TL::rotl(v1, 13);
                 v1 ^= v0;
-                v0 = Detail::rotl(v0, 32);
+                v0 = TL::rotl(v0, 32);
                 v2 += v3;
-                v3 = Detail::rotl(v3, 16);
+                v3 = TL::rotl(v3, 16);
                 v3 ^= v2;
                 v0 += v3;
-                v3 = Detail::rotl(v3, 21);
+                v3 = TL::rotl(v3, 21);
                 v3 ^= v0;
                 v2 += v1;
-                v1 = Detail::rotl(v1, 17);
+                v1 = TL::rotl(v1, 17);
                 v1 ^= v2;
-                v2 = Detail::rotl(v2, 32);
+                v2 = TL::rotl(v2, 32);
             }
         }
 
@@ -228,7 +207,7 @@ namespace RS::Sci {
             state_ += b_;
             auto x = uint64_t((state_ >> 64) ^ state_);
             auto y = int(state_ >> 122) & 63;
-            return Detail::rotr(x, y);
+            return TL::rotr(x, y);
         }
 
         constexpr void advance(int64_t offset) noexcept {
@@ -319,14 +298,14 @@ namespace RS::Sci {
         constexpr Xoshiro(uint64_t s, uint64_t t, uint64_t u, uint64_t v) noexcept: state_() { seed(s, t, u, v); }
 
         constexpr uint64_t operator()() noexcept {
-            uint64_t x = Detail::rotl(state_[1] * 5, 7) * 9;
+            uint64_t x = TL::rotl(state_[1] * 5, 7) * 9;
             uint64_t y = state_[1] << 17;
             state_[2] ^= state_[0];
             state_[3] ^= state_[1];
             state_[1] ^= state_[2];
             state_[0] ^= state_[3];
             state_[2] ^= y;
-            state_[3] = Detail::rotl(state_[3], 45);
+            state_[3] = TL::rotl(state_[3], 45);
             return x;
         }
 
