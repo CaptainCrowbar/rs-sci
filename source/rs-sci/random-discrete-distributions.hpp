@@ -31,6 +31,34 @@ namespace RS::Sci {
 
         constexpr T min() const noexcept { return min_; }
         constexpr T max() const noexcept { return max_; }
+        constexpr Ratio<T> mean() const noexcept { return {max_ + min_, 2}; }
+        constexpr Ratio<T> variance() const noexcept { T range = max_ - min_ + 1; return {range * range - 1, 12}; }
+        double sd() const noexcept { return std::sqrt(double(variance())); }
+
+        double pdf(T x) const noexcept {
+            if (x >= min_ && x <= max_)
+                return 1 / double(max_ - min_ + 1);
+            else
+                return 0;
+        }
+
+        double cdf(T x) const noexcept {
+            if (x < min_)
+                return 0;
+            else if (x < max_)
+                return double(x - min_ + 1) / double(max_ - min_ + 1);
+            else
+                return 1;
+        }
+
+        double ccdf(T x) const noexcept {
+            if (x <= min_)
+                return 1;
+            else if (x <= max_)
+                return double(max_ - x + 1) / double(max_ - min_ + 1);
+            else
+                return 0;
+        }
 
     private:
 
@@ -107,34 +135,17 @@ namespace RS::Sci {
 
         using result_type = bool;
 
-        constexpr BernoulliDistribution() noexcept:
-        BernoulliDistribution(1, 2) {}
+        constexpr BernoulliDistribution() noexcept: BernoulliDistribution(0.5) {}
+        constexpr explicit BernoulliDistribution(double p) noexcept: prob_(p) {}
+        template <typename T> constexpr explicit BernoulliDistribution(Ratio<T> p) noexcept: prob_(double(p)) {}
 
-        constexpr explicit BernoulliDistribution(double p) noexcept {
-            constexpr int den = std::numeric_limits<int>::max();
-            int num = int(std::lround(p * den));
-            prob_ = {num, den};
-        }
+        template <typename RNG> constexpr bool operator()(RNG& rng) const noexcept { return UniformReal<double>()(rng) < prob_; }
 
-        constexpr explicit BernoulliDistribution(Rational p) noexcept:
-        prob_(p) {}
-
-        constexpr BernoulliDistribution(int num, int den) noexcept:
-        prob_(Rational(num, den)) {}
-
-        template <typename RNG>
-        constexpr bool operator()(RNG& rng) const noexcept {
-            return int_dist(prob_.den())(rng) < prob_.num();
-        }
-
-        constexpr Rational p() const noexcept { return prob_; }
+        constexpr double p() const noexcept { return prob_; }
 
     private:
 
-        using int_type = Rational::integer_type;
-        using int_dist = UniformInteger<int_type>;
-
-        Rational prob_;
+        double prob_;
 
     };
 
@@ -164,19 +175,17 @@ namespace RS::Sci {
 
     };
 
-    template <typename T, typename U = double>
+    template <typename T>
     class PoissonDistribution {
 
     public:
 
         static_assert(std::is_integral_v<T>);
-        static_assert(std::is_floating_point_v<U>);
 
         using result_type = T;
-        using scalar_type = U;
 
         PoissonDistribution() noexcept {}
-        explicit PoissonDistribution(U lambda) noexcept: lambda_(lambda), log_lambda_(std::log(lambda)) {}
+        explicit PoissonDistribution(double lambda) noexcept: lambda_(lambda), log_lambda_(std::log(lambda)) {}
 
         template <typename RNG>
         T operator()(RNG& rng) const noexcept {
@@ -184,19 +193,19 @@ namespace RS::Sci {
             // https://www.johndcook.com/blog/2010/06/14/generating-poisson-random-values/
 
             T n;
-            UniformReal<U> unit;
+            UniformReal<double> unit;
 
             if (lambda_ <= 30) {
 
                 // Knuth algorithm
 
-                U xl = std::exp(- lambda_);
+                double xl = std::exp(- lambda_);
                 T k = 0;
-                U p = 1;
+                double p = 1;
 
                 do {
                     ++k;
-                    U u = unit(rng);
+                    double u = unit(rng);
                     p *= u;
                 } while (p > xl);
 
@@ -206,24 +215,24 @@ namespace RS::Sci {
 
                 // Atkinson algorithm
 
-                U c = U(0.767) - U(3.36) / lambda_;
-                U beta = pi_c<U> / std::sqrt(3 * lambda_);
-                U alpha = beta * lambda_;
-                U k = std::log(c) - lambda_ - std::log(beta);
-                U lhs, rhs;
+                double c = 0.767 - 3.36 / lambda_;
+                double beta = pi_d / std::sqrt(3 * lambda_);
+                double alpha = beta * lambda_;
+                double k = std::log(c) - lambda_ - std::log(beta);
+                double a, b;
 
                 do {
-                    U u = unit(rng);
-                    U x = (alpha - std::log((1 - u) / u)) / beta;
-                    n = T(std::floor(x + U(0.5)));
+                    double u = unit(rng);
+                    double x = (alpha - std::log((1 - u) / u)) / beta;
+                    n = T(std::floor(x + 0.5));
                     if (n < 0)
                         continue;
-                    U v = unit(rng);
-                    U y = alpha - beta * x;
-                    U z = 1 + std::exp(y);
-                    lhs = y + std::log(v / (z * z));
-                    rhs = k + n * log_lambda_ - std::lgamma(U(n) + 1);
-                } while (lhs > rhs);
+                    double v = unit(rng);
+                    double y = alpha - beta * x;
+                    double z = 1 + std::exp(y);
+                    a = y + std::log(v / (z * z));
+                    b = k + n * log_lambda_ - std::lgamma(1.0 + n);
+                } while (a > b);
 
             }
 
@@ -231,13 +240,40 @@ namespace RS::Sci {
 
         }
 
-        U mean() const noexcept { return lambda_; }
-        U sd() const noexcept { return std::sqrt(lambda_); }
+        constexpr double mean() const noexcept { return lambda_; }
+        constexpr double variance() const noexcept { return lambda_; }
+        double sd() const noexcept { return std::sqrt(lambda_); }
+        double pdf(T x) const noexcept { return std::exp(x * log_lambda_ - lambda_ - std::lgamma(1.0 + x)); }
+        double cdf(T x) const noexcept { return x <= lambda_ + 5 ? make_cdf(x) : 1 - make_ccdf(x + 1); }
+        double ccdf(T x) const noexcept { return x <= lambda_ + 5 ? 1 - make_cdf(x - 1) : make_ccdf(x); }
 
     private:
 
-        U lambda_ = 1;
-        U log_lambda_ = 0;
+        double lambda_ = 1;
+        double log_lambda_ = 0;
+
+        double make_cdf(T x) const noexcept {
+            if (x < 0)
+                return 0;
+            double s = 0;
+            for (T y = 0; y <= x; ++y)
+                s += pdf(y);
+            return s;
+        }
+
+        double make_ccdf(T x) const noexcept {
+            if (x <= 0)
+                return 1;
+            double s = 0;
+            T y = x;
+            for (;;) {
+                double t = s + pdf(y);
+                if (t == s)
+                    return s;
+                s = t;
+                ++y;
+            }
+        }
 
     };
 

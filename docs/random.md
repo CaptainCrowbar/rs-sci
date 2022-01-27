@@ -157,6 +157,28 @@ Most of these duplicate distributions from the standard library, to allow
 consistently reproducible results without depending on the library
 implementation.
 
+In addition to the standard properties of a random distribution class, many of
+these also provide functions that return statistical properties of the
+distribution.
+
+The `pdf()`, `cdf()`, and `ccdf()` functions represent the probability
+distribution function, cumulative distribution function, and complementary
+CDF. For discrete distributions, `pdf(x)` is the probably of a result exactly
+equal to `x`, `cdf(x)` is the probability of a result less than or equal to
+`x`, and `ccdf(x)` is the probability of a result greater than or equal to `x`
+(`cdf+ccdf-pdf=1`). For continuous distributions, `pdf(x)` is the probably
+density at `x`, `cdf(x)` is the probability of a result less than `x`, and
+`ccdf(x)` is the probability of a result greater than `x` (`cdf+ccdf=1`).
+
+The `quantile()` and `cquantile()` (complementary quantile) functions are only
+defined for continuous distributions, and are the inverse of `cdf()` and
+`ccdf()` respectively. Behaviour is undefined if the argument to one of the
+quantile functions is less than 0 or greater than 1; it may or may not be
+defined for exactly 0 or 1, depending on how the distribution is bounded. For
+some of the distributions, the quantile functions have no analytical form and
+are evaluated by a numerical approximation, usually reliable to at least 6
+significant figures.
+
 ### Discrete distributions
 
 #### Uniform integer distribution
@@ -174,6 +196,12 @@ template <typename T> class UniformInteger {
         constexpr T operator()(RNG& rng) const noexcept;
     constexpr T min() const noexcept;
     constexpr T max() const noexcept;
+    constexpr Ratio<T> mean() const noexcept;
+    constexpr Ratio<T> variance() const noexcept;
+    double sd() const noexcept;
+    double pdf(T x) const noexcept;
+    double cdf(T x) const noexcept;
+    double ccdf(T x) const noexcept;
 };
 ```
 
@@ -183,15 +211,15 @@ template <typename T> class UniformInteger {
 class BernoulliDistribution {
     using result_type = bool;
     constexpr BernoulliDistribution() noexcept;
+        // p=1/2
     constexpr explicit BernoulliDistribution(double p) noexcept;
         // UB if p<0 or p>1
-    constexpr explicit BernoulliDistribution(Rational p) noexcept:;
+    template <typename T>
+        constexpr explicit BernoulliDistribution(Ratio<T> p) noexcept;
         // UB if p<0 or p>1
-    constexpr BernoulliDistribution(int num, int den) noexcept;
-        // p=num/den; UB if num<0, den<1, or num>den
     template <typename RNG>
         constexpr bool operator()(RNG& rng) const noexcept;
-    constexpr Rational p() const noexcept;
+    constexpr double p() const noexcept;
 };
 ```
 
@@ -211,16 +239,19 @@ template <typename T> class DiscreteNormal {
 #### Poisson distribution
 
 ```c++
-template <typename T, typename U = double> class PoissonDistribution {
-    using result_type = T; // integer type
-    using scalar_type = U; // floating point type
+template <typename T> class PoissonDistribution {
+    using result_type = T;
     PoissonDistribution() noexcept;
         // lambda=1
-    explicit PoissonDistribution(U lambda) noexcept;
+    explicit PoissonDistribution(double lambda) noexcept;
         // UB if lambda<=0
     template <typename RNG> T operator()(RNG& rng) const noexcept;
-    U mean() const noexcept;
-    U sd() const noexcept;
+    constexpr double mean() const noexcept;
+    constexpr double variance() const noexcept;
+    double sd() const noexcept;
+    double pdf(T x) const noexcept;
+    double cdf(T x) const noexcept;
+    double ccdf(T x) const noexcept;
 };
 ```
 
@@ -241,6 +272,14 @@ template <typename T> class UniformReal {
         constexpr T operator()(RNG& rng) const noexcept;
     constexpr T min() const noexcept;
     constexpr T max() const noexcept;
+    constexpr T mean() const noexcept;
+    constexpr T variance() const noexcept;
+    T sd() const noexcept;
+    constexpr T pdf(T x) const noexcept;
+    constexpr T cdf(T x) const noexcept;
+    constexpr T ccdf(T x) const noexcept;
+    constexpr T quantile(T p) const noexcept;
+    constexpr T cquantile(T q) const noexcept;
 };
 ```
 
@@ -252,8 +291,14 @@ template <typename T> class NormalDistribution {
     NormalDistribution() noexcept; // mean=0, sd=1
     NormalDistribution(T mean, T sd) noexcept;
     template <typename RNG> T operator()(RNG& rng) const noexcept;
-    T mean() const noexcept;
-    T sd() const noexcept;
+    constexpr T mean() const noexcept;
+    constexpr T sd() const noexcept;
+    constexpr T variance() const noexcept;
+    T pdf(T x) const noexcept;
+    T cdf(T x) const noexcept;
+    T ccdf(T x) const noexcept;
+    T quantile(T p) const noexcept;
+    T cquantile(T q) const noexcept;
 };
 ```
 

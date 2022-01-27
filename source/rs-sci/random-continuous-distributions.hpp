@@ -6,6 +6,8 @@
 #include "rs-sci/constants.hpp"
 #include "rs-format/enum.hpp"
 #include <cmath>
+#include <cstdlib>
+#include <limits>
 #include <type_traits>
 
 namespace RS::Sci {
@@ -26,20 +28,51 @@ namespace RS::Sci {
 
         constexpr UniformReal() noexcept: UniformReal(0, 1) {} // Defaults to 0-1
         constexpr explicit UniformReal(T range) noexcept: UniformReal(0, range) {} // 0 to range; UB if range<0
-        constexpr UniformReal(T a, T b) noexcept: min_(a), range_(b - a) {} // a to b; UB if a>b
+        constexpr UniformReal(T a, T b) noexcept: min_(a), max_(b) {} // a to b; UB if a>b
 
         template <typename RNG>
         constexpr T operator()(RNG& rng) const noexcept {
-            return min_ + (range_ / (T(rng.max()) + 1)) * rng();
+            return min_ + ((max_ - min_) / (T(rng.max()) + 1)) * rng();
         }
 
         constexpr T min() const noexcept { return min_; }
-        constexpr T max() const noexcept { return min_ + range_; }
+        constexpr T max() const noexcept { return max_; }
+        constexpr T mean() const noexcept { return (min_ + max_) / 2; }
+        constexpr T variance() const noexcept { T range = max_ - min_; return range * range / 12; }
+        T sd() const noexcept { static const T isr12 = 1 / std::sqrt(T(12)); return isr12 * (max_ - min_); }
+
+        constexpr T pdf(T x) const noexcept {
+            if (x > min_ && x < max_)
+                return 1 / (max_ - min_);
+            else
+                return 0;
+        }
+
+        constexpr T cdf(T x) const noexcept {
+            if (x <= min_)
+                return 0;
+            else if (x < max_)
+                return (x - min_) / (max_ - min_);
+            else
+                return 1;
+        }
+
+        constexpr T ccdf(T x) const noexcept {
+            if (x <= min_)
+                return 1;
+            else if (x < max_)
+                return (max_ - x) / (max_ - min_);
+            else
+                return 0;
+        }
+
+        constexpr T quantile(T p) const noexcept { return min_ + p * (max_ - min_); }
+        constexpr T cquantile(T q) const noexcept { return max_ - q * (max_ - min_); }
 
     private:
 
         T min_;
-        T range_;
+        T max_;
 
     };
 
@@ -64,14 +97,42 @@ namespace RS::Sci {
             return a * b * sd_ + mean_;
         }
 
-        T mean() const noexcept { return mean_; }
-        T sd() const noexcept { return sd_; }
+        constexpr T mean() const noexcept { return mean_; }
+        constexpr T sd() const noexcept { return sd_; }
+        constexpr T variance() const noexcept { return sd_ * sd_; }
+        T pdf(T x) const noexcept { return pdf_z((x - mean_) / sd_); }
+        T cdf(T x) const noexcept { return cdf_z((x - mean_) / sd_); }
+        T ccdf(T x) const noexcept { return cdf_z((mean_ - x) / sd_); }
+        T quantile(T p) const noexcept { return mean_ + sd_ * q_z(p); }
+        T cquantile(T q) const noexcept { return mean_ - sd_ * q_z(q); }
 
     private:
 
         UniformReal<T> unit_;
         T mean_ = 0;
         T sd_ = 1;
+
+        T pdf_z(T z) const noexcept { return inv_sqrt2_c<T> * inv_sqrtpi_c<T> * std::exp(- z * z / 2); }
+        T cdf_z(T z) const noexcept { return std::erfc(- inv_sqrt2_c<T> * z) / 2; }
+        T q_z(T p) const noexcept { return - sqrt2_c<T> * inverse_erfc(2 * p); }
+
+        static T inverse_erfc(T y) noexcept {
+            static constexpr T epsilon = 2 * std::numeric_limits<T>::epsilon();
+            static constexpr T sqrtpi_over_2 = 1 / two_over_sqrtpi_c<T>;
+            static const auto inv_deriv = [] (T x) { return - sqrtpi_over_2 * std::exp(x * x); };
+            if (y > 1)
+                return - inverse_erfc(2 - y);
+            T x = std::sqrt(- std::log(y));
+            for (;;) {
+                T f = std::erfc(x) - y;
+                if (f == 0)
+                    return x;
+                T delta = - f * inv_deriv(x);
+                if (std::abs(delta) < epsilon * std::abs(x))
+                    return x + delta / 2;
+                x += delta;
+            }
+        }
 
     };
 

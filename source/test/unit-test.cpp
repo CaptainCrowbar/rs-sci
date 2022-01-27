@@ -117,8 +117,10 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_random_poisson_distribution)
 
     // random-continuous-test.cpp
+    UNIT_TEST(rs_sci_random_uniform_real_distribution_properties)
     UNIT_TEST(rs_sci_random_uniform_real_distribution)
     UNIT_TEST(rs_sci_random_log_uniform_distribution)
+    UNIT_TEST(rs_sci_random_normal_distribution_properties)
     UNIT_TEST(rs_sci_random_normal_distribution)
     UNIT_TEST(rs_sci_random_log_normal_distribution)
 
