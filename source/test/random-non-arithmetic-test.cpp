@@ -39,6 +39,23 @@ void test_rs_sci_random_choice_distribution() {
     TEST_NEAR(census['i'] / double(iterations), 0.1, 0.001);
     TEST_NEAR(census['j'] / double(iterations), 0.1, 0.001);
 
+    TRY(choice = random_choice({'v', 'w', 'x', 'y', 'z'}));
+    TEST_EQUAL(choice.size(), 5u);
+    census.clear();
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(c = choice(rng));
+        ++census[c];
+    }
+
+    TEST_EQUAL(census.size(), 5u);
+
+    TEST_NEAR(census['v'] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census['w'] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census['x'] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census['y'] / double(iterations), 0.2, 0.001);
+    TEST_NEAR(census['z'] / double(iterations), 0.2, 0.001);
+
 }
 
 void test_rs_sci_random_weighted_distribution() {

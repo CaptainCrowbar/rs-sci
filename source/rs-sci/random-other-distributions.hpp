@@ -138,6 +138,11 @@ namespace RS::Sci {
     }
 
     template <typename T>
+    RandomChoice<T> random_choice(std::initializer_list<T> list) {
+        return RandomChoice<T>(list);
+    }
+
+    template <typename T>
     class WeightedChoice {
 
     private:
