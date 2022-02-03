@@ -2,7 +2,38 @@
 #include <cstring>
 #include <stdexcept>
 
+using namespace RS::Format;
+
 namespace RS::Sci {
+
+    namespace {
+
+        std::string roman(const MPN& n, bool lcase = false) {
+
+            static constexpr std::pair<int, const char*> table[] = {
+                { 900, "CM" }, { 500, "D" }, { 400, "CD" }, { 100, "C" },
+                { 90, "XC" }, { 50, "L" }, { 40, "XL" }, { 10, "X" },
+                { 9, "IX" }, { 5, "V" }, { 4, "IV" }, { 1, "I" },
+            };
+
+            std::string rom(size_t(n / 1000), 'M');
+            auto m = n;
+            m %= 1000;
+
+            for (auto [num,str]: table) {
+                for (MPN q = m / num; q > 0; --q)
+                    rom += str;
+                m %= num;
+            }
+
+            if (lcase)
+                rom = ascii_lowercase(rom);
+
+            return rom;
+
+        }
+
+    }
 
     // Unsigned integer class
 
@@ -205,44 +236,37 @@ namespace RS::Sci {
         return z;
     }
 
-    std::string MPN::str(int base, size_t digits) const {
-        if (base < 2 || base > 36)
-            throw std::invalid_argument("Invalid base: " + std::to_string(base));
-        if (rep_.empty())
-            return std::string(digits, '0');
-        std::string s;
-        if (base == 2) {
-            s = Format::format_integer(rep_.back(), "b1");
-            for (size_t i = rep_.size() - 2; i != std::string::npos; --i)
-                s += Format::format_integer(rep_[i], "b32");
-        } else if (base == 16) {
-            s = Format::format_integer(rep_.back(), "x1");
-            for (size_t i = rep_.size() - 2; i != std::string::npos; --i)
-                s += Format::format_integer(rep_[i], "x8");
-        } else if (base <= 10) {
-            MPN b = base, q, r, t = *this;
-            while (t) {
-                do_divide(t, b, q, r);
-                s += char(int(r) + '0');
-                t = std::move(q);
-            }
-            std::reverse(s.begin(), s.end());
-        } else {
-            MPN b = base, q, r, t = *this;
-            while (t) {
-                do_divide(t, b, q, r);
-                int d = int(r);
-                if (d < 10)
-                    s += char(d + '0');
-                else
-                    s += char(d - 10 + 'a');
-                t = std::move(q);
-            }
-            std::reverse(s.begin(), s.end());
+    std::string MPN::str(FormatSpec spec) const {
+
+        if (spec.lcmode() == 'r') {
+            if (*this < 1)
+                throw std::invalid_argument("No Roman numeral for " + str());
+            return roman(*this, spec.mode() == 'r');
         }
-        if (s.size() < digits)
-            s.insert(0, digits - s.size(), '0');
-        return s;
+
+        if (spec.lcmode() >= 'd' && spec.lcmode() <= 'g')
+            return format_floating_point(static_cast<long double>(*this), spec);
+
+        MPN base;
+
+        switch (spec.lcmode()) {
+            case 'b':  base = 2; break;
+            case 'x':  base = 16; break;
+            default:   base = 10; break;
+        }
+
+        spec.default_prec(1);
+        auto xdigits = spec.mode() == 'X' ? Format::Detail::hex_digits_uc : Format::Detail::hex_digits_lc;
+        std::string result;
+
+        for (MPN n = *this; n != 0 || result.size() < size_t(spec.prec()); n /= base)
+            result += xdigits[unsigned(n % base)];
+
+        std::reverse(result.begin(), result.end());
+        Format::Detail::expand_formatted_number(result, spec);
+
+        return result;
+
     }
 
     void MPN::write_be(void* ptr, size_t n) const noexcept {
@@ -290,17 +314,23 @@ namespace RS::Sci {
     }
 
     void MPN::do_divide(const MPN& x, const MPN& y, MPN& q, MPN& r) {
+
         MPN quo, rem = x;
+
         if (x >= y) {
+
             size_t shift = x.bits() - y.bits();
             MPN rsub = y;
             rsub <<= shift;
+
             if (rsub > x) {
                 --shift;
                 rsub >>= 1;
             }
+
             MPN qadd = 1;
             qadd <<= shift;
+
             while (qadd) {
                 if (rem >= rsub) {
                     rem -= rsub;
@@ -309,41 +339,59 @@ namespace RS::Sci {
                 rsub >>= 1;
                 qadd >>= 1;
             }
+
         }
+
         q = std::move(quo);
         r = std::move(rem);
+
     }
 
     void MPN::do_multiply(const MPN& x, const MPN& y, MPN& z) {
+
         if (! x || ! y) {
+
             z.rep_.clear();
+
         } else {
+
             size_t m = x.rep_.size(), n = y.rep_.size();
             z.rep_.assign(m + n, 0);
             uint64_t carry = 0;
+
             for (size_t k = 0; k <= m + n - 2; ++k) {
+
                 carry += uint64_t(z.rep_[k]);
                 z.rep_[k] = uint32_t(carry);
                 carry >>= 32;
                 size_t i_min = k < n ? 0 : k - n + 1;
                 size_t i_max = k < m ? k : m - 1;
+
                 for (size_t i = i_min; i <= i_max; ++i) {
                     uint64_t p = uint64_t(x.rep_[i]) * uint64_t(y.rep_[k - i]) + uint64_t(z.rep_[k]);
                     z.rep_[k] = uint32_t(p);
                     carry += uint32_t(p >> 32);
                 }
+
             }
+
             z.rep_[m + n - 1] = uint32_t(carry);
             z.trim();
+
         }
+
     }
 
     void MPN::init(std::string_view s, int base) {
+
         if (base < 0 || base == 1 || base > 36)
             throw std::invalid_argument("Invalid base: " + std::to_string(base));
+
         if (s.empty())
             return;
+
         auto ptr = s.data(), end = ptr + s.size();
+
         if (base == 0) {
             if (s[0] != '0' || s.size() < 3)
                 base = 10;
@@ -356,23 +404,27 @@ namespace RS::Sci {
             if (base != 10)
                 ptr += 2;
         }
+
         MPN nbase = base;
         int digit = 0;
         int (*get_digit)(char c);
+
         if (base <= 10)
             get_digit = [] (char c) noexcept { return c >= '0' && c <= '9' ? int(c - '0') : 64; };
         else
             get_digit = [] (char c) noexcept { return c >= '0' && c <= '9' ? int(c - '0') :
                 c >= 'A' && c <= 'Z' ? int(c - 'A') + 10 : c >= 'a' && c <= 'z' ? int(c - 'a') + 10 : 64; };
+
         for (; ptr != end; ++ptr) {
             if (*ptr == '\'')
                 continue;
             digit = get_digit(*ptr);
             if (digit >= base)
-                throw std::invalid_argument(Format::format("Invalid base {0} integer: {1:q}", base, s));
+                throw std::invalid_argument(format("Invalid base {0} integer: {1:q}", base, s));
             *this *= nbase;
             *this += digit;
         }
+
     }
 
     void MPN::trim() noexcept {
@@ -424,13 +476,18 @@ namespace RS::Sci {
         return z;
     }
 
-    std::string MPZ::str(int base, size_t digits, bool sign) const {
-        std::string s = mag_.str(base, digits);
-        if (neg_)
-            s.insert(s.begin(), '-');
-        else if (sign)
-            s.insert(s.begin(), '+');
-        return s;
+    std::string MPZ::str(FormatSpec spec) const {
+        if (spec.lcmode() == 'r') {
+            if (*this < 1)
+                throw std::invalid_argument("No Roman numeral for " + str());
+            return roman(mag_, spec.mode() == 'r');
+        }
+        if (spec.lcmode() >= 'd' && spec.lcmode() <= 'g')
+            return format_floating_point(static_cast<long double>(*this), spec);
+        auto result = mag_.str(spec);
+        if (sign() == -1)
+            result.insert(0, 1, '-');
+        return result;
     }
 
     MPZ MPZ::from_double(double x) {

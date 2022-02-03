@@ -61,7 +61,7 @@ namespace RS::Sci {
         bool is_odd() const noexcept { return ! is_even(); }
         MPN pow(const MPN& n) const;
         int sign() const noexcept { return int(bool(*this)); }
-        std::string str(int base = 10, size_t digits = 1) const;
+        std::string str(Format::FormatSpec spec = {}) const;
         void write_be(void* ptr, size_t n) const noexcept;
         void write_le(void* ptr, size_t n) const noexcept;
 
@@ -156,7 +156,7 @@ namespace RS::Sci {
         bool is_odd() const noexcept { return mag_.is_odd(); }
         MPZ pow(const MPZ& n) const;
         int sign() const noexcept { return neg_ ? -1 : mag_.sign(); }
-        std::string str(int base = 10, size_t digits = 1, bool sign = false) const;
+        std::string str(Format::FormatSpec spec = {}) const;
 
         static MPZ from_double(double x);
 

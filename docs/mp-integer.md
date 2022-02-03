@@ -178,14 +178,12 @@ int MPN::sign() const noexcept;
 Returns the sign of `*this` (0 if zero, otherwise 1).
 
 ```c++
-std::string MPN::str(int base = 10, size_t digits = 1) const;
-std::string to_string(const MPN& x);
+std::string MPN::str(Format::FormatSpec spec = {}) const;
 std::ostream& operator<<(std::ostream& out, const MPN& x);
 ```
 
-The `str()` function will throw `std::invalid_argument` if the base is less
-than 2 or greater than 36. The output operator and `to_string()` call
-`str(10)`.
+Formatting functions. `MPN::str()` respects the same flags as standard
+integers.
 
 ```c++
 void MPN::write_be(void* ptr, size_t n) const noexcept;
@@ -361,14 +359,12 @@ int MPZ::sign() const noexcept;
 Returns the sign of `*this` (-1 if negative, 0 if zero, 1 if positive).
 
 ```c++
-std::string MPZ::str(int base = 10, size_t digits = 1, bool sign = false) const;
-std::string to_string(const MPZ& x);
+std::string MPZ::str(Format::FormatSpec spec = {}) const;
 std::ostream& operator<<(std::ostream& out, const MPZ& x);
 ```
 
-The `str()` function will throw `std::invalid_argument` if the base is less
-than 2 or greater than 36. The output operator and `to_string()` call
-`str(10)`.
+Formatting functions. `MPZ::str()` respects the same flags as standard
+integers.
 
 ```c++
 static std::pair<MPZ, MPZ> divide(const MPZ& x, const MPZ& y);

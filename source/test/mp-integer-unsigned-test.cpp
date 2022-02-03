@@ -26,28 +26,25 @@ void test_rs_sci_mp_integer_unsigned_conversion_integers() {
 
     TEST_EQUAL(uint64_t(x), 0u);
     TEST_EQUAL(double(x), 0);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "0");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "0");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "0");
-    TRY(s = x.str(36));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "0");
 
     TRY(x = 0x12345678ul);
     TEST_EQUAL(x.bits(), 29u);
     TEST_EQUAL(uint64_t(x), 0x12345678ul);
     TEST_EQUAL(double(x), 305419896);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "10010001101000101011001111000");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "305419896");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "12345678");
-    TRY(s = x.str(36));  TEST_EQUAL(s, "51u7i0");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "10010001101000101011001111000");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "305419896");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "12345678");
 
     TRY(x = 0x123456789abcdef0ull);
     TEST_EQUAL(x.bits(), 61u);
     TEST_EQUAL(uint64_t(x), 0x123456789abcdef0ull);
     TEST_NEAR(double(x), 1.311768e18, 1e12);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "1001000110100010101100111100010011010101111001101111011110000");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "1311768467463790320");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "123456789abcdef0");
-    TRY(s = x.str(36));  TEST_EQUAL(s, "9ys742pps3qo");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "1001000110100010101100111100010011010101111001101111011110000");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "1311768467463790320");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "123456789abcdef0");
 
 }
 
@@ -58,33 +55,33 @@ void test_rs_sci_mp_integer_unsigned_conversion_strings() {
 
     TRY(x = MPN("110011000011110111111011111001011100011101100011001111101111100000001000101111100010101", 2));
     TEST_NEAR(double(x), 1.234568e26, 1e20);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "123456789123456789123456789");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "123456789123456789123456789");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
 
     TRY(x = MPN("123456789123456789123456789", 10));
     TEST_NEAR(double(x), 1.234568e26, 1e20);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "123456789123456789123456789");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "123456789123456789123456789");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
 
     TRY(x = MPN("661efdf2e3b19f7c045f15", 16));
     TEST_NEAR(double(x), 1.234568e26, 1e20);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "123456789123456789123456789");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "123456789123456789123456789");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
 
     TRY(x = MPN("123456789123456789123456789", 0));
     TEST_NEAR(double(x), 1.234568e26, 1e20);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "123456789123456789123456789");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "123456789123456789123456789");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
 
     TRY(x = MPN("0x661efdf2e3b19f7c045f15", 0));
     TEST_NEAR(double(x), 1.234568e26, 1e20);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "123456789123456789123456789");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "110011000011110111111011111001011100011101100011001111101111100000001000101111100010101");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "123456789123456789123456789");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "661efdf2e3b19f7c045f15");
 
 }
 
@@ -151,19 +148,19 @@ void test_rs_sci_mp_integer_unsigned_arithmetic() {
 
     TRY(x = 0);
     TEST_EQUAL(x.bits(), 0u);
-    TRY(s = x.str(2));   TEST_EQUAL(s, "0");
-    TRY(s = x.str(10));  TEST_EQUAL(s, "0");
-    TRY(s = x.str(16));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("b"));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("n"));  TEST_EQUAL(s, "0");
+    TRY(s = x.str("x"));  TEST_EQUAL(s, "0");
 
     TRY(y = x + 15);
     TEST_EQUAL(y.bits(), 4u);
     TRY(s = to_string(y));  TEST_EQUAL(s, "15");
-    TRY(s = y.str(16));     TEST_EQUAL(s, "f");
+    TRY(s = y.str("x"));    TEST_EQUAL(s, "f");
 
     TRY(y = 15 - x);
     TEST_EQUAL(y.bits(), 4u);
     TRY(s = to_string(y));  TEST_EQUAL(s, "15");
-    TRY(s = y.str(16));     TEST_EQUAL(s, "f");
+    TRY(s = y.str("x"));    TEST_EQUAL(s, "f");
 
     TRY(x = 0x123456789abcdef0ull);
     TRY(y = 0xffffffffffffffffull);
@@ -175,27 +172,27 @@ void test_rs_sci_mp_integer_unsigned_arithmetic() {
     TRY(z = x + 15);
     TEST_EQUAL(z.bits(), 61u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "1311768467463790335");
-    TRY(s = z.str(16));     TEST_EQUAL(s, "123456789abcdeff");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "123456789abcdeff");
 
     TRY(z = x + y);
     TEST_EQUAL(z.bits(), 65u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "19758512541173341935");
-    TRY(s = z.str(16));     TEST_EQUAL(s, "1123456789abcdeef");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "1123456789abcdeef");
 
     TRY(z = y - 15);
     TEST_EQUAL(z.bits(), 64u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "18446744073709551600");
-    TRY(s = z.str(16));     TEST_EQUAL(s, "fffffffffffffff0");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "fffffffffffffff0");
 
     TRY(z = y - x);
     TEST_EQUAL(z.bits(), 64u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "17134975606245761295");
-    TRY(s = z.str(16));     TEST_EQUAL(s, "edcba9876543210f");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "edcba9876543210f");
 
     TRY(z = x * y);
     TEST_EQUAL(z.bits(), 125u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "24197857203266734862169780735577366800");
-    TRY(s = z.str(16));     TEST_EQUAL(s, "123456789abcdeefedcba98765432110");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "123456789abcdeefedcba98765432110");
 
     TRY(x = MPN("123456789123456789123456789123456789123456789"));
     TRY(y = MPN("123456789123456789123456789123456789"));
@@ -301,55 +298,55 @@ void test_rs_sci_mp_integer_unsigned_bit_operations() {
     TRY(z = x & y);
     TEST_EQUAL(z.bits(), 61u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "1311768467463790320");
-    TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef0");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "123456789abcdef0");
 
     TRY(z = x | y);
     TEST_EQUAL(z.bits(), 64u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "18446744073709551615");
-    TRY(s = z.str(16));  TEST_EQUAL(s, "ffffffffffffffff");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "ffffffffffffffff");
 
     TRY(z = x ^ y);
     TEST_EQUAL(z.bits(), 64u);
     TRY(s = to_string(z));  TEST_EQUAL(s, "17134975606245761295");
-    TRY(s = z.str(16));  TEST_EQUAL(s, "edcba9876543210f");
+    TRY(s = z.str("x"));    TEST_EQUAL(s, "edcba9876543210f");
 
-    TRY(z = x >> 0);   TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef0");
-    TRY(z = x >> 1);   TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f78");
-    TRY(z = x >> 2);   TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc");
-    TRY(z = x >> 3);   TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde");
-    TRY(z = x >> 31);  TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf1");
-    TRY(z = x >> 32);  TRY(s = z.str(16));  TEST_EQUAL(s, "12345678");
-    TRY(z = x >> 33);  TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c");
-    TRY(z = x >> 58);  TRY(s = z.str(16));  TEST_EQUAL(s, "4");
-    TRY(z = x >> 59);  TRY(s = z.str(16));  TEST_EQUAL(s, "2");
-    TRY(z = x >> 60);  TRY(s = z.str(16));  TEST_EQUAL(s, "1");
-    TRY(z = x >> 61);  TRY(s = z.str(16));  TEST_EQUAL(s, "0");
-    TRY(z = x >> 62);  TRY(s = z.str(16));  TEST_EQUAL(s, "0");
-    TRY(z = x >> 63);  TRY(s = z.str(16));  TEST_EQUAL(s, "0");
-    TRY(z = x >> 64);  TRY(s = z.str(16));  TEST_EQUAL(s, "0");
-    TRY(z = x >> 65);  TRY(s = z.str(16));  TEST_EQUAL(s, "0");
+    TRY(z = x >> 0);   TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef0");
+    TRY(z = x >> 1);   TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f78");
+    TRY(z = x >> 2);   TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc");
+    TRY(z = x >> 3);   TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde");
+    TRY(z = x >> 31);  TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf1");
+    TRY(z = x >> 32);  TRY(s = z.str("x"));  TEST_EQUAL(s, "12345678");
+    TRY(z = x >> 33);  TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c");
+    TRY(z = x >> 58);  TRY(s = z.str("x"));  TEST_EQUAL(s, "4");
+    TRY(z = x >> 59);  TRY(s = z.str("x"));  TEST_EQUAL(s, "2");
+    TRY(z = x >> 60);  TRY(s = z.str("x"));  TEST_EQUAL(s, "1");
+    TRY(z = x >> 61);  TRY(s = z.str("x"));  TEST_EQUAL(s, "0");
+    TRY(z = x >> 62);  TRY(s = z.str("x"));  TEST_EQUAL(s, "0");
+    TRY(z = x >> 63);  TRY(s = z.str("x"));  TEST_EQUAL(s, "0");
+    TRY(z = x >> 64);  TRY(s = z.str("x"));  TEST_EQUAL(s, "0");
+    TRY(z = x >> 65);  TRY(s = z.str("x"));  TEST_EQUAL(s, "0");
 
-    TRY(z = x << 0);   TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef0");
-    TRY(z = x << 1);   TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde0");
-    TRY(z = x << 2);   TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc0");
-    TRY(z = x << 3);   TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f780");
-    TRY(z = x << 4);   TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef00");
-    TRY(z = x << 5);   TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde00");
-    TRY(z = x << 6);   TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc00");
-    TRY(z = x << 7);   TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f7800");
-    TRY(z = x << 8);   TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef000");
-    TRY(z = x << 9);   TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde000");
-    TRY(z = x << 10);  TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc000");
-    TRY(z = x << 11);  TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f78000");
-    TRY(z = x << 12);  TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef0000");
-    TRY(z = x << 13);  TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde0000");
-    TRY(z = x << 14);  TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc0000");
-    TRY(z = x << 15);  TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f780000");
-    TRY(z = x << 16);  TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef00000");
-    TRY(z = x << 17);  TRY(s = z.str(16));  TEST_EQUAL(s, "2468acf13579bde00000");
-    TRY(z = x << 18);  TRY(s = z.str(16));  TEST_EQUAL(s, "48d159e26af37bc00000");
-    TRY(z = x << 19);  TRY(s = z.str(16));  TEST_EQUAL(s, "91a2b3c4d5e6f7800000");
-    TRY(z = x << 20);  TRY(s = z.str(16));  TEST_EQUAL(s, "123456789abcdef000000");
+    TRY(z = x << 0);   TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef0");
+    TRY(z = x << 1);   TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde0");
+    TRY(z = x << 2);   TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc0");
+    TRY(z = x << 3);   TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f780");
+    TRY(z = x << 4);   TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef00");
+    TRY(z = x << 5);   TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde00");
+    TRY(z = x << 6);   TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc00");
+    TRY(z = x << 7);   TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f7800");
+    TRY(z = x << 8);   TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef000");
+    TRY(z = x << 9);   TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde000");
+    TRY(z = x << 10);  TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc000");
+    TRY(z = x << 11);  TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f78000");
+    TRY(z = x << 12);  TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef0000");
+    TRY(z = x << 13);  TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde0000");
+    TRY(z = x << 14);  TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc0000");
+    TRY(z = x << 15);  TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f780000");
+    TRY(z = x << 16);  TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef00000");
+    TRY(z = x << 17);  TRY(s = z.str("x"));  TEST_EQUAL(s, "2468acf13579bde00000");
+    TRY(z = x << 18);  TRY(s = z.str("x"));  TEST_EQUAL(s, "48d159e26af37bc00000");
+    TRY(z = x << 19);  TRY(s = z.str("x"));  TEST_EQUAL(s, "91a2b3c4d5e6f7800000");
+    TRY(z = x << 20);  TRY(s = z.str("x"));  TEST_EQUAL(s, "123456789abcdef000000");
 
     TRY(x = {});
     TEST(! x.get_bit(0));
@@ -417,14 +414,14 @@ void test_rs_sci_mp_integer_unsigned_byte_operations() {
     TEST_EQUAL(a.get_byte(15), 0u);
     TEST_EQUAL(a.get_byte(16), 0u);
 
-    TRY(a.set_byte(1, 0xff));   TEST_EQUAL(a.str(16), "123456789abcdef1ff45");
-    TRY(a.set_byte(3, 0xff));   TEST_EQUAL(a.str(16), "123456789abcfff1ff45");
-    TRY(a.set_byte(5, 0xff));   TEST_EQUAL(a.str(16), "12345678ffbcfff1ff45");
-    TRY(a.set_byte(7, 0xff));   TEST_EQUAL(a.str(16), "1234ff78ffbcfff1ff45");
-    TRY(a.set_byte(9, 0xff));   TEST_EQUAL(a.str(16), "ff34ff78ffbcfff1ff45");
-    TRY(a.set_byte(11, 0xff));  TEST_EQUAL(a.str(16), "ff00ff34ff78ffbcfff1ff45");
-    TRY(a.set_byte(13, 0xff));  TEST_EQUAL(a.str(16), "ff00ff00ff34ff78ffbcfff1ff45");
-    TRY(a.set_byte(15, 0xff));  TEST_EQUAL(a.str(16), "ff00ff00ff00ff34ff78ffbcfff1ff45");
+    TRY(a.set_byte(1, 0xff));   TEST_EQUAL(a.str("x"), "123456789abcdef1ff45");
+    TRY(a.set_byte(3, 0xff));   TEST_EQUAL(a.str("x"), "123456789abcfff1ff45");
+    TRY(a.set_byte(5, 0xff));   TEST_EQUAL(a.str("x"), "12345678ffbcfff1ff45");
+    TRY(a.set_byte(7, 0xff));   TEST_EQUAL(a.str("x"), "1234ff78ffbcfff1ff45");
+    TRY(a.set_byte(9, 0xff));   TEST_EQUAL(a.str("x"), "ff34ff78ffbcfff1ff45");
+    TRY(a.set_byte(11, 0xff));  TEST_EQUAL(a.str("x"), "ff00ff34ff78ffbcfff1ff45");
+    TRY(a.set_byte(13, 0xff));  TEST_EQUAL(a.str("x"), "ff00ff00ff34ff78ffbcfff1ff45");
+    TRY(a.set_byte(15, 0xff));  TEST_EQUAL(a.str("x"), "ff00ff00ff00ff34ff78ffbcfff1ff45");
 
     TRY(a = 0);
     TRY(b = MPN("0x123456789abcdef12345"));
@@ -439,7 +436,7 @@ void test_rs_sci_mp_integer_unsigned_byte_operations() {
 
     v = {0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0xaa,0xbb,0xcc,0xdd,0xee,0xff};
 
-    TRY(a = MPN::read_be(v.data(), v.size()));  TEST_EQUAL(a.str(16), "112233445566778899aabbccddeeff");
-    TRY(a = MPN::read_le(v.data(), v.size()));  TEST_EQUAL(a.str(16), "ffeeddccbbaa998877665544332211");
+    TRY(a = MPN::read_be(v.data(), v.size()));  TEST_EQUAL(a.str("x"), "112233445566778899aabbccddeeff");
+    TRY(a = MPN::read_le(v.data(), v.size()));  TEST_EQUAL(a.str("x"), "ffeeddccbbaa998877665544332211");
 
 }
