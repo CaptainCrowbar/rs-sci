@@ -45,6 +45,9 @@ function(check_for_library required library header repo)
     endif()
 endfunction()
 
+check_for_library(yes rs-format rs-format.hpp https://github.com/CaptainCrowbar/rs-format)
+check_for_library(yes rs-graphics-core rs-graphics-core.hpp https://github.com/CaptainCrowbar/rs-graphics-core)
+check_for_library(yes rs-tl rs-tl.hpp https://github.com/CaptainCrowbar/rs-tl)
 check_for_library(no rs-unit-test rs-unit-test.hpp https://github.com/CaptainCrowbar/rs-unit-test)
 
 set(library rs-sci)
