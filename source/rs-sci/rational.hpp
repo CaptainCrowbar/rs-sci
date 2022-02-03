@@ -97,9 +97,7 @@ namespace RS::Sci {
         constexpr T whole() const noexcept;
         constexpr Ratio frac() const noexcept;
 
-        std::string str() const;
-        std::string mixed() const;
-        std::string vulgar() const;
+        std::string str(Format::FormatSpec spec = {}) const;
         friend std::ostream& operator<<(std::ostream& o, Ratio r) { return o << r.str(); }
 
         static Ratio parse(const std::string& s);
@@ -110,6 +108,8 @@ namespace RS::Sci {
         T num_;
         T den_;
 
+        std::string format_mixed(Format::FormatSpec spec) const;
+        std::string format_vulgar(Format::FormatSpec spec) const;
         constexpr void reduce() noexcept;
 
         static T parse_integer(const std::string& s) noexcept;
@@ -179,44 +179,24 @@ namespace RS::Sci {
         }
 
         template <typename T>
-        std::string Ratio<T>::str() const {
-            using std::to_string;
-            std::string s = to_string(num_);
-            if (den_ > 1)
-                s += '/' + to_string(den_);
-            return s;
-        }
-
-        template <typename T>
-        std::string Ratio<T>::mixed() const {
-            using std::to_string;
-            T w = whole();
-            auto f = frac();
-            bool wx = bool(w), fx = bool(f);
-            std::string s;
-            if (wx || ! fx) {
-                s = to_string(w);
-                f = f.abs();
-            }
-            if (wx && fx)
-                s += ' ';
-            if (fx)
-                s += f.vulgar();
-            return s;
-        }
-
-        template <typename T>
-        std::string Ratio<T>::vulgar() const {
-            using namespace RS::Format::Literals;
-            static const auto fmt = "{0}/{1}"_fmt;
-            return fmt(num_, den_);
+        std::string Ratio<T>::str(Format::FormatSpec spec) const {
+            using namespace Format;
+            if (spec.find_mode("DEFGdefg") != 0)
+                return format_object(static_cast<double>(*this), spec);
+            else if (! spec.empty() && spec.find_mode("BNRXbnrx") == 0)
+                throw std::invalid_argument("Invalid rational number format: " + quote(spec.str()));
+            else if (spec.option('v'))
+                return format_vulgar(spec);
+            else
+                return format_mixed(spec);
         }
 
         template <typename T>
         Ratio<T> Ratio<T>::parse(const std::string& s) {
+            using namespace Format;
             Ratio r;
             if (! try_parse(s, r))
-                throw std::invalid_argument("Invalid rational number: " + Format::quote(s));
+                throw std::invalid_argument("Invalid rational number: " + quote(s));
             return r;
         }
 
@@ -239,6 +219,34 @@ namespace RS::Sci {
             q.reduce();
             r = q;
             return true;
+        }
+
+        template <typename T>
+        std::string Ratio<T>::format_mixed(Format::FormatSpec spec) const {
+            using namespace Format;
+            using std::to_string;
+            T w = whole();
+            auto f = frac();
+            bool wx = bool(w), fx = bool(f);
+            std::string s;
+            if (wx || ! fx) {
+                s = format_object(w, spec);
+                f = f.abs();
+            }
+            if (wx && fx)
+                s += ' ';
+            if (fx)
+                s += f.format_vulgar(spec);
+            return s;
+        }
+
+        template <typename T>
+        std::string Ratio<T>::format_vulgar(Format::FormatSpec spec) const {
+            using namespace Format;
+            std::string s = format_object(num_, spec);
+            s += '/';
+            s += format_object(den_, spec);
+            return s;
         }
 
         template <typename T>

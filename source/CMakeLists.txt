@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.2.7
+    VERSION 0.2.8
     LANGUAGES CXX
 )
 

@@ -163,17 +163,18 @@ truncated toward zero; the fractional part will have the same sign as the
 original value, if the value was not an exact integer.
 
 ```c++
-std::string Ratio::str() const;
-std::string Ratio::mixed() const;
-std::string Ratio::vulgar() const;
+std::string Ratio::str(Format::FormatSpec spec = {}) const;
 std::ostream& operator<<(std::ostream& o, Ratio r);
 ```
 
-Convert a rational number to a string. The `mixed()` format expresses the
-rational as an integer and a fraction (e.g. `"2 3/5"`); the `vulgar()` format
-expresses it as a pure ratio (e.g. `"13/5"`). The `str()` format and the
-output operator will write the rational as a plain integer if it has no
-fractional part, otherwise they use the `vulgar()` format.
+Convert a rational number to a string.
+
+* Format modes:
+    * `[DEFGdefg]` -- Convert to floating point and format accordingly.
+    * `[BNRXbnrx]` -- Format the integer parts using these modes.
+* Format options (only applied to integer modes):
+    * `m` -- Mixed fraction e.g. `"2 3/5"` (default)
+    * `v` -- Vulgar fraction e.g. `"13/5"`
 
 ```c++
 static Ratio Ratio::parse(const std::string& s);

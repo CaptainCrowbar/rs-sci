@@ -20,8 +20,7 @@ void test_rs_sci_rational_basics() {
     TEST_EQUAL(r.frac().num(), 0);
     TEST_EQUAL(r.frac().den(), 1);
     TEST_EQUAL(r.str(), "0");
-    TEST_EQUAL(r.mixed(), "0");
-    TEST_EQUAL(r.vulgar(), "0/1");
+    TEST_EQUAL(r.str("nv"), "0/1");
 
     TRY(r = Rational(5, 3));
     TEST_EQUAL(r.num(), 5);
@@ -32,9 +31,8 @@ void test_rs_sci_rational_basics() {
     TEST_EQUAL(r.whole(), 1);
     TEST_EQUAL(r.frac().num(), 2);
     TEST_EQUAL(r.frac().den(), 3);
-    TEST_EQUAL(r.str(), "5/3");
-    TEST_EQUAL(r.mixed(), "1 2/3");
-    TEST_EQUAL(r.vulgar(), "5/3");
+    TEST_EQUAL(r.str(), "1 2/3");
+    TEST_EQUAL(r.str("nv"), "5/3");
 
     TRY(r = Rational(-7, 9));
     TEST_EQUAL(r.num(), -7);
@@ -46,8 +44,7 @@ void test_rs_sci_rational_basics() {
     TEST_EQUAL(r.frac().num(), -7);
     TEST_EQUAL(r.frac().den(), 9);
     TEST_EQUAL(r.str(), "-7/9");
-    TEST_EQUAL(r.mixed(), "-7/9");
-    TEST_EQUAL(r.vulgar(), "-7/9");
+    TEST_EQUAL(r.str("nv"), "-7/9");
 
 }
 
