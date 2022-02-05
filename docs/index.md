@@ -24,7 +24,7 @@ Dependencies:
 
 ## Index
 
-* [Algorithms](algorithms.html)
+* [Algorithms](algorithm.html)
 * [Constants](constants.html)
 * [Multiple precision integers](mp-integer.html)
 * [Prime numbers](prime.html)

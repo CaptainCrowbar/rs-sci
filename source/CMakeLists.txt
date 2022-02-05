@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.2.8
+    VERSION 0.2.9
     LANGUAGES CXX
 )
 
@@ -62,7 +62,7 @@ add_library(${library} STATIC
 
 add_executable(${unittest}
     test/version-test.cpp
-    test/algorithms-test.cpp
+    test/algorithm-test.cpp
     test/constants-test.cpp
     test/formula-test.cpp
     test/rational-test.cpp

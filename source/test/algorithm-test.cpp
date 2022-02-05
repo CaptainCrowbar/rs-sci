@@ -1,4 +1,4 @@
-#include "rs-sci/algorithms.hpp"
+#include "rs-sci/algorithm.hpp"
 #include "rs-graphics-core/vector.hpp"
 #include "rs-unit-test.hpp"
 #include <algorithm>
@@ -11,7 +11,7 @@
 using namespace RS::Graphics::Core;
 using namespace RS::Sci;
 
-void test_rs_sci_algorithms_binomial_coefficients() {
+void test_rs_sci_algorithm_binomial_coefficients() {
 
     TEST_EQUAL(binomial(-1, -1),  0);
     TEST_EQUAL(binomial(-1, 0),   0);
@@ -52,7 +52,7 @@ void test_rs_sci_algorithms_binomial_coefficients() {
 
 }
 
-void test_rs_sci_algorithms_interpolation() {
+void test_rs_sci_algorithm_interpolation() {
 
     TEST_EQUAL(interpolate(1.0, 10.0, 2.0, 20.0, 0.75),                  7.5);
     TEST_EQUAL(interpolate(1.0, 10.0, 2.0, 20.0, 1.00),                  10.0);
@@ -85,7 +85,7 @@ void test_rs_sci_algorithms_interpolation() {
 
 }
 
-void test_rs_sci_algorithms_interpolated_map() {
+void test_rs_sci_algorithm_interpolated_map() {
 
     InterpolatedMap<double> map;
     double y = 0;
@@ -136,7 +136,7 @@ void test_rs_sci_algorithms_interpolated_map() {
 
 }
 
-void test_rs_sci_algorithms_interpolated_map_lin_log() {
+void test_rs_sci_algorithm_interpolated_map_lin_log() {
 
     InterpolatedMap<double, log_y> map;
     double y = 0;
@@ -166,7 +166,7 @@ void test_rs_sci_algorithms_interpolated_map_lin_log() {
 
 }
 
-void test_rs_sci_algorithms_interpolated_map_log_log() {
+void test_rs_sci_algorithm_interpolated_map_log_log() {
 
     InterpolatedMap<double, log_x | log_y> map;
     double y = 0;
@@ -194,7 +194,7 @@ void test_rs_sci_algorithms_interpolated_map_log_log() {
 
 }
 
-void test_rs_sci_algorithms_cubic_spline_map() {
+void test_rs_sci_algorithm_cubic_spline_map() {
 
     using cubic = CubicSplineMap<double>;
 
@@ -292,7 +292,7 @@ namespace {
 
 }
 
-void test_rs_sci_algorithms_precision_sum() {
+void test_rs_sci_algorithm_precision_sum() {
 
     std::mt19937 rng(42);
 
@@ -308,7 +308,7 @@ void test_rs_sci_algorithms_precision_sum() {
 
 }
 
-void test_rs_sci_algorithms_line_integral() {
+void test_rs_sci_algorithm_line_integral() {
 
     double integral = 0;
     auto f = [] (auto x) { return x * x; };
@@ -318,7 +318,7 @@ void test_rs_sci_algorithms_line_integral() {
 
 }
 
-void test_rs_sci_algorithms_volume_integral() {
+void test_rs_sci_algorithm_volume_integral() {
 
     double integral = 0;
     auto f = [] (auto x) { return x[0] * x[1]; };
@@ -328,7 +328,7 @@ void test_rs_sci_algorithms_volume_integral() {
 
 }
 
-void test_rs_sci_algorithms_find_optimum() {
+void test_rs_sci_algorithm_find_optimum() {
 
     std::vector<std::string> vec;
     auto i = vec.begin();
