@@ -52,6 +52,74 @@ void test_rs_sci_algorithm_binomial_coefficients() {
 
 }
 
+void test_rs_sci_algorithm_integer_power() {
+
+    TEST_EQUAL(integer_power(0ll, 0ll),    1ll);
+    TEST_EQUAL(integer_power(0ll, 1ll),    0ll);
+    TEST_EQUAL(integer_power(0ll, 2ll),    0ll);
+    TEST_EQUAL(integer_power(0ll, 3ll),    0ll);
+    TEST_EQUAL(integer_power(0ll, 4ll),    0ll);
+    TEST_EQUAL(integer_power(0ll, 5ll),    0ll);
+    TEST_EQUAL(integer_power(0ll, 10ll),   0ll);
+    TEST_EQUAL(integer_power(0ll, 15ll),   0ll);
+    TEST_EQUAL(integer_power(0ll, 20ll),   0ll);
+    TEST_EQUAL(integer_power(1ll, 0ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 1ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 2ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 3ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 4ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 5ll),    1ll);
+    TEST_EQUAL(integer_power(1ll, 10ll),   1ll);
+    TEST_EQUAL(integer_power(1ll, 15ll),   1ll);
+    TEST_EQUAL(integer_power(1ll, 20ll),   1ll);
+    TEST_EQUAL(integer_power(2ll, 0ll),    1ll);
+    TEST_EQUAL(integer_power(2ll, 1ll),    2ll);
+    TEST_EQUAL(integer_power(2ll, 2ll),    4ll);
+    TEST_EQUAL(integer_power(2ll, 3ll),    8ll);
+    TEST_EQUAL(integer_power(2ll, 4ll),    16ll);
+    TEST_EQUAL(integer_power(2ll, 5ll),    32ll);
+    TEST_EQUAL(integer_power(2ll, 10ll),   1'024ll);
+    TEST_EQUAL(integer_power(2ll, 15ll),   32'768ll);
+    TEST_EQUAL(integer_power(2ll, 20ll),   1'048'576ll);
+    TEST_EQUAL(integer_power(5ll, 0ll),    1ll);
+    TEST_EQUAL(integer_power(5ll, 1ll),    5ll);
+    TEST_EQUAL(integer_power(5ll, 2ll),    25ll);
+    TEST_EQUAL(integer_power(5ll, 3ll),    125ll);
+    TEST_EQUAL(integer_power(5ll, 4ll),    625ll);
+    TEST_EQUAL(integer_power(5ll, 5ll),    3'125ll);
+    TEST_EQUAL(integer_power(5ll, 10ll),   9'765'625ll);
+    TEST_EQUAL(integer_power(5ll, 15ll),   30'517'578'125ll);
+    TEST_EQUAL(integer_power(5ll, 20ll),   95'367'431'640'625ll);
+    TEST_EQUAL(integer_power(-1ll, 0ll),   1ll);
+    TEST_EQUAL(integer_power(-1ll, 1ll),   -1ll);
+    TEST_EQUAL(integer_power(-1ll, 2ll),   1ll);
+    TEST_EQUAL(integer_power(-1ll, 3ll),   -1ll);
+    TEST_EQUAL(integer_power(-1ll, 4ll),   1ll);
+    TEST_EQUAL(integer_power(-1ll, 5ll),   -1ll);
+    TEST_EQUAL(integer_power(-1ll, 10ll),  1ll);
+    TEST_EQUAL(integer_power(-1ll, 15ll),  -1ll);
+    TEST_EQUAL(integer_power(-1ll, 20ll),  1ll);
+    TEST_EQUAL(integer_power(-2ll, 0ll),   1ll);
+    TEST_EQUAL(integer_power(-2ll, 1ll),   -2ll);
+    TEST_EQUAL(integer_power(-2ll, 2ll),   4ll);
+    TEST_EQUAL(integer_power(-2ll, 3ll),   -8ll);
+    TEST_EQUAL(integer_power(-2ll, 4ll),   16ll);
+    TEST_EQUAL(integer_power(-2ll, 5ll),   -32ll);
+    TEST_EQUAL(integer_power(-2ll, 10ll),  1'024ll);
+    TEST_EQUAL(integer_power(-2ll, 15ll),  -32'768ll);
+    TEST_EQUAL(integer_power(-2ll, 20ll),  1'048'576ll);
+    TEST_EQUAL(integer_power(-5ll, 0ll),   1ll);
+    TEST_EQUAL(integer_power(-5ll, 1ll),   -5ll);
+    TEST_EQUAL(integer_power(-5ll, 2ll),   25ll);
+    TEST_EQUAL(integer_power(-5ll, 3ll),   -125ll);
+    TEST_EQUAL(integer_power(-5ll, 4ll),   625ll);
+    TEST_EQUAL(integer_power(-5ll, 5ll),   -3'125ll);
+    TEST_EQUAL(integer_power(-5ll, 10ll),  9'765'625ll);
+    TEST_EQUAL(integer_power(-5ll, 15ll),  -30'517'578'125ll);
+    TEST_EQUAL(integer_power(-5ll, 20ll),  95'367'431'640'625ll);
+
+}
+
 void test_rs_sci_algorithm_interpolation() {
 
     TEST_EQUAL(interpolate(1.0, 10.0, 2.0, 20.0, 0.75),                  7.5);

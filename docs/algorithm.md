@@ -19,9 +19,19 @@ template <typename T> constexpr T binomial(T a, T b) noexcept;
 ```
 
 Returns the binomial coefficient of `(a,b)`, equal to `a!/b!(a-b)!` if
-`b∈[0,a]`, otherwise zero). `T` must be an arithmetic type. Behaviour is
-undefined if the correct result would be out of range for `T`, or if `T` is
-floating point and either argument is not an integer value.
+`b∈[0,a]`, otherwise zero). `T` must be an arithmetic type (floating point
+types are allowed). Behaviour is undefined if the correct result would be out
+of range for `T`, or if `T` is floating point and either argument is not an
+integer value.
+
+```c++
+template <typename T> constexpr T integer_power(T x, T y) noexcept;
+```
+
+Calculates _x<sup>y</sup>_ where `x` and `y` are integers. _0<sup>0</sup>_
+will yield 1. Behaviour is undefined if `y` is negative, if the correct
+result would be out of range for `T`, or if `T` is floating point and either
+argument is not an integer value.
 
 ## Interpolation
 

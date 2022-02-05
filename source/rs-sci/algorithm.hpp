@@ -2,6 +2,7 @@
 
 #include "rs-graphics-core/vector.hpp"
 #include "rs-tl/algorithm.hpp"
+#include "rs-tl/binary.hpp"
 #include "rs-tl/iterator.hpp"
 #include <algorithm>
 #include <array>
@@ -40,6 +41,19 @@ namespace RS::Sci {
             b -= 1;
         }
         return n / d;
+    }
+
+    template <typename T>
+    constexpr T integer_power(T x, T y) noexcept {
+        T mask = TL::bit_floor(y);
+        T z = 1;
+        while (mask != 0) {
+            z *= z;
+            if ((y & mask) != 0)
+                z *= x;
+            mask >>= 1;
+        }
+        return z;
     }
 
     // Interpolation

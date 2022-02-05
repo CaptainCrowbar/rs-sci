@@ -11,6 +11,7 @@ int main(int argc, char** argv) {
 
     // algorithm-test.cpp
     UNIT_TEST(rs_sci_algorithm_binomial_coefficients)
+    UNIT_TEST(rs_sci_algorithm_integer_power)
     UNIT_TEST(rs_sci_algorithm_interpolation)
     UNIT_TEST(rs_sci_algorithm_interpolated_map)
     UNIT_TEST(rs_sci_algorithm_interpolated_map_lin_log)
