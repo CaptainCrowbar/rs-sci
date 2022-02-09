@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.2.10
+    VERSION 0.2.11
     LANGUAGES CXX
 )
 
@@ -56,6 +56,7 @@ include_directories(.)
 find_package(Threads REQUIRED)
 
 add_library(${library} STATIC
+    ${library}/hash.cpp
     ${library}/mp-integer.cpp
     ${library}/rational.cpp
 )
@@ -65,13 +66,13 @@ add_executable(${unittest}
     test/algorithm-test.cpp
     test/constants-test.cpp
     test/formula-test.cpp
+    test/hash-test.cpp
     test/rational-test.cpp
     test/mp-integer-unsigned-test.cpp
     test/mp-integer-signed-test.cpp
     test/mp-integer-sign-agnostic-test.cpp
     test/mp-integer-rational-test.cpp
     test/prime-test.cpp
-    test/random-hash-test.cpp
     test/random-lcg-test.cpp
     test/random-pcg-test.cpp
     test/random-xoshiro-test.cpp

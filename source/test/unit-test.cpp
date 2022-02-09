@@ -38,6 +38,9 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_formula_bolometric_correction)
     UNIT_TEST(rs_sci_formula_planet_temperature)
 
+    // hash-test.cpp
+    UNIT_TEST(rs_sci_random_siphash)
+
     // rational-test.cpp
     UNIT_TEST(rs_sci_rational_basics)
     UNIT_TEST(rs_sci_rational_reduction)
@@ -98,9 +101,6 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_prime_list_primes_int)
     UNIT_TEST(rs_sci_prime_list_primes_fixed_binary)
     UNIT_TEST(rs_sci_prime_list_primes_mp_integer)
-
-    // random-hash-test.cpp
-    UNIT_TEST(rs_sci_random_siphash)
 
     // random-lcg-test.cpp
     UNIT_TEST(rs_sci_random_lcg_generators)

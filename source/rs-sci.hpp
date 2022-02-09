@@ -3,6 +3,7 @@
 #include "rs-sci/algorithm.hpp"
 #include "rs-sci/constants.hpp"
 #include "rs-sci/formula.hpp"
+#include "rs-sci/hash.hpp"
 #include "rs-sci/mp-integer.hpp"
 #include "rs-sci/prime.hpp"
 #include "rs-sci/random-continuous-distributions.hpp"

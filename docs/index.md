@@ -26,6 +26,7 @@ Dependencies:
 
 * [Algorithms](algorithm.html)
 * [Constants](constants.html)
+* [Hash functions](hash.html)
 * [Multiple precision integers](mp-integer.html)
 * [Prime numbers](prime.html)
 * [Random number generators](random.html)
