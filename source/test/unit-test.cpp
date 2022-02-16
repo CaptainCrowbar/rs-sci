@@ -39,7 +39,11 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_formula_planet_temperature)
 
     // hash-test.cpp
-    UNIT_TEST(rs_sci_random_siphash)
+    UNIT_TEST(rs_sci_hash_siphash)
+    UNIT_TEST(rs_sci_hash_md5)
+    UNIT_TEST(rs_sci_hash_sha1)
+    UNIT_TEST(rs_sci_hash_sha256)
+    UNIT_TEST(rs_sci_hash_sha512)
 
     // rational-test.cpp
     UNIT_TEST(rs_sci_rational_basics)

@@ -4,6 +4,7 @@
 #include <array>
 #include <functional>
 #include <iterator>
+#include <string>
 #include <type_traits>
 
 namespace RS::Sci {
@@ -122,5 +123,41 @@ namespace RS::Sci {
         }
 
     };
+
+    // Cryptographic hash functions
+
+    #define RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(ClassName, BitSize) \
+        class ClassName { \
+        public: \
+            static_assert(BitSize % 8 == 0); \
+            using result_type = std::string; \
+            static constexpr size_t bits = BitSize; \
+            static constexpr size_t bytes = BitSize / 8; \
+            ClassName(): hash_(bytes, '\0'), impl_(nullptr) {} \
+            ~ClassName() noexcept { done(); } \
+            ClassName(const ClassName&) = delete; \
+            ClassName(ClassName&&) = delete; \
+            ClassName& operator=(const ClassName&) = delete; \
+            ClassName& operator=(ClassName&&) = delete; \
+            std::string operator()(const void* ptr, size_t len) { clear(); add(ptr, len); return get(); } \
+            std::string operator()(const std::string& str) { clear(); add(str); return get(); } \
+            void add(const void* ptr, size_t len); \
+            void add(const std::string& str) { add(str.data(), str.size()); } \
+            void clear() noexcept { done(); hash_.assign(bytes, '\0'); } \
+            std::string get() { done(); return hash_; } \
+        private: \
+            struct impl_type; \
+            std::string hash_ = {}; \
+            impl_type* impl_ = nullptr; \
+            auto data() noexcept { return reinterpret_cast<unsigned char*>(hash_.data()); } \
+            void done() noexcept; \
+        };
+
+    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Md5, 128)
+    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha1, 160)
+    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha256, 256)
+    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha512, 512)
+
+    #undef RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS
 
 }
