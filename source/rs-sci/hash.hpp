@@ -125,38 +125,81 @@ namespace RS::Sci {
 
     // Cryptographic hash functions
 
-    #define RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(ClassName, BitSize) \
-        class ClassName { \
-        public: \
-            static_assert(BitSize % 8 == 0); \
-            using result_type = std::string; \
-            static constexpr size_t bits = BitSize; \
-            static constexpr size_t bytes = BitSize / 8; \
-            ClassName(): hash_(bytes, '\0'), impl_(nullptr) {} \
-            ~ClassName() noexcept { done(); } \
-            ClassName(const ClassName&) = delete; \
-            ClassName(ClassName&&) = delete; \
-            ClassName& operator=(const ClassName&) = delete; \
-            ClassName& operator=(ClassName&&) = delete; \
-            std::string operator()(const void* ptr, size_t len) { clear(); add(ptr, len); return get(); } \
-            std::string operator()(const std::string& str) { clear(); add(str); return get(); } \
-            void add(const void* ptr, size_t len); \
-            void add(const std::string& str) { add(str.data(), str.size()); } \
-            std::string get() { done(); return hash_; } \
-            void clear() noexcept { done(); hash_.assign(bytes, '\0'); } \
-        private: \
-            struct impl_type; \
-            std::string hash_ = {}; \
-            impl_type* impl_ = nullptr; \
-            auto data() noexcept { return reinterpret_cast<unsigned char*>(hash_.data()); } \
-            void done() noexcept; \
-        };
+    class CryptographicHash {
 
-    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Md5, 128)
-    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha1, 160)
-    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha256, 256)
-    RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS(Sha512, 512)
+    public:
 
-    #undef RS_DEFINE_CRYPTOGRAPHIC_HASH_CLASS
+        using result_type = std::string;
+
+        virtual ~CryptographicHash() noexcept {}
+        CryptographicHash(const CryptographicHash&) = delete;
+        CryptographicHash(CryptographicHash&&) = delete;
+        CryptographicHash& operator=(const CryptographicHash&) = delete;
+        CryptographicHash& operator=(CryptographicHash&&) = delete;
+
+        std::string operator()(const void* ptr, size_t len) { clear(); add(ptr, len); return get(); }
+        std::string operator()(const std::string& str) { clear(); add(str); return get(); }
+
+        constexpr size_t bits() const noexcept { return bits_; }
+        constexpr size_t bytes() const noexcept { return bits_ / 8; }
+        void add(const void* ptr, size_t len) { do_add(ptr, len); }
+        void add(const std::string& str) { do_add(str.data(), str.size()); }
+        std::string get() { do_final(); return hash_; }
+        void clear() noexcept { do_final(); hash_.assign(bytes(), '\0'); }
+
+    protected:
+
+        std::string hash_;
+        void* anon_ctx_;
+        size_t bits_;
+
+        CryptographicHash(): hash_(bytes(), '\0'), anon_ctx_(nullptr) {}
+
+        virtual void do_add(const void* ptr, size_t len) = 0;
+        virtual void do_final() noexcept = 0;
+
+        auto byte_data() noexcept { return reinterpret_cast<unsigned char*>(hash_.data()); }
+
+    };
+
+    class MD5:
+    public CryptographicHash {
+    public:
+        MD5() { bits_ = 128; }
+        ~MD5() noexcept override { do_final(); }
+    private:
+        void do_add(const void* ptr, size_t len) override;
+        void do_final() noexcept override;
+    };
+
+    class SHA1:
+    public CryptographicHash {
+    public:
+        SHA1() { bits_ = 160; }
+        ~SHA1() noexcept override { do_final(); }
+    private:
+        void do_add(const void* ptr, size_t len) override;
+        void do_final() noexcept override;
+    };
+
+    class SHA256:
+    public CryptographicHash {
+    public:
+        SHA256() { bits_ = 256; }
+        ~SHA256() noexcept override { do_final(); }
+    private:
+        void do_add(const void* ptr, size_t len) override;
+        void do_final() noexcept override;
+    };
+
+    class SHA512:
+    public CryptographicHash {
+    public:
+        SHA512() { bits_ = 512; }
+        ~SHA512() noexcept override { do_final(); }
+    private:
+        void do_add(const void* ptr, size_t len) override;
+        void do_final() noexcept override;
+    };
 
 }

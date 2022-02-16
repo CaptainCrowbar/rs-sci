@@ -106,7 +106,7 @@ namespace {
 
 void test_rs_sci_hash_md5() {
 
-    run_hash_tests<Md5>(
+    run_hash_tests<MD5>(
         "3e25960a79dbc69b674cd4ec67a72c62",
         "fa5c89f3c88b81bfd5e821b0316569af"
     );
@@ -115,7 +115,7 @@ void test_rs_sci_hash_md5() {
 
 void test_rs_sci_hash_sha1() {
 
-    run_hash_tests<Sha1>(
+    run_hash_tests<SHA1>(
         "7b502c3a1f48c8609ae212cdfb639dee39673f5e",
         "19afa2a4a37462c7b940a6c4c61363d49c3a35f4"
     );
@@ -124,7 +124,7 @@ void test_rs_sci_hash_sha1() {
 
 void test_rs_sci_hash_sha256() {
 
-    run_hash_tests<Sha256>(
+    run_hash_tests<SHA256>(
         "64ec88ca00b268e5ba1a35678a1b5316d212f4f366b2477232534a8aeca37f3c",
         "2c7c3d5f244f1a40069a32224215e0cf9b42485c99d80f357d76f006359c7a18"
     );
@@ -133,7 +133,7 @@ void test_rs_sci_hash_sha256() {
 
 void test_rs_sci_hash_sha512() {
 
-    run_hash_tests<Sha512>(
+    run_hash_tests<SHA512>(
         "b7f783baed8297f0db917462184ff4f08e69c2d5e5f79a942600f9725f58ce1f29c18139bf80b06c0fff2bdd34738452ecf40c488c22a7e3d80cdf6f9c1c0d47",
         "f41d92bc9fc1157a0d1387e67f3d0893b70f7039d3d46d8115b5079d45ad601159398c79c281681e2da09bf7d9f8c23b41d1a0a3c5b528a7f2735933a4353194"
     );

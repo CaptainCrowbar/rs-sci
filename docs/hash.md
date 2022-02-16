@@ -48,48 +48,47 @@ SipHash-2-4-64.
 
 ## Cryptographic hash functions
 
-| Class     | Bits  | Bytes  |
-| -----     | ----  | -----  |
-| `Md5`     | 128   | 16     |
-| `Sha1`    | 160   | 20     |
-| `Sha256`  | 256   | 32     |
-| `Sha512`  | 512   | 64     |
-
-Each class has the following interface (where `Algorithm` is replaced by the
-name of the class, as listed above):
-
 ```c++
-class Algorithm {
+class CryptographicHash {
     using result_type = std::string;
-    static constexpr size_t bits = BitSize;
-    static constexpr size_t bytes = BitSize / 8;
-    Algorithm();
-    ~Algorithm() noexcept;
+    virtual ~CryptographicHash() noexcept;
     std::string operator()(const void* ptr, size_t len);
     std::string operator()(const std::string& str);
+    constexpr size_t bits() const noexcept;
+    constexpr size_t bytes() const noexcept;
     void add(const void* ptr, size_t len);
     void add(const std::string& str);
     std::string get();
     void clear() noexcept;
 };
+class MD5: public CryptographicHash;     // 128 bits = 16 bytes
+class SHA1: public CryptographicHash;    // 160 bits = 20 bytes
+class SHA256: public CryptographicHash;  // 256 bits = 32 bytes
+class SHA512: public CryptographicHash;  // 512 bits = 64 bytes
 ```
 
 These classes generate cryptographic hashes by calling the operating system's
-native cryptographic API. The hash is returned as a string containing a fixed
-number of bytes. These classes are not copyable or movable. They can be used
-either in progressive or immediate mode.
+native cryptographic API. `CryptographicHash` is an abstract base class
+inherited by the concrete algorithm classes. These classes are not copyable
+or movable.
 
-In progressive mode, a hash class object is default constructed or reset using
-`clear()`. One or more blocks of data are processed by calling `add()` any
-number of times. The hash value can then be retrieved using `get()`. The
-`get()` function will return the same value if called multiple times with no
-intervening calls to `clear()` or `add()`. Behaviour is undefined if `add()`
-is called after `get()` without an intervening call to `clear()`.
+The hash is returned as a string containing a fixed number of bytes. The
+`bits()` and `bytes()` functions return the hash size in bits or bytes.
+
+These can be used in either immediate or progressive mode:
 
 In immediate mode, the function call operator is used to hash a single block
 of data and return the resulting hash value in one call. This always starts
 from a clean slate; any progressive hash state already in the object will be
 discarded. Calling `get()` after `operator()` will return the same value.
+
+In progressive mode, a hash class object is default constructed or reset using
+`clear()`. One or more blocks of data are processed by calling `add()` any
+number of times. The hash value can then be retrieved using `get()`. The
+`get()` function will return the same value if called multiple times with no
+intervening calls to `clear(), add(),` or `operator()`. Behaviour is undefined
+if `add()` is called after `get()` or `operator()` without an intervening call
+to `clear()`.
 
 Uses of the progressive and immediate mode APIs can be mixed on the same
 object, provided `clear()` is always used to reset the state before a
