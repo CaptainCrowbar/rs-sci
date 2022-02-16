@@ -1,7 +1,6 @@
 #pragma once
 
 #include "rs-tl/binary.hpp"
-#include <array>
 #include <functional>
 #include <iterator>
 #include <string>

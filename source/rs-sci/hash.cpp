@@ -34,7 +34,7 @@ namespace RS::Sci {
         #define HASH_CONTEXT(unix_fn_prefix, unix_ctx_prefix) \
             HCRYPTPROV hcprov = 0; \
             HCRYPTHASH hchash = 0; \
-            DWORD hashlen = sizeof(result_type);
+            DWORD hashlen = bytes;
         #define HASH_INIT(unix_fn_prefix, win_fn_suffix) \
             CryptAcquireContextW(&impl_->hcprov, nullptr, MS_ENH_RSA_AES_PROV, PROV_RSA_AES, CRYPT_SILENT | CRYPT_VERIFYCONTEXT); \
             CryptCreateHash(impl_->hcprov, CALG_ ## win_fn_suffix, 0, 0, &impl_->hchash);
