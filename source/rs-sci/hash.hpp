@@ -142,8 +142,8 @@ namespace RS::Sci {
             std::string operator()(const std::string& str) { clear(); add(str); return get(); } \
             void add(const void* ptr, size_t len); \
             void add(const std::string& str) { add(str.data(), str.size()); } \
-            void clear() noexcept { done(); hash_.assign(bytes, '\0'); } \
             std::string get() { done(); return hash_; } \
+            void clear() noexcept { done(); hash_.assign(bytes, '\0'); } \
         private: \
             struct impl_type; \
             std::string hash_ = {}; \

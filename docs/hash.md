@@ -55,21 +55,22 @@ SipHash-2-4-64.
 | `Sha256`  | 256   | 32     |
 | `Sha512`  | 512   | 64     |
 
-Each class has the following interface:
+Each class has the following interface (where `Algorithm` is replaced by the
+name of the class, as listed above):
 
 ```c++
-class ClassName {
+class Algorithm {
     using result_type = std::string;
     static constexpr size_t bits = BitSize;
     static constexpr size_t bytes = BitSize / 8;
-    ClassName();
-    ~ClassName() noexcept;
+    Algorithm();
+    ~Algorithm() noexcept;
     std::string operator()(const void* ptr, size_t len);
     std::string operator()(const std::string& str);
     void add(const void* ptr, size_t len);
     void add(const std::string& str);
-    void clear() noexcept;
     std::string get();
+    void clear() noexcept;
 };
 ```
 
