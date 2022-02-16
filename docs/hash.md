@@ -37,7 +37,7 @@ class SipHash {
     using result_type = uint64_t;
     constexpr SipHash() noexcept; // SipHash(0,0)
     constexpr SipHash(uint64_t key0, uint64_t key1) noexcept;
-    uint64_t constexpr operator()(const void* ptr, size_t len) const noexcept;
+    constexpr uint64_t operator()(const void* ptr, size_t len) const noexcept;
 };
 ```
 
