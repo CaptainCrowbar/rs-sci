@@ -55,21 +55,25 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_rational_parsing)
     UNIT_TEST(rs_sci_rational_hash)
 
-    // mp-integer-unsigned-test.cpp
+    // mp-integer-unsigned-conversion-test.cpp
     UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_integers)
     UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_strings)
     UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_base_strings)
     UNIT_TEST(rs_sci_mp_integer_unsigned_conversion_double)
+
+    // mp-integer-unsigned-arithmetic-test.cpp
     UNIT_TEST(rs_sci_mp_integer_unsigned_arithmetic)
     UNIT_TEST(rs_sci_mp_integer_unsigned_arithmetic_powers)
     UNIT_TEST(rs_sci_mp_integer_unsigned_bit_operations)
     UNIT_TEST(rs_sci_mp_integer_unsigned_byte_operations)
 
-    // mp-integer-signed-test.cpp
+    // mp-integer-signed-conversion-test.cpp
     UNIT_TEST(rs_sci_mp_integer_signed_conversion_integers)
     UNIT_TEST(rs_sci_mp_integer_signed_conversion_strings)
     UNIT_TEST(rs_sci_mp_integer_signed_conversion_base_strings)
     UNIT_TEST(rs_sci_mp_integer_signed_conversion_double)
+
+    // mp-integer-signed-arithmetic-test.cpp
     UNIT_TEST(rs_sci_mp_integer_signed_arithmetic)
     UNIT_TEST(rs_sci_mp_integer_signed_division)
     UNIT_TEST(rs_sci_mp_integer_signed_large_arithmetic)
@@ -80,30 +84,40 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_mp_integer_core_functions)
     UNIT_TEST(rs_sci_mp_integer_hash_set)
 
-    // mp-integer-rational-test.cpp
-    UNIT_TEST(rs_sci_mp_integer_rational_basics)
+    // mp-integer-rational-arithmetic-test.cpp
     UNIT_TEST(rs_sci_mp_integer_rational_reduction)
     UNIT_TEST(rs_sci_mp_integer_rational_arithmetic)
     UNIT_TEST(rs_sci_mp_integer_rational_properties)
     UNIT_TEST(rs_sci_mp_integer_rational_comparison)
     UNIT_TEST(rs_sci_mp_integer_rational_mixed)
+
+    // mp-integer-rational-conversion-test.cpp
+    UNIT_TEST(rs_sci_mp_integer_rational_basics)
     UNIT_TEST(rs_sci_mp_integer_rational_parsing)
 
-    // prime-test.cpp
+    // prime-int-test.cpp
     UNIT_TEST(rs_sci_prime_iterator_int)
-    UNIT_TEST(rs_sci_prime_iterator_fixed_binary)
-    UNIT_TEST(rs_sci_prime_iterator_mp_integer)
     UNIT_TEST(rs_sci_prime_primality_int)
-    UNIT_TEST(rs_sci_prime_primality_fixed_binary)
-    UNIT_TEST(rs_sci_prime_primality_mp_integer)
-    UNIT_TEST(rs_sci_prime_next_prev_prime_int)
-    UNIT_TEST(rs_sci_prime_next_prev_prime_fixed_binary)
-    UNIT_TEST(rs_sci_prime_next_prev_prime_mp_integer)
-    UNIT_TEST(rs_sci_prime_factorization_int)
-    UNIT_TEST(rs_sci_prime_factorization_fixed_binary)
-    UNIT_TEST(rs_sci_prime_factorization_mp_integer)
     UNIT_TEST(rs_sci_prime_list_primes_int)
+
+    // prime-int-next-prev-test.cpp
+    UNIT_TEST(rs_sci_prime_next_prev_prime_int)
+
+    // prime-int-factors-test.cpp
+    UNIT_TEST(rs_sci_prime_factorization_int)
+
+    // prime-fixed-binary-test.cpp
+    UNIT_TEST(rs_sci_prime_iterator_fixed_binary)
+    UNIT_TEST(rs_sci_prime_primality_fixed_binary)
+    UNIT_TEST(rs_sci_prime_next_prev_prime_fixed_binary)
+    UNIT_TEST(rs_sci_prime_factorization_fixed_binary)
     UNIT_TEST(rs_sci_prime_list_primes_fixed_binary)
+
+    // prime-mp-integer-test.cpp
+    UNIT_TEST(rs_sci_prime_iterator_mp_integer)
+    UNIT_TEST(rs_sci_prime_primality_mp_integer)
+    UNIT_TEST(rs_sci_prime_next_prev_prime_mp_integer)
+    UNIT_TEST(rs_sci_prime_factorization_mp_integer)
     UNIT_TEST(rs_sci_prime_list_primes_mp_integer)
 
     // random-lcg-test.cpp
