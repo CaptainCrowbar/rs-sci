@@ -22,8 +22,20 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_algorithm_volume_integral)
     UNIT_TEST(rs_sci_algorithm_find_optimum)
 
-    // approximate-test.cpp
+    // approx-basic-test.cpp
     UNIT_TEST(rs_sci_approx_initialization)
+
+    // approx-parsing-test.cpp
+    UNIT_TEST(rs_sci_approx_parsing)
+
+    // approx-formatting-test.cpp
+    UNIT_TEST(rs_sci_approx_formatting)
+
+    // approx-arithmetic-test.cpp
+    UNIT_TEST(rs_sci_approx_arithmetic)
+
+    // approx-functions-test.cpp
+    UNIT_TEST(rs_sci_approx_functions)
 
     // constants-test.cpp
     UNIT_TEST(rs_sci_constants)

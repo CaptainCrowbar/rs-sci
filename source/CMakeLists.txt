@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.16)
 # and propagate the new version to version.hpp.
 
 project(rs-sci
-    VERSION 0.2.17
+    VERSION 0.2.18
     LANGUAGES CXX
 )
 
@@ -47,6 +47,7 @@ endfunction()
 
 check_for_library(yes rs-format rs-format.hpp https://github.com/CaptainCrowbar/rs-format)
 check_for_library(yes rs-graphics-core rs-graphics-core.hpp https://github.com/CaptainCrowbar/rs-graphics-core)
+check_for_library(yes rs-regex rs-regex.hpp https://github.com/CaptainCrowbar/rs-regex)
 check_for_library(yes rs-tl rs-tl.hpp https://github.com/CaptainCrowbar/rs-tl)
 check_for_library(no rs-unit-test rs-unit-test.hpp https://github.com/CaptainCrowbar/rs-unit-test)
 
@@ -56,7 +57,7 @@ include_directories(.)
 find_package(Threads REQUIRED)
 
 add_library(${library} STATIC
-    ${library}/approximate.cpp
+    ${library}/approx.cpp
     ${library}/hash.cpp
     ${library}/mp-integer.cpp
     ${library}/rational.cpp
@@ -65,7 +66,11 @@ add_library(${library} STATIC
 add_executable(${unittest}
     test/version-test.cpp
     test/algorithm-test.cpp
-    test/approximate-test.cpp
+    test/approx-basic-test.cpp
+    test/approx-parsing-test.cpp
+    test/approx-formatting-test.cpp
+    test/approx-arithmetic-test.cpp
+    test/approx-functions-test.cpp
     test/constants-test.cpp
     test/formula-test.cpp
     test/hash-test.cpp
@@ -96,6 +101,9 @@ add_executable(${unittest}
 
 target_link_libraries(${unittest}
     PRIVATE ${library}
+    PRIVATE rs-graphics-core
+    PRIVATE rs-regex
+    PRIVATE pcre2-8
     PRIVATE Threads::Threads
 )
 

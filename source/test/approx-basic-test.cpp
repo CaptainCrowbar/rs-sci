@@ -1,6 +1,5 @@
-#include "rs-sci/approximate.hpp"
+#include "rs-sci/approx.hpp"
 #include "rs-unit-test.hpp"
-#include <string>
 
 using namespace RS::Sci;
 
@@ -31,7 +30,5 @@ void test_rs_sci_approx_initialization() {
     TEST_EQUAL(a.value(), 10);
     TEST_EQUAL(a.error(), 2.5);
     TEST(! a.is_exact());
-
-    // TODO
 
 }

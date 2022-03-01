@@ -25,7 +25,7 @@ Dependencies:
 ## Index
 
 * [Algorithms](algorithm.html)
-* [Approximate value](approximate.html)
+* [Approximate value](approx.html)
 * [Constants](constants.html)
 * [Hash functions](hash.html)
 * [Multiple precision integers](mp-integer.html)
