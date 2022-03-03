@@ -26,10 +26,15 @@ int main(int argc, char** argv) {
     UNIT_TEST(rs_sci_approx_initialization)
 
     // approx-parsing-test.cpp
-    UNIT_TEST(rs_sci_approx_parsing)
+    UNIT_TEST(rs_sci_approx_parse_zero)
+    UNIT_TEST(rs_sci_approx_parse_paired_format)
+    UNIT_TEST(rs_sci_approx_parse_ulps_format)
+    UNIT_TEST(rs_sci_approx_parse_decimal_format)
 
     // approx-formatting-test.cpp
-    UNIT_TEST(rs_sci_approx_formatting)
+    UNIT_TEST(rs_sci_approx_format_paired)
+    UNIT_TEST(rs_sci_approx_format_ulps)
+    UNIT_TEST(rs_sci_approx_format_decimal)
 
     // approx-arithmetic-test.cpp
     UNIT_TEST(rs_sci_approx_arithmetic)

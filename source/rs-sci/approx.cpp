@@ -1,6 +1,8 @@
 #include "rs-sci/approx.hpp"
+#include "rs-format/format.hpp"
 #include "rs-format/string.hpp"
 #include "rs-regex/regex.hpp"
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <stdexcept>
@@ -9,6 +11,18 @@ using namespace RS::Format;
 using namespace RS::RE;
 
 namespace RS::Sci {
+
+    namespace {
+
+        int dec_scale(double x) {
+            // Return the exponent of the largest power of 10 <= |x|
+            if (x == 0)
+                return 0;
+            else
+                return int(std::floor(std::log10(std::abs(x))));
+        }
+
+    }
 
     Approx::Approx(const std::string& str, parse mode) {
 
@@ -43,7 +57,7 @@ namespace RS::Sci {
                 auto dpos = std::find_if(str.begin(), str.end(), ascii_isdigit);
                 auto epos = std::find_if(dpos, str.end(), [] (char c) { return c == 'E' || c == 'e'; });
                 int digits = int(std::count_if(dpos, epos, ascii_isdigit));
-                int scale = int(std::floor(std::log10(std::abs(value_))));
+                int scale = dec_scale(value_);
                 double error = 5 * std::pow(10.0, double(scale - digits));
                 set_error(error);
             }
@@ -102,14 +116,54 @@ namespace RS::Sci {
 
         // Grouping and strip-zeroes options are not supported
 
+        spec.no_option("AaCcEUuWwz");
         spec.default_prec(10);
-        char error_format = spec.find_option("pPq"); // p = V±E, P = V+/-E, q = V(E)
 
-        // TODO
-        (void)spec;
-        (void)error_format;
+        if (is_exact())
+            return format_object(value_, spec);
 
-        return {};
+        char error_format = spec.find_option("Ppqr");
+
+        if (error_format == 'P' || error_format == 'p') {
+
+            // Paired format: V±E
+
+            // TODO
+
+            return {};
+
+        } else if (error_format == 'r') {
+
+            // Rounded format: V
+
+            // TODO
+
+            return {};
+
+        } else {
+
+            // Ulps format: V(E) (default)
+
+            static const FormatSpec ulp_spec("f0");
+
+            int vscale = dec_scale(value_);
+            int escale = dec_scale(error_);
+            int vdigits = std::max(vscale - escale, 0) + 2;
+            int edigits = vdigits + escale - vscale;
+            auto vspec = spec;
+            vspec.set_prec(vdigits);
+            auto str = format_object(value_, vspec);
+            double ulps = error_ * std::pow(10.0, double(edigits - escale - 1));
+            auto ustr = '(' + format_object(ulps, ulp_spec) + ')';
+            size_t epos = str.find_first_of("Ee");
+            if (epos == npos)
+                str += ustr;
+            else
+                str.insert(epos, ustr);
+
+            return str;
+
+        }
 
     }
 
