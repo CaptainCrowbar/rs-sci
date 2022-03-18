@@ -1,7 +1,7 @@
 #pragma once
 
-#include "rs-format/enum.hpp"
 #include "rs-format/spec.hpp"
+#include "rs-tl/enum.hpp"
 #include "rs-tl/types.hpp"
 #include <string>
 

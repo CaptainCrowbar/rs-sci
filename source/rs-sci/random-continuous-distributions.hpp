@@ -4,7 +4,7 @@
 #pragma once
 
 #include "rs-sci/constants.hpp"
-#include "rs-format/enum.hpp"
+#include "rs-tl/enum.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <limits>
