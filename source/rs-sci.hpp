@@ -1,7 +1,6 @@
 #pragma once
 
 #include "rs-sci/algorithm.hpp"
-#include "rs-sci/approx.hpp"
 #include "rs-sci/constants.hpp"
 #include "rs-sci/formula.hpp"
 #include "rs-sci/hash.hpp"
