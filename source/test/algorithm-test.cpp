@@ -10,6 +10,7 @@
 
 using namespace RS::Graphics::Core;
 using namespace RS::Sci;
+using namespace std::literals;
 
 void test_rs_sci_algorithm_binomial_coefficients() {
 
@@ -117,6 +118,19 @@ void test_rs_sci_algorithm_integer_power() {
     TEST_EQUAL(integer_power(-5ll, 10ll),  9'765'625ll);
     TEST_EQUAL(integer_power(-5ll, 15ll),  -30'517'578'125ll);
     TEST_EQUAL(integer_power(-5ll, 20ll),  95'367'431'640'625ll);
+
+}
+
+void test_rs_sci_algorithm_integer_power_generalised() {
+
+    static const auto f = std::plus<std::string>();
+
+    TEST_EQUAL(integer_power("A"s, 0, f, ""s),  "");
+    TEST_EQUAL(integer_power("A"s, 1, f, ""s),  "A");
+    TEST_EQUAL(integer_power("A"s, 2, f, ""s),  "AA");
+    TEST_EQUAL(integer_power("A"s, 3, f, ""s),  "AAA");
+    TEST_EQUAL(integer_power("A"s, 4, f, ""s),  "AAAA");
+    TEST_EQUAL(integer_power("A"s, 5, f, ""s),  "AAAAA");
 
 }
 

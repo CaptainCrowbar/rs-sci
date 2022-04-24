@@ -12,7 +12,7 @@ namespace RS::Sci;
 * TOC
 {:toc}
 
-## Integer algorithms
+## Arithmetic algorithms
 
 ```c++
 template <typename T> constexpr T binomial(T a, T b) noexcept;
@@ -25,13 +25,19 @@ of range for `T`, or if `T` is floating point and either argument is not an
 integer value.
 
 ```c++
-template <typename T> constexpr T integer_power(T x, T y) noexcept;
+template <typename T, typename U>
+    constexpr T integer_power(T x, U y) noexcept;
+template <typename T, typename U, typename BinaryFunction>
+    constexpr T integer_power(T x, U y, BinaryFunction f,
+        T unit = T(1)) noexcept;
 ```
 
-Calculates _x<sup>y</sup>_ where `x` and `y` are integers. _0<sup>0</sup>_
-will yield 1. Behaviour is undefined if `y` is negative, if the correct
-result would be out of range for `T`, or if `T` is floating point and either
-argument is not an integer value.
+Raise `x` to the power of `y`, using an _O(log y)_ algorithm. `T` can be any
+type supported by the binary function, which defaults to multiplication. `U`
+must be a standard integer type. If `y` is zero, this will return `unit`,
+regardless of the value of `x`; behaviour is undefined if `y` is negative.
+The function and unit arguments must be supplied if `T` is not constructible
+from an integer.
 
 ## Interpolation
 

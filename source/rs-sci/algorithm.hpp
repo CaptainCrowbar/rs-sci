@@ -43,17 +43,23 @@ namespace RS::Sci {
         return n / d;
     }
 
-    template <typename T>
-    constexpr T integer_power(T x, T y) noexcept {
-        T mask = TL::bit_floor(y);
-        T z = 1;
+    template <typename T, typename U, typename BinaryFunction>
+    constexpr T integer_power(T x, U y, BinaryFunction f, T unit = T(1)) noexcept {
+        static_assert(std::is_integral_v<U>);
+        U mask = TL::bit_floor(y);
+        T z = unit;
         while (mask != 0) {
-            z *= z;
+            z = f(z, z);
             if ((y & mask) != 0)
-                z *= x;
+                z = f(z, x);
             mask >>= 1;
         }
         return z;
+    }
+
+    template <typename T, typename U>
+    constexpr T integer_power(T x, U y) noexcept {
+        return integer_power(x, y, std::multiplies<T>());
     }
 
     // Interpolation
