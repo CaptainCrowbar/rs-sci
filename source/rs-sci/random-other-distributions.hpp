@@ -213,7 +213,7 @@ namespace RS::Sci {
         template <typename RNG>
         TL::Uuid operator()(RNG& rng) const {
             std::array<uint64_t, 2> array;
-            UniformInteger<uint64_t> make64(0, ~uint64_t(0));
+            UniformInteger<uint64_t> make64(0, ~ uint64_t(0));
             for (auto& a: array)
                 a = make64(rng);
             TL::Uuid u(array.data(), 16);

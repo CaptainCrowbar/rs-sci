@@ -4,6 +4,7 @@
     #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     #include <CommonCrypto/CommonDigest.h>
 #elif defined(_XOPEN_SOURCE)
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
     #include <openssl/md5.h>
     #include <openssl/sha.h>
 #else

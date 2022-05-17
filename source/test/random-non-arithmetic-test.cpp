@@ -132,7 +132,7 @@ void test_rs_sci_random_weighted_distribution() {
 
 void test_rs_sci_random_uuid() {
 
-    static constexpr int iterations = 100'000;
+    static constexpr int iterations = 1000;
 
     Pcg64 rng(42);
     RandomUuid ru;

@@ -2,6 +2,7 @@
 #include "rs-sci/random-engines.hpp"
 #include "rs-sci/statistics.hpp"
 #include "rs-unit-test.hpp"
+#include <cmath>
 #include <map>
 
 using namespace RS::Sci;
@@ -96,6 +97,25 @@ void test_rs_sci_random_uniform_integer_distribution() {
     TEST_NEAR(census[2] / double(iterations), 0.25, 0.002);
     TEST_NEAR(census[3] / double(iterations), 0.25, 0.002);
     TEST_NEAR(census[4] / double(iterations), 0.25, 0.002);
+
+    UniformInteger<uint64_t> random64(0, ~ uint64_t(0));
+    uint64_t u = 0;
+    double w = 0;
+    double sum = 0;
+    double sum2 = 0;
+
+    for (int i = 0; i < iterations; ++i) {
+        TRY(u = random64(rng));
+        w = double(u);
+        sum += w;
+        sum2 += w * w;
+    }
+
+    double m = sum / iterations;
+    double s = std::sqrt(sum2 / iterations - m * m);
+
+    TEST_NEAR(m, 9.22e18, 1e16);
+    TEST_NEAR(s, 5.33e18, 1e16);
 
 }
 

@@ -219,9 +219,10 @@ namespace RS::Sci {
                 double beta = pi_d / std::sqrt(3 * lambda_);
                 double alpha = beta * lambda_;
                 double k = std::log(c) - lambda_ - std::log(beta);
-                double a, b;
+                double a = 1;
+                double b = 0;
 
-                do {
+                while (a > b) {
                     double u = unit(rng);
                     double x = (alpha - std::log((1 - u) / u)) / beta;
                     n = T(std::floor(x + 0.5));
@@ -232,7 +233,7 @@ namespace RS::Sci {
                     double z = 1 + std::exp(y);
                     a = y + std::log(v / (z * z));
                     b = k + n * log_lambda_ - std::lgamma(1.0 + n);
-                } while (a > b);
+                }
 
             }
 

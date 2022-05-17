@@ -101,6 +101,11 @@ target_link_libraries(${unittest}
     PRIVATE Threads::Threads
 )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(${unittest} PRIVATE OpenSSL::Crypto)
+endif()
+
 install(DIRECTORY ${library} DESTINATION include)
 install(FILES ${library}.hpp DESTINATION include)
 install(TARGETS ${library} LIBRARY DESTINATION lib)

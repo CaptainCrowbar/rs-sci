@@ -54,8 +54,8 @@ class CryptographicHash {
     virtual ~CryptographicHash() noexcept;
     std::string operator()(const void* ptr, size_t len);
     std::string operator()(const std::string& str);
-    constexpr size_t bits() const noexcept;
-    constexpr size_t bytes() const noexcept;
+    size_t bits() const noexcept;
+    size_t bytes() const noexcept;
     void add(const void* ptr, size_t len);
     void add(const std::string& str);
     std::string get();

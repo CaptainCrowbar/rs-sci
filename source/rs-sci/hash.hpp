@@ -140,8 +140,8 @@ namespace RS::Sci {
         std::string operator()(const void* ptr, size_t len) { clear(); add(ptr, len); return get(); }
         std::string operator()(const std::string& str) { clear(); add(str); return get(); }
 
-        constexpr size_t bits() const noexcept { return bits_; }
-        constexpr size_t bytes() const noexcept { return bits_ / 8; }
+        size_t bits() const noexcept { return bits_; }
+        size_t bytes() const noexcept { return bits_ / 8; }
         void add(const void* ptr, size_t len) { do_add(ptr, len); }
         void add(const std::string& str) { do_add(str.data(), str.size()); }
         std::string get() { do_final(); return hash_; }
@@ -149,11 +149,11 @@ namespace RS::Sci {
 
     protected:
 
-        std::string hash_;
-        void* anon_ctx_;
         size_t bits_;
+        void* anon_ctx_;
+        std::string hash_;
 
-        CryptographicHash(): hash_(bytes(), '\0'), anon_ctx_(nullptr) {}
+        explicit CryptographicHash(size_t b): bits_(b), anon_ctx_(nullptr), hash_(bytes(), '\0') {}
 
         virtual void do_add(const void* ptr, size_t len) = 0;
         virtual void do_final() noexcept = 0;
@@ -165,7 +165,7 @@ namespace RS::Sci {
     class MD5:
     public CryptographicHash {
     public:
-        MD5() { bits_ = 128; }
+        MD5(): CryptographicHash(128) {}
         ~MD5() noexcept override { do_final(); }
     private:
         void do_add(const void* ptr, size_t len) override;
@@ -175,7 +175,7 @@ namespace RS::Sci {
     class SHA1:
     public CryptographicHash {
     public:
-        SHA1() { bits_ = 160; }
+        SHA1(): CryptographicHash(160) {}
         ~SHA1() noexcept override { do_final(); }
     private:
         void do_add(const void* ptr, size_t len) override;
@@ -185,7 +185,7 @@ namespace RS::Sci {
     class SHA256:
     public CryptographicHash {
     public:
-        SHA256() { bits_ = 256; }
+        SHA256(): CryptographicHash(256) {}
         ~SHA256() noexcept override { do_final(); }
     private:
         void do_add(const void* ptr, size_t len) override;
@@ -195,7 +195,7 @@ namespace RS::Sci {
     class SHA512:
     public CryptographicHash {
     public:
-        SHA512() { bits_ = 512; }
+        SHA512(): CryptographicHash(512) {}
         ~SHA512() noexcept override { do_final(); }
     private:
         void do_add(const void* ptr, size_t len) override;
