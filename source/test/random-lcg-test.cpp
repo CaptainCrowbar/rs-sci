@@ -29,11 +29,11 @@ void test_rs_sci_random_lcg_generators() {
     TEST_NEAR(stats.sd(), sd32, 1e7);
 
     Lcg64 rng64(42);
-    uint64_t y = 0;
+    double y = 0;
     stats.clear();
 
     for (int i = 0; i < iterations; ++i) {
-        TRY(y = rng64());
+        TRY(y = double(rng64()));
         stats(y);
     }
 

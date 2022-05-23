@@ -18,11 +18,14 @@ namespace RS::Sci {
 
     }
 
-    template <typename T, typename... Args>
-    size_t hash_mix(const T& t, const Args&... args) {
-        size_t h = std::hash<T>()(t);
-        if constexpr (sizeof...(Args) > 0)
-            h = Detail::mix_hashes(h, hash_mix(args...));
+    template <typename T1, typename T2, typename... Args>
+    size_t hash_mix(const T1& t1, const T2& t2, const Args&... args) {
+        using namespace Detail;
+        size_t h = std::hash<T1>()(t1);
+        if constexpr (sizeof...(Args) == 0)
+            h = mix_hashes(h, std::hash<T2>()(t2));
+        else
+            h = mix_hashes(h, hash_mix(t2, args...));
         return h;
     }
 

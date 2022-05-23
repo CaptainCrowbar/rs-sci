@@ -183,8 +183,8 @@ namespace RS::Sci {
         int count_ = 0;
 
         void init();
-        T px(int i) const noexcept { return points_[i].first; }
-        T py(int i) const noexcept { return points_[i].second; }
+        T px(ptrdiff_t i) const noexcept { return points_[i].first; }
+        T py(ptrdiff_t i) const noexcept { return points_[i].second; }
 
     };
 
@@ -200,7 +200,7 @@ namespace RS::Sci {
             if (it != points_.begin())
                 --it;
 
-            int j = it - points_.begin();
+            auto j = it - points_.begin();
             T dx = px(j + 1) - px(j);
             T q_prev = (x - px(j)) / dx;
             T q_next = (px(j + 1) - x) / dx;

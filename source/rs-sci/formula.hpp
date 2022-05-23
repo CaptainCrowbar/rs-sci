@@ -189,11 +189,11 @@ namespace RS::Sci {
         TL::Irange<const T*> range;
 
         if (log_t <= 3.7)
-            range = {coeffs1.begin(), coeffs1.end()};
+            range = {coeffs1.data(), coeffs1.data() + coeffs1.size()};
         else if (log_t <= 3.9)
-            range = {coeffs2.begin(), coeffs2.end()};
+            range = {coeffs2.data(), coeffs2.data() + coeffs2.size()};
         else
-            range = {coeffs3.begin(), coeffs3.end()};
+            range = {coeffs3.data(), coeffs3.data() + coeffs3.size()};
 
         T bc = 0;
         T x = 1;

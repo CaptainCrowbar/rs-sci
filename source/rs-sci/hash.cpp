@@ -43,9 +43,9 @@ namespace RS::Sci {
             CryptAcquireContextW(&ctx->hcprov, nullptr, MS_ENH_RSA_AES_PROV, PROV_RSA_AES, CRYPT_SILENT | CRYPT_VERIFYCONTEXT); \
             CryptCreateHash(ctx->hcprov, CALG_ ## windows_function_suffix, 0, 0, &ctx->hchash);
         #define HASH_UPDATE(unix_function_prefix) \
-            CryptHashData(ctx->hchash, static_cast<const unsigned char*>(ptr), uint32_t(len), 0);
+            CryptHashData(ctx->hchash, static_cast<const unsigned char*>(ptr), DWORD(len), 0);
         #define HASH_FINAL(unix_function_prefix) \
-            ctx->hashlen = bytes(); \
+            ctx->hashlen = DWORD(bytes()); \
             CryptGetHashParam(ctx->hchash, HP_HASHVAL, byte_data(), &ctx->hashlen, 0); \
             CryptDestroyHash(ctx->hchash); \
             CryptReleaseContext(ctx->hcprov, 0);
@@ -72,7 +72,26 @@ namespace RS::Sci {
             } \
         }
 
-    IMPLEMENT_CRYPTOGRAPHIC_HASH(MD5, MD5, MD5, MD5)
+        void MD5::do_add(const void* ptr, size_t len) {
+            using context_type = HASH_CONTEXT(MD5, MD5);
+            auto ctx = static_cast<context_type*>(anon_ctx_);
+            if (! anon_ctx_) {
+                anon_ctx_ = ctx = new context_type;
+                HASH_INIT(MD5, MD5)
+            }
+            HASH_UPDATE(MD5)
+        }
+        void MD5::do_final() noexcept {
+            using context_type = HASH_CONTEXT(MD5, MD5);
+            if (anon_ctx_) {
+                auto ctx = static_cast<context_type*>(anon_ctx_);
+                HASH_FINAL(MD5)
+                delete ctx;
+                anon_ctx_ = nullptr;
+            }
+        }
+
+    // IMPLEMENT_CRYPTOGRAPHIC_HASH(MD5, MD5, MD5, MD5)
     IMPLEMENT_CRYPTOGRAPHIC_HASH(SHA1, SHA1, SHA, SHA1)
     IMPLEMENT_CRYPTOGRAPHIC_HASH(SHA256, SHA256, SHA256, SHA_256)
     IMPLEMENT_CRYPTOGRAPHIC_HASH(SHA512, SHA512, SHA512, SHA_512)

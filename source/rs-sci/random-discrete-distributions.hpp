@@ -114,7 +114,7 @@ namespace RS::Sci {
                 // the result is too large.
 
                 working_type high = 0, low = 0;
-                working_type ratio = (out_range - rng_range) / (rng_range + 1);
+                T ratio = T((out_range - rng_range) / (rng_range + 1));
                 do {
                     high = generate(rng, working_type(0), ratio) * (rng_range + 1);
                     low = working_type(rng() - rng_min);
@@ -192,7 +192,7 @@ namespace RS::Sci {
 
             // https://www.johndcook.com/blog/2010/06/14/generating-poisson-random-values/
 
-            T n;
+            T n = 0;
             UniformReal<double> unit;
 
             if (lambda_ <= 30) {
